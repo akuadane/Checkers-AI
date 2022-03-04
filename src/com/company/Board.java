@@ -102,13 +102,15 @@ public class Board {
     }
         return tempMoveList;
     }
-    //private void findKingMoves(PieceOwner owner,int r, int c){}
+
+    /**
+     * Moves a piece on the board
+     * */
     public void makeMove(Move move){
         int initR = move.movement[0];
         int initC = move.movement[1];
         int newR = move.movement[2];
         int newC = move.movement[3];
-
 
         board[newR][newC] = board[initR][initC].copy();
         board[initR][initC] = null;

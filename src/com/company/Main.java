@@ -14,11 +14,12 @@ public class Main {
         board.display();
         board.findLegalMoves(PieceOwner.PLAYER1);
 
-        for(Move a: board.moveList){
-                System.out.println(String.valueOf(a));
-
-        }
-        board.makeMove(board.moveList.get(0));
+//        for(Move a: board.moveList){
+//                System.out.println(String.valueOf(a));
+//
+//        }
+        System.out.println("===================");
+        board.makeMove(board.moveList.get(3));
         board.display();
 
     }
