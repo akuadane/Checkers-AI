@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RemovingMove extends Move{
-    List<int[]> toBeRemoved;
+    public List<int[]> toBeRemoved;
 
     public RemovingMove(int[] movement) {
         super(movement);

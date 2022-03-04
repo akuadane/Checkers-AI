@@ -103,8 +103,22 @@ public class Board {
         return tempMoveList;
     }
     //private void findKingMoves(PieceOwner owner,int r, int c){}
-    public void makeMove(int[] move){}
-    public void makeJump(int[] jump){}
+    public void makeMove(Move move){
+        int initR = move.movement[0];
+        int initC = move.movement[1];
+        int newR = move.movement[2];
+        int newC = move.movement[3];
+
+
+        board[newR][newC] = board[initR][initC].copy();
+        board[initR][initC] = null;
+
+        if(move instanceof RemovingMove){
+            for(int[] remove: ((RemovingMove) move).toBeRemoved){
+                board[remove[0]][remove[1]]=null;
+            }
+        }
+    }
 
     /**
      * Resets the board to its original state.

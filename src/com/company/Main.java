@@ -16,7 +16,10 @@ public class Main {
 
         for(Move a: board.moveList){
                 System.out.println(String.valueOf(a));
+
         }
+        board.makeMove(board.moveList.get(0));
+        board.display();
 
     }
 }

@@ -3,7 +3,7 @@ package com.company.move;
 import java.util.Arrays;
 
 public class Move {
-    int[] movement ;
+    public int[] movement ;
 
     public  Move(int[] movement){
         this.movement = movement;

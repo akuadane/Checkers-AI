@@ -11,4 +11,8 @@ public class Piece {
         this.type = type;
         this.owner= owner;
     }
+
+   Piece copy(){
+        return new Piece(type,owner);
+   }
 }
