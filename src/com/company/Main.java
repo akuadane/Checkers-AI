@@ -1,4 +1,11 @@
 package com.company;
+
+import com.company.move.Move;
+import com.company.move.RemovingMove;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -7,8 +14,9 @@ public class Main {
         board.display();
         board.findLegalMoves(PieceOwner.PLAYER1);
 
-        for(int[] a: board.moveList){
-            System.out.printf("%d %d %d %d\n",a[0],a[1],a[2],a[3]);
+        for(Move a: board.moveList){
+                System.out.println(String.valueOf(a));
         }
+
     }
 }

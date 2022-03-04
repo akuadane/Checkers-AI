@@ -1,13 +1,13 @@
 package com.company;
 
+import com.company.move.Move;
+import com.company.move.RemovingMove;
+
 import java.util.ArrayList;
 
 public class Board {
     Piece[][] board = new Piece[8][8];
-    ArrayList<int[]> jumpList = new ArrayList<>();
-    ArrayList<int[]> moveList = new ArrayList<>();
-    ArrayList<int[]> removingMoveList = new ArrayList<>();
-
+    ArrayList<Move> moveList = new ArrayList<>();
 
     public Board(){
         this.resetBoard();
@@ -19,30 +19,27 @@ public class Board {
             for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
                 Piece piece = this.board[r][c];
                 if(piece!=null && piece.owner==owner){
-                        this.findMoves(piece,r,c);
+                        Move mv = this.findMoves(piece,r,c);
+                        if(mv!=null)
+                            moveList.add(mv);
                 }
-
-
-
             }
         }
 
         return new int[48][12];
     }
     private void findJumps(PieceOwner owner,int r, int c){}
-    private void findKingJumps(PieceOwner owner,int r, int c){}
-
-    private void findMoves(Piece piece,int r, int c){
+    private Move findMoves(Piece piece,int r, int c){
         int[][] moveDir;
 
         if(piece.type==PieceType.PAWN){
             if(piece.owner==PieceOwner.PLAYER1 )
-                moveDir= new int[][]{{-1,-1},{-1,1}}; // allow player1's pawns to move towards the top of the board only
+                moveDir= new int[][]{{-1,-1},{-1,1}}; // allows player1's pawns to move towards the top of the board only
             else
-                moveDir= new int[][]{{1,-1},{1,1}};  // allow player2's pawns to move towards the bottom of the board only
+                moveDir= new int[][]{{1,-1},{1,1}};  // allows player2's pawns to move towards the bottom of the board only
         }
         else
-            moveDir= new int[][]{{1,-1},{1,1},{-1,1},{-1,-1}}; // allow kings to move to every direction
+            moveDir= new int[][]{{1,-1},{1,1},{-1,1},{-1,-1}}; // allows kings to move to every direction
 
         for(int i=0;i< moveDir.length;i++){
             int newR = r+moveDir[i][0];
@@ -52,17 +49,20 @@ public class Board {
             if(newR<0 || newR>=this.board.length || newC<0 || newC>=this.board.length)
                 continue;
 
-            Piece init = this.board[r][c];
+
             Piece newPos = this.board[newR][newC];
 
             // check if the adjacent square is empty
-            if(newPos==null)
-                this.moveList.add(new int[]{r, c, newR, newC});
+            if(newPos==null) {
+                Move mv = new Move(new int[]{r, c, newR, newC});
+                return mv;
+                //this.moveList.add(mv);
+            }
             // check if the adjacent square is occupied by our piece, if so continue
-            else if(newPos.owner==init.owner)
+            else if(newPos.owner==piece.owner)
                 continue;
             // check if the second adjacent square is occupied or not
-            else{
+            else if(piece.type==PieceType.KING || newPos.type==PieceType.PAWN) { // Makes sure a PAWN doesn't take a KING
                 int nextNewR = newR + moveDir[i][0];
                 int nextNewC = newC + moveDir[i][1];
 
@@ -71,12 +71,17 @@ public class Board {
                 Piece nextNewPos = this.board[nextNewR][nextNewC];
 
                 // if the second adjacent square isn't occupied  this is a valid removing move
-                if(nextNewPos==null)
-                    this.removingMoveList.add(new int[]{r, c, nextNewR, nextNewC});
+                if(nextNewPos==null){
+                    RemovingMove rm = new RemovingMove(new int[]{r, c, nextNewR, nextNewC});
+                    rm.addToBeRemovedSquare(new int[]{newR,newC});
+                    moveList.add(rm);
+                    return rm;
+                }
+
 
         }
     }
-
+        return null;
     }
     //private void findKingMoves(PieceOwner owner,int r, int c){}
     public void makeMove(int[] move){}
@@ -99,6 +104,7 @@ public class Board {
 
             }
         }
+
     }
 
     public void display(){
