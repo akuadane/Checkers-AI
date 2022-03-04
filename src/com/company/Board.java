@@ -4,10 +4,11 @@ import com.company.move.Move;
 import com.company.move.RemovingMove;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
     Piece[][] board = new Piece[8][8];
-    ArrayList<Move> moveList = new ArrayList<>();
+    List<Move> moveList = new ArrayList<>();
 
     public Board(){
         this.resetBoard();
@@ -19,18 +20,36 @@ public class Board {
             for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
                 Piece piece = this.board[r][c];
                 if(piece!=null && piece.owner==owner){
-                        Move mv = this.findMoves(piece,r,c);
-                        if(mv!=null)
-                            moveList.add(mv);
+
+                        for (Move a: findMoves(piece,r,c))
+                            moveList.add(a);
                 }
             }
         }
 
         return new int[48][12];
     }
-    private void findJumps(PieceOwner owner,int r, int c){}
-    private Move findMoves(Piece piece,int r, int c){
+    private List<Move> findJumps(Piece piece,int r, int c){
+
+
+        List<Move> jumpList = new ArrayList<>();
+
+        for(Move mv: findMoves(piece,r,c)){
+            if(!(mv instanceof RemovingMove))
+                continue;
+
+
+
+
+        }
+
+
+
+        return jumpList;
+    }
+    private List<Move> findMoves(Piece piece,int r, int c){
         int[][] moveDir;
+        List<Move> tempMoveList = new ArrayList<>();
 
         if(piece.type==PieceType.PAWN){
             if(piece.owner==PieceOwner.PLAYER1 )
@@ -55,8 +74,8 @@ public class Board {
             // check if the adjacent square is empty
             if(newPos==null) {
                 Move mv = new Move(new int[]{r, c, newR, newC});
-                return mv;
-                //this.moveList.add(mv);
+                tempMoveList.add(mv);
+
             }
             // check if the adjacent square is occupied by our piece, if so continue
             else if(newPos.owner==piece.owner)
@@ -74,14 +93,14 @@ public class Board {
                 if(nextNewPos==null){
                     RemovingMove rm = new RemovingMove(new int[]{r, c, nextNewR, nextNewC});
                     rm.addToBeRemovedSquare(new int[]{newR,newC});
-                    moveList.add(rm);
-                    return rm;
+
+                    tempMoveList.add(rm);
                 }
 
 
         }
     }
-        return null;
+        return tempMoveList;
     }
     //private void findKingMoves(PieceOwner owner,int r, int c){}
     public void makeMove(int[] move){}

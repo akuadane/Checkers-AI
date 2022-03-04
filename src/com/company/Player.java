@@ -3,9 +3,9 @@ package com.company;
 public abstract class Player {
     String name;
     PieceOwner myTurn;
-    Player(String name,PieceOwner myTurn){
+    Player(String name){
         this.name = name;
-        this.myTurn = myTurn;
+
     }
 
     abstract int[] makeMove(Board board);
