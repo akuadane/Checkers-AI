@@ -4,10 +4,12 @@ import com.company.move.Move;
 import com.company.move.Jump;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Board {
-    Piece[][] board = new Piece[8][8];
+    private Piece[][] board = new Piece[8][8];
+    private Piece[][] prevBoard;
     List<Move> moveList = new ArrayList<>();
     List<Jump> jumpList = new ArrayList<>();
 
@@ -128,6 +130,9 @@ public class Board {
      * Moves a piece on the board
      * */
     public void makeMove(Move move){
+
+        prevBoard = Arrays.copyOf(board,board.length);
+
         int initR = move.movement[0];
         int initC = move.movement[1];
         int newR = move.movement[2];
@@ -163,6 +168,10 @@ public class Board {
         board[4][1]= new Piece(PieceType.KING,PieceOwner.PLAYER2);
     }
 
+    public void undo(){
+        if(prevBoard!=null)
+            board = Arrays.copyOf(prevBoard,prevBoard.length);
+    }
     public void display(){
         for(int i=0;i<this.board.length;i++){
             for(int j=0;j<this.board.length;j++){
