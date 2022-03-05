@@ -1,7 +1,7 @@
 package com.company;
 
 import com.company.move.Move;
-import com.company.move.RemovingMove;
+import com.company.move.Jump;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.List;
 public class Board {
     Piece[][] board = new Piece[8][8];
     List<Move> moveList = new ArrayList<>();
+    List<Jump> jumpList = new ArrayList<>();
 
     public Board(){
         this.resetBoard();
@@ -20,29 +21,49 @@ public class Board {
             for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
                 Piece piece = this.board[r][c];
                 if(piece!=null && piece.owner==owner){
+                        jumpList.addAll(findJumps(piece,r,c)); // add all possible jumps
 
-                        for (Move a: findMoves(piece,r,c))
-                            moveList.add(a);
+                        if(jumpList.size()==0) // If there is no jump, then look for normal moves
+                            moveList.addAll(findMoves(piece,r,c));
                 }
             }
         }
 
         return new int[48][12];
     }
-    private List<Move> findJumps(Piece piece,int r, int c){
+    private List<Jump> findJumps(Piece piece, int r, int c){
 
 
-        List<Move> jumpList = new ArrayList<>();
+        List<Jump> jumpList = new ArrayList<>();
 
-        for(Move mv: findMoves(piece,r,c)){
-            if(!(mv instanceof RemovingMove))
+        for(Move mv: findMoves(piece,r,c)){  // Use BreadthFirst search to locate all possible jumps from this point
+            if(!(mv instanceof Jump))
                 continue;
+            List<Jump> queue = new ArrayList<>();
+            queue.add((Jump) mv);
+            
+            while(queue.size()>0){
+                Jump x = queue.get(0);
+                queue.remove(0);
+                boolean addToJumpList = true;
+                for(Move nMove: findMoves(piece,x.movement[2],x.movement[3])){
+                    if(!(nMove instanceof Jump))
+                        continue;
+                    
+                    Jump rm = new Jump(new int[]{x.movement[0],x.movement[1],nMove.movement[2],nMove.movement[3]});
+                    rm.toBeRemoved.addAll(x.toBeRemoved);
+                    rm.toBeRemoved.addAll(((Jump) nMove).toBeRemoved);
+                    queue.add(rm);
+                    addToJumpList=false;
+                }
 
-
+                if(addToJumpList)
+                    jumpList.add(x);
+                
+            }
 
 
         }
-
 
 
         return jumpList;
@@ -91,7 +112,7 @@ public class Board {
 
                 // if the second adjacent square isn't occupied  this is a valid removing move
                 if(nextNewPos==null){
-                    RemovingMove rm = new RemovingMove(new int[]{r, c, nextNewR, nextNewC});
+                    Jump rm = new Jump(new int[]{r, c, nextNewR, nextNewC});
                     rm.addToBeRemovedSquare(new int[]{newR,newC});
 
                     tempMoveList.add(rm);
@@ -115,8 +136,8 @@ public class Board {
         board[newR][newC] = board[initR][initC].copy();
         board[initR][initC] = null;
 
-        if(move instanceof RemovingMove){
-            for(int[] remove: ((RemovingMove) move).toBeRemoved){
+        if(move instanceof Jump){
+            for(int[] remove: ((Jump) move).toBeRemoved){
                 board[remove[0]][remove[1]]=null;
             }
         }
@@ -139,7 +160,7 @@ public class Board {
 
             }
         }
-
+        board[4][1]= new Piece(PieceType.KING,PieceOwner.PLAYER2);
     }
 
     public void display(){
