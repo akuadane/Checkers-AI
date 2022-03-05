@@ -17,13 +17,13 @@ public Game(Player player1, Player player2){
     this.board = new Board();
 }
 
-public void play(){
+public void play() throws InterruptedException {
     while (true){
-        List<Move> possibleMovements = board.findLegalMoves(playerInTurn.myTurn);
 
         Move playerMove = playerInTurn.makeMove(board.copy());
         board.makeMove(playerMove);
-
+        Thread.sleep(100);
+        board.display();
         playerInTurn = (playerInTurn==player1)?player2:player1;
     }
 
