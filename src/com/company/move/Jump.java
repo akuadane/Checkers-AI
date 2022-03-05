@@ -1,13 +1,12 @@
 package com.company.move;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class RemovingMove extends Move{
+public class Jump extends Move{
     public List<int[]> toBeRemoved;
 
-    public RemovingMove(int[] movement) {
+    public Jump(int[] movement) {
         super(movement);
         toBeRemoved = new ArrayList<>();
     }
@@ -22,11 +21,11 @@ public class RemovingMove extends Move{
     public boolean equals(Object o) {
         if(o==null)
             return false;
-        if (!(o instanceof RemovingMove))
+        if (!(o instanceof Jump))
            return false;
         if(this==o)
             return true;
-       RemovingMove that = (RemovingMove) o;
+       Jump that = (Jump) o;
 
        if(!super.equals(that))
            return false;
