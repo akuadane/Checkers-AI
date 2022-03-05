@@ -1,8 +1,8 @@
 package com.company;
 
 public class BackRowAIPlayer extends Player implements AIPlayer{
-    BackRowAIPlayer(String name) {
-        super(name);
+    BackRowAIPlayer(String name,PieceOwner myTurn) {
+        super(name,myTurn);
     }
 
 

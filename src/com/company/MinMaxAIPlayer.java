@@ -1,8 +1,8 @@
 package com.company;
 
 public class MinMaxAIPlayer extends Player implements AIPlayer{
-    MinMaxAIPlayer(String name) {
-        super(name);
+    MinMaxAIPlayer(String name,PieceOwner myTurn) {
+        super(name,myTurn);
     }
 
 

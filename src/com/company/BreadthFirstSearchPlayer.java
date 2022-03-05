@@ -1,8 +1,8 @@
 package com.company;
 
 public class BreadthFirstSearchPlayer extends Player implements AIPlayer{
-    BreadthFirstSearchPlayer(String name) {
-        super(name);
+    BreadthFirstSearchPlayer(String name,PieceOwner myTurn) {
+        super(name,myTurn);
     }
 
 

@@ -2,8 +2,8 @@ package com.company;
 
 public class PhysicalPlayer extends Player{
 
-    PhysicalPlayer(String name) {
-        super(name);
+    PhysicalPlayer(String name,PieceOwner myTurn) {
+        super(name,myTurn);
     }
 
     @Override

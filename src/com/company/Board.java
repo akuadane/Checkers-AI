@@ -3,9 +3,7 @@ package com.company;
 import com.company.move.Move;
 import com.company.move.Jump;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Board {
     private Piece[][] board = new Piece[8][8];
@@ -17,12 +15,16 @@ public class Board {
         this.resetBoard();
     }
 
-    public int[][] findLegalMoves(PieceOwner owner){
+    /**
+     * Locate Pieces owned by inTurnPlayer and find the possible moves
+     * It populates jumpList and moveList, if jumpList is empty
+     * */
+    public void findLegalMoves(PieceOwner inTurnPlayer){
 
         for(int r=0;r<this.board.length;r++){
             for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
                 Piece piece = this.board[r][c];
-                if(piece!=null && piece.owner==owner){
+                if(piece!=null && piece.owner==inTurnPlayer){
                         jumpList.addAll(findJumps(piece,r,c)); // add all possible jumps
 
                         if(jumpList.size()==0) // If there is no jump, then look for normal moves
@@ -30,24 +32,26 @@ public class Board {
                 }
             }
         }
-
-        return new int[48][12];
     }
-    private List<Jump> findJumps(Piece piece, int r, int c){
 
+    /**
+     * Find all possible jumps from the square [r,c]
+     * */
+    private List<Jump> findJumps(Piece piece, int r, int c){
 
         List<Jump> jumpList = new ArrayList<>();
 
         for(Move mv: findMoves(piece,r,c)){  // Use BreadthFirst search to locate all possible jumps from this point
             if(!(mv instanceof Jump))
                 continue;
-            List<Jump> queue = new ArrayList<>();
-            queue.add((Jump) mv);
+            Queue<Jump> queue = new LinkedList<>(); // instatia
+            queue.add((Jump) mv);  //
             
             while(queue.size()>0){
-                Jump x = queue.get(0);
-                queue.remove(0);
+
+                Jump x =queue.remove();
                 boolean addToJumpList = true;
+
                 for(Move nMove: findMoves(piece,x.movement[2],x.movement[3])){
                     if(!(nMove instanceof Jump))
                         continue;
@@ -59,17 +63,18 @@ public class Board {
                     addToJumpList=false;
                 }
 
-                if(addToJumpList)
+                if(addToJumpList) // if the move doesn't have any more jumps add it to jumpList
                     jumpList.add(x);
-                
             }
-
 
         }
 
 
         return jumpList;
     }
+    /**
+     * Finds all possible moves and jumps from the square [r,c] in one-step range
+     * */
     private List<Move> findMoves(Piece piece,int r, int c){
         int[][] moveDir;
         List<Move> tempMoveList = new ArrayList<>();
@@ -138,12 +143,13 @@ public class Board {
         int newR = move.movement[2];
         int newC = move.movement[3];
 
+        // Put the piece onto its new destination
         board[newR][newC] = board[initR][initC].copy();
-        board[initR][initC] = null;
+        board[initR][initC] = null;  // Make the previous position empty
 
         if(move instanceof Jump){
             for(int[] remove: ((Jump) move).toBeRemoved){
-                board[remove[0]][remove[1]]=null;
+                board[remove[0]][remove[1]]=null;  // Remove all piece that are jumped over
             }
         }
     }
@@ -165,9 +171,13 @@ public class Board {
 
             }
         }
-        board[4][1]= new Piece(PieceType.KING,PieceOwner.PLAYER2);
+
     }
 
+    /**
+     * Restores the previous state of the board
+     * prevBoard holds the board state just before the last move
+     * */
     public void undo(){
         if(prevBoard!=null)
             board = Arrays.copyOf(prevBoard,prevBoard.length);

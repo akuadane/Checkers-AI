@@ -1,8 +1,8 @@
 package com.company;
 
 public class IterativeDeepeningAIPlayer extends Player implements AIPlayer{
-    IterativeDeepeningAIPlayer(String name) {
-        super(name);
+    IterativeDeepeningAIPlayer(String name,PieceOwner myTurn) {
+        super(name,myTurn);
     }
 
 

@@ -8,7 +8,7 @@ public class Main {
 	// write your code here
         Board board = new Board();
         board.display();
-        board.findLegalMoves(PieceOwner.PLAYER2);
+        board.findLegalMoves(PieceOwner.PLAYER1);
 
         for(Move a: board.moveList){
                 System.out.println(String.valueOf(a));

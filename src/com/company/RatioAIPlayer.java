@@ -1,8 +1,8 @@
 package com.company;
 
 public class RatioAIPlayer extends Player implements AIPlayer{
-    RatioAIPlayer(String name) {
-        super(name);
+    RatioAIPlayer(String name,PieceOwner myTurn) {
+        super(name,myTurn);
     }
 
 

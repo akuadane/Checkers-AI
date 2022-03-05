@@ -1,8 +1,8 @@
 package com.company;
 
 public class RandomPlayer extends Player{
-    RandomPlayer(String name) {
-        super(name);
+    RandomPlayer(String name,PieceOwner myTurn) {
+        super(name,myTurn);
     }
 
     @Override
