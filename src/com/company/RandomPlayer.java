@@ -1,12 +1,14 @@
 package com.company;
 
+import com.company.move.Move;
+
 public class RandomPlayer extends Player{
     RandomPlayer(String name,PieceOwner myTurn) {
         super(name,myTurn);
     }
 
     @Override
-    int[] makeMove(Board board) {
-        return new int[0];
+    Move makeMove(Board board) {
+        return null;
     }
 }

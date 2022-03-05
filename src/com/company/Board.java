@@ -8,8 +8,8 @@ import java.util.*;
 public class Board {
     private Piece[][] board = new Piece[8][8];
     private Piece[][] prevBoard;
-    List<Move> moveList = new ArrayList<>();
-    List<Jump> jumpList = new ArrayList<>();
+
+    List<Move> possibleMovements = new ArrayList<>();
 
     public Board(){
         this.resetBoard();
@@ -19,7 +19,9 @@ public class Board {
      * Locate Pieces owned by inTurnPlayer and find the possible moves
      * It populates jumpList and moveList, if jumpList is empty
      * */
-    public void findLegalMoves(PieceOwner inTurnPlayer){
+    public List<Move> findLegalMoves(PieceOwner inTurnPlayer){
+        List<Move> moveList = new ArrayList<>();
+        List<Jump> jumpList = new ArrayList<>();
 
         for(int r=0;r<this.board.length;r++){
             for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
@@ -32,6 +34,10 @@ public class Board {
                 }
             }
         }
+        possibleMovements.addAll(jumpList);
+        possibleMovements.addAll(moveList);
+
+        return possibleMovements;
     }
 
     /**
@@ -46,7 +52,7 @@ public class Board {
                 continue;
             Queue<Jump> queue = new LinkedList<>(); // instatia
             queue.add((Jump) mv);  //
-            
+
             while(queue.size()>0){
 
                 Jump x =queue.remove();
@@ -55,7 +61,7 @@ public class Board {
                 for(Move nMove: findMoves(piece,x.movement[2],x.movement[3])){
                     if(!(nMove instanceof Jump))
                         continue;
-                    
+
                     Jump rm = new Jump(new int[]{x.movement[0],x.movement[1],nMove.movement[2],nMove.movement[3]});
                     rm.toBeRemoved.addAll(x.toBeRemoved);
                     rm.toBeRemoved.addAll(((Jump) nMove).toBeRemoved);
@@ -202,4 +208,9 @@ public class Board {
         }
     }
 
+    public Board copy(){
+        Board tempBoard = new Board();
+        tempBoard.board = Arrays.copyOf(board,board.length);
+        return tempBoard;
+    }
 }

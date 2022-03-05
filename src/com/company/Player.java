@@ -1,5 +1,5 @@
 package com.company;
-
+import  com.company.move.Move;
 public abstract class Player {
     String name;
     PieceOwner myTurn;
@@ -8,7 +8,7 @@ public abstract class Player {
         this.myTurn = myTurn;
     }
 
-    abstract int[] makeMove(Board board);
+    abstract Move makeMove(Board board);
 
     @Override
     public String toString() {

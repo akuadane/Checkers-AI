@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.move.Move;
+
 public class PhysicalPlayer extends Player{
 
     PhysicalPlayer(String name,PieceOwner myTurn) {
@@ -7,8 +9,8 @@ public class PhysicalPlayer extends Player{
     }
 
     @Override
-    int[] makeMove(Board board) {
+    Move makeMove(Board board) {
         //TODO receive the move from the click of mouse
-        return new int[0];
+        return null;
     }
 }

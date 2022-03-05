@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.move.Move;
+
 public class BreadthFirstSearchPlayer extends Player implements AIPlayer{
     BreadthFirstSearchPlayer(String name,PieceOwner myTurn) {
         super(name,myTurn);
@@ -13,11 +15,11 @@ public class BreadthFirstSearchPlayer extends Player implements AIPlayer{
     }
 
     @Override
-    int[] makeMove(Board board) {
-        return new int[0];
+    Move makeMove(Board board) {
+        return null;
     }
 
     public int[] search(Board prevBoard, int iteration, int time){
-        return new int[0];
+        return null;
     }
 }

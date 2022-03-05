@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.move.Move;
+
 public class MinMaxAIPlayer extends Player implements AIPlayer{
     MinMaxAIPlayer(String name,PieceOwner myTurn) {
         super(name,myTurn);
@@ -13,8 +15,8 @@ public class MinMaxAIPlayer extends Player implements AIPlayer{
     }
 
     @Override
-    int[] makeMove(Board board) {
-        return new int[0];
+    Move makeMove(Board board) {
+        return null;
     }
 
     private double min(Board prevBoard){
