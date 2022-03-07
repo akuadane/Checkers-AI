@@ -8,7 +8,6 @@ import java.util.*;
 public class Board {
     private Piece[][] board = new Piece[8][8];
     private Piece[][] prevBoard;
-    private boolean gameHasEnded= false;
     List<Move> possibleMovements = new ArrayList<>();
 
     public Board(){
@@ -16,8 +15,16 @@ public class Board {
     }
 
     /**
-     * Locate Pieces owned by inTurnPlayer and find the possible moves
-     * It populates jumpList and moveList, if jumpList is empty
+     * Locate Pieces owned by inTurnPlayer and find the possible moves.
+     *Goes through the entire board and if there is a piece on a square which is owned by the
+     * inTurnPlayer, we call findJumps followed by findMoves. To make sure that the possible
+     * list of moves only contains jumps if the exists, we only add moveList to possibleMovements only
+     * if jumpList is empty.
+     *
+     * @param inTurnPlayer the owner of the pieces whose turn it is
+     *
+     * @return list of possible movements
+     *
      * */
     public List<Move> findLegalMoves(PieceOwner inTurnPlayer){
         List<Move> moveList = new ArrayList<>();
@@ -38,14 +45,19 @@ public class Board {
         if(possibleMovements.size()==0)
             possibleMovements.addAll(moveList);
 
-        if(possibleMovements.size()==0)
-            gameHasEnded = true;
-
         return possibleMovements;
     }
 
     /**
-     * Find all possible jumps from the square [r,c]
+     * Find all possible jumps from the square [r,c].
+     * We call the findMoves method to see all the possible moves from that square.
+     * If there is any jump from the returned list, we use BreadthFirst search
+     * to look for any other jumps from the new position.
+     *
+     * @param piece the piece that is on the square
+     * @param r the row at which the piece is located
+     * @param c the column at which the piece is located
+     * @return list of all possible jumps from that square
      * */
     private List<Jump> findJumps(Piece piece, int r, int c){
 
@@ -88,7 +100,17 @@ public class Board {
         return jumpList;
     }
     /**
-     * Finds all possible moves and jumps from the square [r,c] in one-step range
+     * Finds all possible moves and jumps from the square [r,c] in one-step range.
+     * First we set the proper movement direction for each piece. After that we iterate
+     * through each movement direction and check if the new square is inside the board. If
+     * that condition is satisfied we check if we have a legal movement from that square and return
+     * a list of all possible moves from the square.
+     *
+     * @param piece the piece that is on the square
+     * @param r the row at which the piece is located
+     * @param c the column at which the piece is located
+     *
+     * @return list of all possible moves from that square
      * */
     private List<Move> findMoves(Piece piece,int r, int c){
         int[][] moveDir;
@@ -148,6 +170,11 @@ public class Board {
 
     /**
      * Moves a piece on the board
+     * Move a piece to a new square on the board, and makes
+     * its previous spot null. We also check if the piece is at
+     * an edge row and make the piece a king if so. If the move is a jump,
+     * we iterate through the toBeRemoved list and make sure all the pieces
+     * in there are null so that they are removed.
      * */
     public void makeMove(Move move, PieceOwner playerInTurn){
 
@@ -177,6 +204,9 @@ public class Board {
 
     /**
      * Resets the board to its original state.
+     * We iterate through the board skipping a square. The first 3 rows
+     * are for player 2 and the last three row are for player 1 initially.
+     * The rows in between are empty.
      * */
     public void resetBoard(){
 
@@ -226,6 +256,13 @@ public class Board {
         }
     }
 
+    /**
+     * Iterates through the board looking at if each player has at least one possible movement.
+     * If each player has at least one move, we return null symbolizing no-one is a winner here.
+     * If one of players has possible moves and the other doesn't we return that player.
+     *
+     * @return PieceOwner type of the winning player or null if the game hasn't ended yet.
+     * */
     public PieceOwner isGameOver(){
         boolean p1HasMoves=false,p2HasMoves=false;
 
