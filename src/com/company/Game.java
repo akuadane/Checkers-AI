@@ -19,11 +19,20 @@ public Game(Player player1, Player player2){
 
 public void play() throws InterruptedException {
     while (true){
-
-        Move playerMove = playerInTurn.makeMove(board.copy());
-        board.makeMove(playerMove);
-        Thread.sleep(100);
         board.display();
+        Move playerMove = playerInTurn.makeMove(board.copy());
+        board.makeMove(playerMove,playerInTurn.myTurn);
+        PieceOwner winner = board.isGameOver();
+        if(winner!=null){
+            System.out.println("Game over!!!");
+            System.out.println(((player1.myTurn==winner)?(player1):(player2)) + " is the winner");
+            board.display();
+
+            break;
+        }
+
+        Thread.sleep(100); // TODO remove this
+        System.out.println("------------------------------ "+playerInTurn+" "+playerMove);
         playerInTurn = (playerInTurn==player1)?player2:player1;
     }
 

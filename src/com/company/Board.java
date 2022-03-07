@@ -8,7 +8,7 @@ import java.util.*;
 public class Board {
     private Piece[][] board = new Piece[8][8];
     private Piece[][] prevBoard;
-
+    private boolean gameHasEnded= false;
     List<Move> possibleMovements = new ArrayList<>();
 
     public Board(){
@@ -35,7 +35,11 @@ public class Board {
             }
         }
         possibleMovements.addAll(jumpList);
-        possibleMovements.addAll(moveList);
+        if(possibleMovements.size()==0)
+            possibleMovements.addAll(moveList);
+
+        if(possibleMovements.size()==0)
+            gameHasEnded = true;
 
         return possibleMovements;
     }
@@ -46,16 +50,16 @@ public class Board {
     private List<Jump> findJumps(Piece piece, int r, int c){
 
         List<Jump> jumpList = new ArrayList<>();
+        List<int[]> tempPieces = new ArrayList<>();
 
         for(Move mv: findMoves(piece,r,c)){  // Use BreadthFirst search to locate all possible jumps from this point
             if(!(mv instanceof Jump))
                 continue;
-            Queue<Jump> queue = new LinkedList<>(); // instatia
-            queue.add((Jump) mv);  //
+            Queue<Jump> queue = new LinkedList<>();
+            queue.add((Jump) mv);
 
             while(queue.size()>0){
-
-                Jump x =queue.remove();
+                Jump x = queue.remove();
                 boolean addToJumpList = true;
 
                 for(Move nMove: findMoves(piece,x.movement[2],x.movement[3])){
@@ -65,16 +69,21 @@ public class Board {
                     Jump rm = new Jump(new int[]{x.movement[0],x.movement[1],nMove.movement[2],nMove.movement[3]});
                     rm.toBeRemoved.addAll(x.toBeRemoved);
                     rm.toBeRemoved.addAll(((Jump) nMove).toBeRemoved);
+                    board[x.movement[2]][x.movement[3]]= new Piece(piece.type,piece.owner); // place temporary pieces to avoid infinite recursion with Kings
+                    tempPieces.add(new int[]{x.movement[2],x.movement[3]});
                     queue.add(rm);
                     addToJumpList=false;
                 }
-
                 if(addToJumpList) // if the move doesn't have any more jumps add it to jumpList
                     jumpList.add(x);
             }
 
         }
 
+        for (int[] tempPiece :
+                tempPieces) {
+            board[tempPiece[0]][tempPiece[1]] = null;  // Removes the temporary pieces
+        }
 
         return jumpList;
     }
@@ -140,7 +149,7 @@ public class Board {
     /**
      * Moves a piece on the board
      * */
-    public void makeMove(Move move){
+    public void makeMove(Move move, PieceOwner playerInTurn){
 
         prevBoard = Arrays.copyOf(board,board.length);
 
@@ -152,6 +161,12 @@ public class Board {
         // Put the piece onto its new destination
         board[newR][newC] = board[initR][initC].copy();
         board[initR][initC] = null;  // Make the previous position empty
+
+        if(newR==0 && playerInTurn==PieceOwner.PLAYER1)
+            board[newR][newC].type = PieceType.KING;
+
+        if(newR==board.length-1 && playerInTurn==PieceOwner.PLAYER2)
+            board[newR][newC].type = PieceType.KING;
 
         if(move instanceof Jump){
             for(int[] remove: ((Jump) move).toBeRemoved){
@@ -202,12 +217,41 @@ public class Board {
                     if(piece.type==PieceType.KING)
                         p = Character.toUpperCase(p);
                 }
-                System.out.print("|"+p);
+                String box = "|"+p + ((j==board.length-1)? "|":"");
+
+                System.out.print(box);
             }
             System.out.println();
+
         }
     }
 
+    public PieceOwner isGameOver(){
+        boolean p1HasMoves=false,p2HasMoves=false;
+
+        for(int r=0;r<this.board.length;r++){
+            for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
+                Piece piece = this.board[r][c];
+                if(piece!=null){
+                   if(findMoves(piece,r,c).size()!=0){
+                       if(piece.owner==PieceOwner.PLAYER1)
+                           p1HasMoves=true;
+                       else
+                           p2HasMoves=true;
+
+                       if(p1HasMoves && p2HasMoves)
+                           return null;
+                   }
+
+                }
+            }
+        }
+
+        if(p1HasMoves)
+            return PieceOwner.PLAYER1;
+
+        return PieceOwner.PLAYER2;
+    }
     public Board copy(){
         Board tempBoard = new Board();
         tempBoard.board = Arrays.copyOf(board,board.length);

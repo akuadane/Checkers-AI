@@ -12,9 +12,7 @@ public abstract class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "name='" + name + '\'' +
-                '}';
+        return name;
     }
 }
 
