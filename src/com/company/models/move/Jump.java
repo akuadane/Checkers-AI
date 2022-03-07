@@ -1,4 +1,4 @@
-package com.company.move;
+package com.company.models.move;
 
 import java.util.ArrayList;
 import java.util.List;

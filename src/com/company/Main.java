@@ -1,6 +1,8 @@
 package com.company;
 
-import com.company.move.Move;
+import com.company.controller.Game;
+import com.company.models.piece.PieceOwner;
+import com.company.models.players.RandomPlayer;
 
 public class Main {
 
@@ -20,7 +22,7 @@ public class Main {
 //        board.makeMove(board.moveList.get(3));
 //        board.display();
 
-        Game game = new Game(new RandomPlayer("Aku",PieceOwner.PLAYER1),new RandomPlayer("Tse",PieceOwner.PLAYER2));
+        Game game = new Game(new RandomPlayer("Aku", PieceOwner.PLAYER1),new RandomPlayer("Tse",PieceOwner.PLAYER2));
         game.play();
 
 
