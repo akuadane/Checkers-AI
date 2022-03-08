@@ -1,6 +1,6 @@
-package com.company.controller;
+package com.company.main.controller;
 
-import com.company.models.players.Player;
+import com.company.main.models.players.Player;
 
 import java.net.Socket;
 

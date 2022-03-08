@@ -1,9 +1,9 @@
-package com.company.controller;
+package com.company.main.controller;
 
-import com.company.models.Board;
-import com.company.models.move.Move;
-import com.company.models.piece.PieceOwner;
-import com.company.models.players.Player;
+import com.company.main.models.Board;
+import com.company.main.models.move.Move;
+import com.company.main.models.piece.PieceOwner;
+import com.company.main.models.players.Player;
 
 public class Game {
 Player player1;

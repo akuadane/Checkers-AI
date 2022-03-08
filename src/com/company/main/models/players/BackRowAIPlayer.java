@@ -1,14 +1,13 @@
-package com.company.models.players;
+package com.company.main.models.players;
 
-import com.company.models.Board;
-import com.company.models.piece.PieceOwner;
-import com.company.models.move.Move;
+import com.company.main.models.Board;
+import com.company.main.models.piece.PieceOwner;
+import com.company.main.models.move.Move;
 
-public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer{
-    AlphaBetaMinMaxAIPlayer(String name, PieceOwner myTurn) {
+public class BackRowAIPlayer extends Player implements AIPlayer{
+    BackRowAIPlayer(String name, PieceOwner myTurn) {
         super(name,myTurn);
     }
-
 
 
     @Override

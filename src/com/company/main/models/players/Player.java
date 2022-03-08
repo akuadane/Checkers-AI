@@ -1,7 +1,7 @@
-package com.company.models.players;
-import com.company.models.Board;
-import com.company.models.piece.PieceOwner;
-import  com.company.models.move.Move;
+package com.company.main.models.players;
+import com.company.main.models.Board;
+import com.company.main.models.piece.PieceOwner;
+import  com.company.main.models.move.Move;
 public abstract class Player {
     String name;
     public PieceOwner myTurn;

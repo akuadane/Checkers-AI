@@ -1,4 +1,4 @@
-package com.company.models.piece;
+package com.company.main.models.piece;
 
 public class Piece {
     public PieceType type;

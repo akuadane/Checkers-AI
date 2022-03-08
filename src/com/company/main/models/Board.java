@@ -1,10 +1,10 @@
-package com.company.models;
+package com.company.main.models;
 
-import com.company.models.move.Move;
-import com.company.models.move.Jump;
-import com.company.models.piece.Piece;
-import com.company.models.piece.PieceOwner;
-import com.company.models.piece.PieceType;
+import com.company.main.models.move.Move;
+import com.company.main.models.move.Jump;
+import com.company.main.models.piece.Piece;
+import com.company.main.models.piece.PieceOwner;
+import com.company.main.models.piece.PieceType;
 
 import java.util.*;
 
