@@ -2,6 +2,7 @@ package com.company.main;
 
 import com.company.main.controller.Game;
 import com.company.main.models.piece.PieceOwner;
+import com.company.main.models.players.PhysicalPlayer;
 import com.company.main.models.players.RandomPlayer;
 
 public class Main {
@@ -22,7 +23,7 @@ public class Main {
 //        board.makeMove(board.moveList.get(3));
 //        board.display();
 
-        Game game = new Game(new RandomPlayer("Aku", PieceOwner.PLAYER1),new RandomPlayer("Tse",PieceOwner.PLAYER2));
+        Game game = new Game(new PhysicalPlayer("Aku", PieceOwner.PLAYER1),new RandomPlayer("Tse",PieceOwner.PLAYER2));
         game.play();
 
 

@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class PhysicalPlayer extends Player{
 
-    PhysicalPlayer(String name, PieceOwner myTurn) {
+    public PhysicalPlayer(String name, PieceOwner myTurn) {
         super(name,myTurn);
     }
 
@@ -27,14 +27,16 @@ public class PhysicalPlayer extends Player{
             index++;
         }
 
-        System.out.print("Choice > ");
-        Scanner scanner = new Scanner(System.in);
-        int i = scanner.nextInt();
-        System.out.println();
+        while(true){
+            System.out.print("Choice > ");
+            Scanner scanner = new Scanner(System.in);
+            int i = scanner.nextInt();
+            System.out.println();
 
-        if(i>=0 && i<moveList.size())
-            return moveList.get(i);
+            if(i>=0 && i<moveList.size())
+                return moveList.get(i);
+            System.out.println("Choose a correct move");
+        }
 
-        return null;
     }
 }

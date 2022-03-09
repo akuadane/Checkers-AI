@@ -1,4 +1,4 @@
-package com.company.test;
+package com.company.test.models;
 import com.company.main.models.Board;
 import org.junit.Test;
 import static org.junit.Assert.*;

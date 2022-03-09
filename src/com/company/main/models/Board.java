@@ -9,7 +9,7 @@ import com.company.main.models.piece.PieceType;
 import java.util.*;
 
 public class Board {
-    private Piece[][] board = new Piece[8][8];
+    public Piece[][] board = new Piece[8][8];
     private Piece[][] prevBoard;
     List<Move> possibleMovements = new ArrayList<>();
 
@@ -189,7 +189,7 @@ public class Board {
         int newC = move.movement[3];
 
         // Put the piece onto its new destination
-        board[newR][newC] = board[initR][initC].copy();
+        board[newR][newC] = board[initR][initC].clone();
         board[initR][initC] = null;  // Make the previous position empty
 
         if(newR==0 && playerInTurn==PieceOwner.PLAYER1)

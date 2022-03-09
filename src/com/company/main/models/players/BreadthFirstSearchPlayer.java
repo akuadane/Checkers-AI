@@ -5,7 +5,7 @@ import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.move.Move;
 
 public class BreadthFirstSearchPlayer extends Player implements AIPlayer{
-    BreadthFirstSearchPlayer(String name, PieceOwner myTurn) {
+    public BreadthFirstSearchPlayer(String name, PieceOwner myTurn) {
         super(name,myTurn);
     }
 

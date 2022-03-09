@@ -45,7 +45,7 @@ public class Jump extends Move{
         String thisString = ",removing ";
         for (int[] remove :
                 toBeRemoved) {
-            thisString += String.format("[%d,%d]", remove[0], remove[1]);
+            thisString += String.format("[%d,%d] ", remove[0], remove[1]);
         }
         return super.toString() + thisString;
     }

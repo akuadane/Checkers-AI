@@ -9,7 +9,8 @@ public class Piece {
         this.owner= owner;
     }
 
-   public Piece copy(){
+    @Override
+    public Piece clone(){
         return new Piece(type,owner);
-   }
+    }
 }
