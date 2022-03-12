@@ -21,7 +21,7 @@ public Game(Player player1, Player player2){
 public void play() throws InterruptedException {
     while (true){
         board.display();
-        Move playerMove = playerInTurn.makeMove(board.copy());
+        Move playerMove = playerInTurn.makeMove(board.clone());
         board.makeMove(playerMove,playerInTurn.myTurn);
         Thread.sleep(100); // TODO remove this
         System.out.println("------------------------------ "+playerInTurn+" "+playerMove);

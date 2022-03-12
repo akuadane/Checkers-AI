@@ -292,9 +292,18 @@ public class Board {
 
         return PieceOwner.PLAYER2;
     }
-    public Board copy(){
+
+    @Override
+    public Board clone(){
         Board tempBoard = new Board();
-        tempBoard.board = Arrays.copyOf(board,board.length);
+
+        for(int i=0;i<this.board.length;i++){
+            for(int j=(1-i%2);j<this.board.length;j+=2){
+                if(board[i][j]!=null)
+                    tempBoard.board[i][j] = board[i][j].clone();
+                else
+                    tempBoard.board[i][j]=null;
+            }}
         return tempBoard;
     }
 }
