@@ -20,7 +20,7 @@ public class Tournament {
 
     //TODO add more detail in the stat
     public String playOff(int rounds) throws InValidMove {
-        HashMap<String,int[]> stat = new HashMap<>(); // [a,b] a is number of wins by game, b is number of win by rounds
+        HashMap<String,int[]> stat = new HashMap<>(); // [a,b,c] a is number of wins by game, b is number of win by rounds, loss
 
         while(rounds>0){
             Queue<Player> playersInGame = new LinkedList<>(Arrays.asList(players));
@@ -43,16 +43,18 @@ public class Tournament {
 
                 int[] result = stat.get(gameWinner.toString());
 
-                if(result==null){
-                    stat.put(gameWinner.toString(),new int[]{1,0});
+                if(result==null){ // If it's the first game that the player won and isn't in the hashmap before
+                    stat.put(gameWinner.toString(),new int[]{0,1,0});
                 }else{
-                    result[0]+=1;
+                    result[1]+=1;
                     stat.put(gameWinner.toString(),result);
                 }
 
+
+
             }
             int[] result = stat.get(roundWinner.toString());
-            result[1]+=1;
+            result[0]+=1;
             stat.put(roundWinner.toString(),result);
             rounds-=1;
         }
@@ -61,7 +63,17 @@ public class Tournament {
     }
 
     public String generateReport(HashMap<String,int[]> stat){
-        return null;
+        String strStat="";
+
+        for (String key :
+                stat.keySet()) {
+            int[] result = stat.get(key);
+            strStat+= String.format(key+" championship wins: %d, wins: %d, loss: %",);
+        }
+
+
+
+        return strStat;
     }
 
 }

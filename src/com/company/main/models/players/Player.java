@@ -21,5 +21,17 @@ public abstract class Player {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this==obj)
+            return true;
+        if(!(obj instanceof Player))
+            return false;
+
+        Player p = (Player) obj;
+        return p.name.equals(this.name) && p.myTurn.equals(this.myTurn);
+
+    }
 }
 
