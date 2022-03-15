@@ -1,6 +1,7 @@
 package com.company.main.controller;
 
 import com.company.main.models.PlayerFactory;
+import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.players.Player;
 
@@ -17,8 +18,8 @@ public class Tournament {
         players = PlayerFactory.getAllPlayers();
     }
 
-
-    public String playOff(int rounds) {
+    //TODO add more detail in the stat
+    public String playOff(int rounds) throws InValidMove {
         HashMap<String,int[]> stat = new HashMap<>(); // [a,b] a is number of wins by game, b is number of win by rounds
 
         while(rounds>0){

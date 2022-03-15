@@ -1,6 +1,7 @@
 package com.company.main.controller;
 
 import com.company.main.models.Board;
+import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.move.Move;
 import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.players.Player;
@@ -18,7 +19,7 @@ public Game(Player player1, Player player2){
     this.board = new Board();
 }
 
-public Player play()  {
+public Player play() throws InValidMove {
     while (true){
         board.display();
         Move playerMove = playerInTurn.makeMove(board.clone());

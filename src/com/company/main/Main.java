@@ -3,6 +3,7 @@ package com.company.main;
 import com.company.main.controller.Game;
 import com.company.main.controller.Tournament;
 import com.company.main.models.Board;
+import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.move.Move;
 import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.players.MinMaxAIPlayer;
@@ -13,7 +14,7 @@ import java.time.LocalTime;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, InValidMove {
 	// write your code here
 //        Board board = new Board();
 //        board.display();

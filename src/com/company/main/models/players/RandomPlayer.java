@@ -15,8 +15,7 @@ public class RandomPlayer extends Player{
     }
 
     public RandomPlayer(){
-        super("Random Player");
-        this.random = new Random();
+        this("Random Player",PieceOwner.PLAYER1);
     }
     @Override
     public Move makeMove(Board board) {

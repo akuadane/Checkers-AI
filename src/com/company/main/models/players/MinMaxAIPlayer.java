@@ -1,5 +1,6 @@
 package com.company.main.models.players;
 import com.company.main.models.Board;
+import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.piece.Piece;
 import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.move.Move;
@@ -59,7 +60,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer{
     }
 
     @Override
-    public Move makeMove(Board board) {
+    public Move makeMove(Board board) throws InValidMove {
         stTime = LocalTime.now();
         double max=Double.MIN_VALUE;
         Move myMove=null ;
@@ -82,7 +83,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer{
         return myMove;
     }
 
-    private double min(Board prevBoard,PieceOwner inTurn,int depth){
+    private double min(Board prevBoard,PieceOwner inTurn,int depth) throws InValidMove {
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
 
@@ -110,7 +111,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer{
 
         return min;
     }
-    private double max(Board prevBoard,PieceOwner inTurn,int depth){
+    private double max(Board prevBoard,PieceOwner inTurn,int depth) throws InValidMove {
 
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
