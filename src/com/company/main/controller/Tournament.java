@@ -38,18 +38,26 @@ public class Tournament {
                 player2.myTurn = PieceOwner.PLAYER2;
 
                 Player gameWinner = new Game(player1,player2).play();
+                Player loser = (gameWinner.equals(player1)?player2:player1);
 
                 playersInGame.add(gameWinner);
 
                 int[] result = stat.get(gameWinner.toString());
 
-                if(result==null){ // If it's the first game that the player won and isn't in the hashmap before
+                if(result==null){ // If wasn't in the hashmap before
                     stat.put(gameWinner.toString(),new int[]{0,1,0});
                 }else{
                     result[1]+=1;
                     stat.put(gameWinner.toString(),result);
                 }
 
+                result = stat.get(loser.toString());
+                if(result==null){ // If wasn't in the hashmap before
+                    stat.put(loser.toString(),new int[]{0,0,1});
+                }else{
+                    result[2]+=1;
+                    stat.put(loser.toString(),result);
+                }
 
 
             }
@@ -68,11 +76,8 @@ public class Tournament {
         for (String key :
                 stat.keySet()) {
             int[] result = stat.get(key);
-            strStat+= String.format(key+" championship wins: %d, wins: %d, loss: %",);
+            strStat+= String.format(key+" championship wins: %d, wins: %d, loss: %",result[0],result[1],result[2]);
         }
-
-
-
         return strStat;
     }
 

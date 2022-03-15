@@ -38,7 +38,7 @@ public Player play() throws InValidMove {
             return winnerPlayer;
         }
 
-        playerInTurn = (playerInTurn==player1)?player2:player1;
+        playerInTurn = (playerInTurn.equals(player1))?player2:player1;
         final long duration = System.currentTimeMillis() - startTime;
         System.out.println(duration + "seconds");
     }
