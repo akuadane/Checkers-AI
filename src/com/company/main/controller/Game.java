@@ -21,6 +21,7 @@ public Game(Player player1, Player player2){
 
 public Player play() throws InValidMove {
     while (true){
+        final long startTime = System.currentTimeMillis();
         board.display();
         Move playerMove = playerInTurn.makeMove(board.clone());
         board.makeMove(playerMove,playerInTurn.myTurn);
@@ -38,6 +39,8 @@ public Player play() throws InValidMove {
         }
 
         playerInTurn = (playerInTurn==player1)?player2:player1;
+        final long duration = System.currentTimeMillis() - startTime;
+        System.out.println(duration + "seconds");
     }
 
 }
