@@ -28,10 +28,8 @@ public class Main {
 //        board.makeMove(board.moveList.get(3));
 //        board.display();
 
-
-
-        Game game = new Game(new MinMaxAIPlayer("Aku", PieceOwner.PLAYER1),new MinMaxAIPlayer("AI",PieceOwner.PLAYER2));
-       game.play();
+        Game game = new Game(new MinMaxAIPlayer("Aku", PieceOwner.PLAYER1),new RandomPlayer("AI",PieceOwner.PLAYER2));
+        game.play();
 
 
     }
