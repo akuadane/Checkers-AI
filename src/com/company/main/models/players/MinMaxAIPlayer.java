@@ -19,6 +19,9 @@ public class MinMaxAIPlayer extends Player implements AIPlayer{
     public MinMaxAIPlayer(String name, PieceOwner myTurn) {
         super(name,myTurn);
     }
+    public MinMaxAIPlayer(){
+        super("MinMaxAIPlayer");
+    }
 
 
 
@@ -71,7 +74,6 @@ public class MinMaxAIPlayer extends Player implements AIPlayer{
             double moveVal  = min(temp,nextInTurn,MAX_DEPTH);
 
             if(max<moveVal || myMove==null){
-                System.out.println("max");
                 myMove = mv;
                 max=moveVal;
             }

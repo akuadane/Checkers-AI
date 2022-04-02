@@ -18,26 +18,26 @@ public Game(Player player1, Player player2){
     this.board = new Board();
 }
 
-public void play() throws InterruptedException {
+public Player play()  {
     while (true){
         board.display();
         Move playerMove = playerInTurn.makeMove(board.clone());
         board.makeMove(playerMove,playerInTurn.myTurn);
-        Thread.sleep(100); // TODO remove this
+
         System.out.println("------------------------------ "+playerInTurn+" "+playerMove);
 
 
         PieceOwner winner = board.isGameOver();
         if(winner!=null){
             System.out.println("Game over!!!");
-            System.out.println(((player1.myTurn==winner)?(player1):(player2)) + " is the winner");
+            Player winnerPlayer = ((player1.myTurn==winner)?(player1):(player2));
+            System.out.println(winnerPlayer + " is the winner");
             board.display();
-            break;
+            return winnerPlayer;
         }
 
         playerInTurn = (playerInTurn==player1)?player2:player1;
     }
-
 
 }
 

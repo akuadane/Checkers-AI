@@ -9,6 +9,10 @@ public abstract class Player {
         this.name = name;
         this.myTurn = myTurn;
     }
+    Player(String name){
+        this.name = name;
+        this.myTurn = PieceOwner.PLAYER1;
+    }
 
     public abstract Move makeMove(Board board);
 

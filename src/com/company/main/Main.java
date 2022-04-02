@@ -1,6 +1,7 @@
 package com.company.main;
 
 import com.company.main.controller.Game;
+import com.company.main.controller.Tournament;
 import com.company.main.models.Board;
 import com.company.main.models.move.Move;
 import com.company.main.models.piece.PieceOwner;
@@ -28,9 +29,11 @@ public class Main {
 //        board.makeMove(board.moveList.get(3));
 //        board.display();
 
-        Game game = new Game(new MinMaxAIPlayer("Aku", PieceOwner.PLAYER1),new RandomPlayer("AI",PieceOwner.PLAYER2));
-        game.play();
+        //Game game = new Game(new MinMaxAIPlayer("Aku", PieceOwner.PLAYER1),new RandomPlayer("AI",PieceOwner.PLAYER2));
+        //game.play();
 
+        Tournament tr = new Tournament();
+        tr.playOff(1);
 
     }
 }

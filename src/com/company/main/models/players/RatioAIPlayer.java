@@ -9,6 +9,9 @@ public class RatioAIPlayer extends Player implements AIPlayer{
         super(name,myTurn);
     }
 
+    public RatioAIPlayer(){
+        super("RatioAIPlayer");
+    }
 
 
     @Override
