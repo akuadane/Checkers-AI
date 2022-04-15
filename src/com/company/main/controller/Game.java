@@ -20,10 +20,11 @@ public Game(Player player1, Player player2){
 
 public void play() throws InterruptedException {
     while (true){
+        final long startTime = System.currentTimeMillis();
         board.display();
         Move playerMove = playerInTurn.makeMove(board.clone());
         board.makeMove(playerMove,playerInTurn.myTurn);
-        Thread.sleep(100); // TODO remove this
+
         System.out.println("------------------------------ "+playerInTurn+" "+playerMove);
 
 
@@ -36,6 +37,8 @@ public void play() throws InterruptedException {
         }
 
         playerInTurn = (playerInTurn==player1)?player2:player1;
+        final long duration = System.currentTimeMillis() - startTime;
+        System.out.println(duration + "seconds");
     }
 
 

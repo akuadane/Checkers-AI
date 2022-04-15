@@ -4,6 +4,7 @@ import com.company.main.controller.Game;
 import com.company.main.models.Board;
 import com.company.main.models.move.Move;
 import com.company.main.models.piece.PieceOwner;
+import com.company.main.models.players.AlphaBetaMinMaxAIPlayer;
 import com.company.main.models.players.MinMaxAIPlayer;
 import com.company.main.models.players.PhysicalPlayer;
 import com.company.main.models.players.RandomPlayer;
@@ -30,8 +31,8 @@ public class Main {
 
 
 
-        Game game = new Game(new MinMaxAIPlayer("Aku", PieceOwner.PLAYER1),new MinMaxAIPlayer("AI",PieceOwner.PLAYER2));
-       game.play();
+        Game game = new Game(new PhysicalPlayer("Aku", PieceOwner.PLAYER1),new AlphaBetaMinMaxAIPlayer("AI",PieceOwner.PLAYER2));
+        game.play();
 
 
     }
