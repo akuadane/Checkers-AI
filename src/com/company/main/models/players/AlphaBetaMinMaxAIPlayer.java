@@ -105,11 +105,11 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             min = Math.min(min,moveVal);
             beta = Math.min(beta, moveVal);
             System.out.println(moveList );
-            System.out.println(beta + "=========== beta mi");
-            System.out.println(alpha + "=========== alpha mi");
+//            System.out.println(beta + "=========== beta mi");
+//            System.out.println(alpha + "=========== alpha mi");
             if(beta <= alpha){
-                System.out.println(alpha+ "============ in min alpha");
-                System.out.println(beta + "============ in min beta");
+//                System.out.println(alpha+ "============ in min alpha");
+//                System.out.println(beta + "============ in min beta");
                 break;
             }
 
@@ -140,7 +140,12 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = min(temp,nextInTurn,depth-1,alpha,beta);
             max = Math.max(max,moveVal);
             alpha = Math.max(alpha,moveVal);
+            System.out.println(moveList);
+//            System.out.println(alpha+ "========== alpha m");
+//            System.out.println(beta+ "========== beta m");
             if(beta <= alpha){
+//                System.out.println(alpha + "============ in max alpha");
+//                System.out.println(beta + "============ in max beta ");
                 break;
             }
 
