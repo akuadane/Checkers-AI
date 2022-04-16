@@ -104,12 +104,9 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = max(temp,nextInTurn,depth-1,alpha,beta);
             min = Math.min(min,moveVal);
             beta = Math.min(beta, moveVal);
-            System.out.println(moveList );
-//            System.out.println(beta + "=========== beta mi");
-//            System.out.println(alpha + "=========== alpha mi");
             if(beta <= alpha){
-//                System.out.println(alpha+ "============ in min alpha");
-//                System.out.println(beta + "============ in min beta");
+                System.out.println("pruning tree in minimizing player");
+                System.out.println("beta = " + beta + " <= alpha = " + alpha);
                 break;
             }
 
@@ -140,12 +137,9 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = min(temp,nextInTurn,depth-1,alpha,beta);
             max = Math.max(max,moveVal);
             alpha = Math.max(alpha,moveVal);
-            System.out.println(moveList);
-//            System.out.println(alpha+ "========== alpha m");
-//            System.out.println(beta+ "========== beta m");
             if(beta <= alpha){
-//                System.out.println(alpha + "============ in max alpha");
-//                System.out.println(beta + "============ in max beta ");
+                System.out.println("pruning tree while maximizing player");
+                System.out.println("beta = " + beta + " <= alpha = " + alpha);
                 break;
             }
 
