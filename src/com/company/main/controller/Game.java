@@ -1,6 +1,7 @@
 package com.company.main.controller;
 
 import com.company.main.models.Board;
+import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.move.Move;
 import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.players.Player;
@@ -18,7 +19,7 @@ public Game(Player player1, Player player2){
     this.board = new Board();
 }
 
-public void play() throws InterruptedException {
+public Player play() throws InValidMove {
     while (true){
         final long startTime = System.currentTimeMillis();
         board.display();
@@ -31,16 +32,16 @@ public void play() throws InterruptedException {
         PieceOwner winner = board.isGameOver();
         if(winner!=null){
             System.out.println("Game over!!!");
-            System.out.println(((player1.myTurn==winner)?(player1):(player2)) + " is the winner");
+            Player winnerPlayer = ((player1.myTurn==winner)?(player1):(player2));
+            System.out.println(winnerPlayer + " is the winner");
             board.display();
-            break;
+            return winnerPlayer;
         }
 
-        playerInTurn = (playerInTurn==player1)?player2:player1;
+        playerInTurn = (playerInTurn.equals(player1))?player2:player1;
         final long duration = System.currentTimeMillis() - startTime;
         System.out.println(duration + "seconds");
     }
-
 
 }
 

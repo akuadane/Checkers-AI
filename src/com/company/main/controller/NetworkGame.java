@@ -13,7 +13,7 @@ public class NetworkGame extends Game{
 
 
     @Override
-    public void play(){}
+    public Player play(){return null;}
 
     public void acceptSocket(){}
 }

@@ -1,5 +1,6 @@
 package com.company.main.models;
 
+import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.move.Move;
 import com.company.main.models.move.Jump;
 import com.company.main.models.piece.Piece;
@@ -179,7 +180,10 @@ public class Board {
      * we iterate through the toBeRemoved list and make sure all the pieces
      * in there are null so that they are removed.
      * */
-    public void makeMove(Move move, PieceOwner playerInTurn){
+    public void makeMove(Move move, PieceOwner playerInTurn) throws InValidMove {
+
+        if(move==null)
+            throw new InValidMove("Move object can't be null.");
 
         prevBoard = Arrays.copyOf(board,board.length);
 
