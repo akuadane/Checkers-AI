@@ -4,7 +4,7 @@ import com.company.main.models.Board;
 import com.company.main.models.move.Move;
 import com.company.main.models.piece.PieceOwner;
 
-public class RemotePlayer extends Player{
+public class RemotePlayer extends Player {
     RemotePlayer(String name, PieceOwner myTurn) {
         super(name, myTurn);
     }

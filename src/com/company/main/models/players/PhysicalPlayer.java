@@ -1,17 +1,17 @@
 package com.company.main.models.players;
 
 import com.company.main.models.Board;
-import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.move.Move;
+import com.company.main.models.piece.PieceOwner;
 
 import java.util.List;
 import java.util.Scanner;
 
 
-public class PhysicalPlayer extends Player{
+public class PhysicalPlayer extends Player {
 
     public PhysicalPlayer(String name, PieceOwner myTurn) {
-        super(name,myTurn);
+        super(name, myTurn);
     }
 
     @Override
@@ -20,20 +20,20 @@ public class PhysicalPlayer extends Player{
         // TODO remove the following implementation
 
         List<Move> moveList = board.findLegalMoves(myTurn);
-        int index =0;
+        int index = 0;
         for (Move a :
                 moveList) {
-            System.out.println(index + " " +a);
+            System.out.println(index + " " + a);
             index++;
         }
 
-        while(true){
+        while (true) {
             System.out.print("Choice > ");
             Scanner scanner = new Scanner(System.in);
             int i = scanner.nextInt();
             System.out.println();
 
-            if(i>=0 && i<moveList.size())
+            if (i >= 0 && i < moveList.size())
                 return moveList.get(i);
             System.out.println("Choose a correct move");
         }

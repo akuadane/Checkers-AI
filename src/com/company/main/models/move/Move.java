@@ -3,15 +3,15 @@ package com.company.main.models.move;
 import java.util.Arrays;
 
 public class Move {
-    public int[] movement ;
+    public int[] movement;
 
-    public  Move(int[] movement){
+    public Move(int[] movement) {
         this.movement = movement;
     }
 
     @Override
     public String toString() {
-        return String.format("Move from [%d,%d] to [%d,%d]",movement[0],movement[1],movement[2],movement[3]);
+        return String.format("Move from [%d,%d] to [%d,%d]", movement[0], movement[1], movement[2], movement[3]);
     }
 
     @Override

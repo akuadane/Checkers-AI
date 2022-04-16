@@ -1,16 +1,17 @@
 package com.company.main.models.players;
 
 import com.company.main.models.Board;
-import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.move.Move;
+import com.company.main.models.piece.PieceOwner;
 
 import java.util.List;
 import java.util.Random;
 
-public class RandomPlayer extends Player{
+public class RandomPlayer extends Player {
     Random random;
+
     public RandomPlayer(String name, PieceOwner myTurn) {
-        super(name,myTurn);
+        super(name, myTurn);
         this.random = new Random();
     }
 
