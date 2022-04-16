@@ -105,7 +105,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             min = Math.min(min,moveVal);
             beta = Math.min(beta, moveVal);
             if(beta <= alpha){
-                System.out.println("pruning tree in minimizing player");
+                System.out.println("pruning tree while minimizing player");
                 System.out.println("beta = " + beta + " <= alpha = " + alpha);
                 break;
             }
