@@ -10,7 +10,8 @@ import com.company.main.models.piece.PieceType;
 import java.util.*;
 
 public class Board {
-    public Piece[][] board = new Piece[8][8];
+    private static final int BOARD_SIZE = 8;
+    public Piece[][] board = new Piece[BOARD_SIZE][BOARD_SIZE];
     private Piece[][] prevBoard;
     List<Move> possibleMovements = new ArrayList<>();
 
@@ -34,8 +35,8 @@ public class Board {
         List<Move> moveList = new ArrayList<>();
         List<Jump> jumpList = new ArrayList<>();
 
-        for(int r=0;r<this.board.length;r++){
-            for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
+        for(int r=0;r<BOARD_SIZE;r++){
+            for(int c=(1-r%2);c<BOARD_SIZE;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
                 Piece piece = this.board[r][c];
                 if(piece!=null && piece.owner==inTurnPlayer){
                         jumpList.addAll(findJumps(piece,r,c)); // add all possible jumps
@@ -134,7 +135,7 @@ public class Board {
             int newC = c+moveDir[i][1];
 
             //Check if the new row and column are inside the board
-            if(newR<0 || newR>=this.board.length || newC<0 || newC>=this.board.length)
+            if(newR<0 || newR>=this.BOARD_SIZE || newC<0 || newC>=this.BOARD_SIZE)
                 continue;
 
 
@@ -154,7 +155,7 @@ public class Board {
                 int nextNewR = newR + moveDir[i][0];
                 int nextNewC = newC + moveDir[i][1];
 
-                if(nextNewR<0 || nextNewR>=this.board.length || nextNewC<0 || nextNewC>=this.board.length)
+                if(nextNewR<0 || nextNewR>=this.BOARD_SIZE || nextNewC<0 || nextNewC>=this.BOARD_SIZE)
                     continue;
                 Piece nextNewPos = this.board[nextNewR][nextNewC];
 
@@ -185,7 +186,7 @@ public class Board {
         if(move==null)
             throw new InValidMove("Move object can't be null.");
 
-        prevBoard = Arrays.copyOf(board,board.length);
+        prevBoard = Arrays.copyOf(board,BOARD_SIZE);
 
         int initR = move.movement[0];
         int initC = move.movement[1];
@@ -199,7 +200,7 @@ public class Board {
         if(newR==0 && playerInTurn==PieceOwner.PLAYER1)
             board[newR][newC].type = PieceType.KING;
 
-        if(newR==board.length-1 && playerInTurn==PieceOwner.PLAYER2)
+        if(newR==BOARD_SIZE-1 && playerInTurn==PieceOwner.PLAYER2)
             board[newR][newC].type = PieceType.KING;
 
         if(move instanceof Jump){
@@ -217,8 +218,8 @@ public class Board {
      * */
     public void resetBoard(){
 
-        for(int i=0;i<this.board.length;i++){
-            for(int j=(1-i%2);j<this.board.length;j+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
+        for(int i=0;i<this.BOARD_SIZE;i++){
+            for(int j=(1-i%2);j<this.BOARD_SIZE;j+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
                 if(i<=2){  //place player two's pawns in their starting place
                     this.board[i][j]= new Piece(PieceType.PAWN,PieceOwner.PLAYER2);
                 }else if(i<=4){ // makes the middle two rows empty
@@ -232,6 +233,15 @@ public class Board {
 
     }
 
+    public Piece getPiece(int[] square){
+        if(square.length!=2)
+            return null;
+        if(square[0]<0 || square[0]>=BOARD_SIZE || square[1]<0 || square[1]>=BOARD_SIZE)
+            return null;
+
+        return board[square[0]][square[1]];
+
+    }
     /**
      * Restores the previous state of the board
      * prevBoard holds the board state just before the last move
@@ -241,8 +251,8 @@ public class Board {
             board = Arrays.copyOf(prevBoard,prevBoard.length);
     }
     public void display(){
-        for(int i=0;i<this.board.length;i++){
-            for(int j=0;j<this.board.length;j++){
+        for(int i=0;i<this.BOARD_SIZE;i++){
+            for(int j=0;j<this.BOARD_SIZE;j++){
                 Piece piece = this.board[i][j];
                 char p = ' ';
                 if(piece!=null){
@@ -254,7 +264,7 @@ public class Board {
                     if(piece.type==PieceType.KING)
                         p = Character.toUpperCase(p);
                 }
-                String box = "|"+p + ((j==board.length-1)? "|":"");
+                String box = "|"+p + ((j==BOARD_SIZE-1)? "|":"");
 
                 System.out.print(box);
             }
@@ -273,8 +283,8 @@ public class Board {
     public PieceOwner isGameOver(){
         boolean p1HasMoves=false,p2HasMoves=false;
 
-        for(int r=0;r<this.board.length;r++){
-            for(int c=(1-r%2);c<this.board.length;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
+        for(int r=0;r<this.BOARD_SIZE;r++){
+            for(int c=(1-r%2);c<this.BOARD_SIZE;c+=2){ // Makes sure the Pieces are placed on squares where i+j is odd
                 Piece piece = this.board[r][c];
                 if(piece!=null){
                    if(findMoves(piece,r,c).size()!=0){
@@ -301,8 +311,8 @@ public class Board {
     public Board clone(){
         Board tempBoard = new Board();
 
-        for(int i=0;i<this.board.length;i++){
-            for(int j=(1-i%2);j<this.board.length;j+=2){
+        for(int i=0;i<this.BOARD_SIZE;i++){
+            for(int j=(1-i%2);j<this.BOARD_SIZE;j+=2){
                 if(board[i][j]!=null)
                     tempBoard.board[i][j] = board[i][j].clone();
                 else

@@ -1,7 +1,9 @@
 package com.company.test.models;
 import com.company.main.models.Board;
+import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.move.Jump;
 import com.company.main.models.move.Move;
+import com.company.main.models.piece.Piece;
 import com.company.main.models.piece.PieceOwner;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,11 +51,28 @@ public class BoardTest {
     @Test
     public void findJumpTest(){}
 
-    @Test
-    public void makeMoveTest(){}
+    @Test(expected = InValidMove.class)
+    public void makeIllegalMoveTest() throws InValidMove {
+    board.makeMove(null,PieceOwner.PLAYER1);
+    }
 
     @Test
-    public void undoTest(){}
+    public void makeMoveTest(){
+        Move mv = board.findLegalMoves(PieceOwner.PLAYER1).get(0);
+        Piece p = board.getPiece(new int[]{mv.movement[0], mv.movement[1]});
+        try {
+            board.makeMove(mv,PieceOwner.PLAYER1);
+            assertEquals(board.board[mv.movement[0]][mv.movement[1]],null);
+            assertEquals(board.getPiece(new int[]{mv.movement[2], mv.movement[3]}),p);
+        } catch (InValidMove e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void undoTest(){
+
+    }
 
     @Test
     public void isGameOverTest(){}
