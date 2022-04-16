@@ -14,6 +14,9 @@ public class RandomPlayer extends Player{
         this.random = new Random();
     }
 
+    public RandomPlayer(){
+        this("Random Player",PieceOwner.PLAYER1);
+    }
     @Override
     public Move makeMove(Board board) {
         List<Move> moveList = board.findLegalMoves(myTurn);
