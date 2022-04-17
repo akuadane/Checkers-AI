@@ -14,8 +14,8 @@ import java.util.List;
 
 public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
     LocalTime stTime;
-    final int MAX_SECONDS = 3;
-    final int MAX_DEPTH=20;
+    final int MAX_SECONDS = 5;
+    final int MAX_DEPTH=50;
 
     public AlphaBetaMinMaxAIPlayer(String name, PieceOwner myTurn) {
         super(name,myTurn);
@@ -62,7 +62,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         double max=Double.MIN_VALUE;
         Move myMove=null ;
         PieceOwner nextInTurn = (myTurn==PieceOwner.PLAYER1)? PieceOwner.PLAYER2: PieceOwner.PLAYER1;
-        System.out.println("choosing the best move");
+
 
         for (Move mv :
                 board.findLegalMoves(myTurn)) {
@@ -72,7 +72,6 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal  = min(temp,nextInTurn,MAX_DEPTH,Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY);
 
             if(max<moveVal || myMove==null){
-                System.out.println("max");
                 myMove = mv;
                 max=moveVal;
             }
@@ -105,12 +104,8 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = max(temp,nextInTurn,depth-1,alpha,beta);
             min = Math.min(min,moveVal);
             beta = Math.min(beta, moveVal);
-            System.out.println(moveList );
-//            System.out.println(beta + "=========== beta mi");
-//            System.out.println(alpha + "=========== alpha mi");
+
             if(beta <= alpha){
-//                System.out.println(alpha+ "============ in min alpha");
-//                System.out.println(beta + "============ in min beta");
                 break;
             }
 
@@ -141,24 +136,13 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = min(temp,nextInTurn,depth-1,alpha,beta);
             max = Math.max(max,moveVal);
             alpha = Math.max(alpha,moveVal);
-            System.out.println(moveList);
-//            System.out.println(alpha+ "========== alpha m");
-//            System.out.println(beta+ "========== beta m");
+
             if(beta <= alpha){
-//                System.out.println(alpha + "============ in max alpha");
-//                System.out.println(beta + "============ in max beta ");
                 break;
             }
-
         }
         return max;
 
     }
 
-    //private double min(Board prevBoard,double alpha, double beta){
-    //    return 0;
-    //}
-    //private double max(Board prevBoard, double alpha, double beta){
-    //    return 0;
-    //}
 }

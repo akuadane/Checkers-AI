@@ -311,8 +311,8 @@ public class Board {
 
     public Board clone() {  // TODO change this to a copy constructor
         Board tempBoard = new Board();
-        tempBoard.prevBoard = cloneBoardArray(prevBoard);
-        tempBoard.board = cloneBoardArray(board);
+        tempBoard.prevBoard = cloneBoardArray(this.prevBoard);
+        tempBoard.board = cloneBoardArray(this.board);
         return tempBoard;
     }
 
@@ -321,7 +321,7 @@ public class Board {
 
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < BOARD_SIZE; j += 2) {
-                if (prevBoard[i][j] != null)
+                if (b[i][j] != null)
                     newBoard[i][j] = b[i][j].clone();
                 else
                     newBoard[i][j] = null;
