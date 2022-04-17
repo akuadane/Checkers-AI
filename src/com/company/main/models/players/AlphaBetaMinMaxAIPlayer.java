@@ -105,7 +105,9 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             min = Math.min(min,moveVal);
             beta = Math.min(beta, moveVal);
 
+
             if(beta <= alpha){
+
                 break;
             }
 
@@ -136,6 +138,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = min(temp,nextInTurn,depth-1,alpha,beta);
             max = Math.max(max,moveVal);
             alpha = Math.max(alpha,moveVal);
+
 
             if(beta <= alpha){
                 break;
