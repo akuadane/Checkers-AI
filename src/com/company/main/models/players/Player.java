@@ -15,7 +15,7 @@ public abstract class Player {
         this.myTurn = PieceOwner.PLAYER1;
     }
 
-    public abstract Move makeMove(Board board) throws InValidMove;
+    public abstract Move makeMove(Board board) throws InValidMove, CloneNotSupportedException;
 
     @Override
     public String toString() {

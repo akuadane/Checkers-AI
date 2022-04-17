@@ -3,7 +3,7 @@ package com.company.main.models.move;
 import java.util.Arrays;
 
 public class Move {
-    public int[] movement ;
+    public int[] movement ;  // TODO  change this to Position object
 
     public  Move(int[] movement){
         this.movement = movement;

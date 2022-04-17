@@ -14,8 +14,8 @@ import java.util.List;
 public class MinMaxAIPlayer extends Player implements AIPlayer{
 
     LocalTime stTime;
-    final int MAX_SECONDS = 3;
-    final int MAX_DEPTH=20;
+    final int MAX_SECONDS = 5;
+    final int MAX_DEPTH=50;
 
     public MinMaxAIPlayer(String name, PieceOwner myTurn) {
         super(name,myTurn);
@@ -65,7 +65,6 @@ public class MinMaxAIPlayer extends Player implements AIPlayer{
         double max=Double.MIN_VALUE;
         Move myMove=null ;
         PieceOwner nextInTurn = (myTurn==PieceOwner.PLAYER1)? PieceOwner.PLAYER2: PieceOwner.PLAYER1;
-        System.out.println("choosing the best move");
 
        for (Move mv :
                 board.findLegalMoves(myTurn)) {

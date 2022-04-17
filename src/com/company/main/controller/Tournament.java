@@ -19,7 +19,7 @@ public class Tournament {
     }
 
     //TODO add more detail in the stat
-    public String playOff(int rounds) throws InValidMove {
+    public String playOff(int rounds) throws InValidMove, CloneNotSupportedException {
         HashMap<String,int[]> stat = new HashMap<>(); // [a,b,c] a is number of wins by game, b is number of win by rounds, loss
 
         while(rounds>0){

@@ -14,8 +14,8 @@ import java.util.List;
 
 public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
     LocalTime stTime;
-    final int MAX_SECONDS = 3;
-    final int MAX_DEPTH=20;
+    final int MAX_SECONDS = 5;
+    final int MAX_DEPTH=50;
 
     public AlphaBetaMinMaxAIPlayer(String name, PieceOwner myTurn) {
         super(name,myTurn);
@@ -57,12 +57,12 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
     }
 
     @Override
-    public Move makeMove(Board board) throws InValidMove {
+    public Move makeMove(Board board) throws InValidMove, CloneNotSupportedException {
         stTime = LocalTime.now();
         double max=Double.MIN_VALUE;
         Move myMove=null ;
         PieceOwner nextInTurn = (myTurn==PieceOwner.PLAYER1)? PieceOwner.PLAYER2: PieceOwner.PLAYER1;
-        System.out.println("choosing the best move");
+
 
         for (Move mv :
                 board.findLegalMoves(myTurn)) {
@@ -72,7 +72,6 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal  = min(temp,nextInTurn,MAX_DEPTH,Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY);
 
             if(max<moveVal || myMove==null){
-                System.out.println("max");
                 myMove = mv;
                 max=moveVal;
             }
@@ -81,7 +80,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         return myMove;
     }
 
-    private double min(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove {
+    private double min(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove, CloneNotSupportedException {
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
 
@@ -105,9 +104,10 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = max(temp,nextInTurn,depth-1,alpha,beta);
             min = Math.min(min,moveVal);
             beta = Math.min(beta, moveVal);
+
+
             if(beta <= alpha){
-                System.out.println("pruning tree while minimizing player");
-                System.out.println("beta = " + beta + " <= alpha = " + alpha);
+
                 break;
             }
 
@@ -115,7 +115,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         return min;
     }
 
-    private double max(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove {
+    private double max(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove, CloneNotSupportedException {
 
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
@@ -138,21 +138,14 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             double moveVal = min(temp,nextInTurn,depth-1,alpha,beta);
             max = Math.max(max,moveVal);
             alpha = Math.max(alpha,moveVal);
+
+
             if(beta <= alpha){
-                System.out.println("pruning tree while maximizing player");
-                System.out.println("beta = " + beta + " <= alpha = " + alpha);
                 break;
             }
-
         }
         return max;
 
     }
 
-    //private double min(Board prevBoard,double alpha, double beta){
-    //    return 0;
-    //}
-    //private double max(Board prevBoard, double alpha, double beta){
-    //    return 0;
-    //}
 }

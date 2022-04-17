@@ -19,10 +19,11 @@ public Game(Player player1, Player player2){
     this.board = new Board();
 }
 
-public Player play() throws InValidMove {
+public Player play() throws InValidMove, CloneNotSupportedException {
     while (true){
         final long startTime = System.currentTimeMillis();
         board.display();
+        System.out.println(playerInTurn+" is thinking...");
         Move playerMove = playerInTurn.makeMove(board.clone());
         board.makeMove(playerMove,playerInTurn.myTurn);
 
@@ -40,7 +41,7 @@ public Player play() throws InValidMove {
 
         playerInTurn = (playerInTurn.equals(player1))?player2:player1;
         final long duration = System.currentTimeMillis() - startTime;
-        System.out.println(duration + "seconds");
+        System.out.println(duration + " milli seconds");
     }
 
 }
