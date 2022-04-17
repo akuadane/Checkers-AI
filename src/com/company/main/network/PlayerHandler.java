@@ -6,9 +6,10 @@ import java.net.Socket;
 
 public class PlayerHandler extends Thread {
     public Socket playerSocket;
-    public String name;
+//    public String name;
 
     public PlayerHandler(Socket playerSocket) {
+        System.out.println("Client Accepted!");
         this.playerSocket = playerSocket;
     }
 
@@ -17,7 +18,9 @@ public class PlayerHandler extends Thread {
         super.run();
         try {
             ObjectInputStream reader = new ObjectInputStream(playerSocket.getInputStream());
+            reader.reset();
             ObjectOutputStream writer = new ObjectOutputStream(playerSocket.getOutputStream());
+            writer.reset();
             Action action;
             while (!((action = (Action) reader.readObject()) instanceof Close)) {
                 if (action instanceof CreateGame createGame) {
@@ -41,9 +44,7 @@ public class PlayerHandler extends Thread {
                         writer.writeObject(new Error("Its not your turn please wait until you peer moves"));
                     } else {
                         int[] game = Server.games.get(gameID);
-                        int nextPlayer;
-                        if (makeMove.playerID == game[0]) nextPlayer = game[1];
-                        else nextPlayer = game[0];
+                        int nextPlayer = makeMove.playerID == game[0] ? game[1] : game[0];
                         Server.games.get(gameID)[2] = nextPlayer;
                         Server.playerInfo.get(nextPlayer).writer.writeObject(makeMove);
                     }
