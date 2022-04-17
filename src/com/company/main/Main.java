@@ -14,7 +14,7 @@ import java.time.LocalTime;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException, InValidMove {
+    public static void main(String[] args) throws InterruptedException, InValidMove, CloneNotSupportedException {
 	// write your code here
 //        Board board = new Board();
 //        board.display();

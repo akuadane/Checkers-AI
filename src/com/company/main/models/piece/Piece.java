@@ -11,7 +11,7 @@ public class Piece {
         this.owner= owner;
     }
 
-    @Override
+
     public Piece clone(){
         return new Piece(type,owner);
     }
@@ -26,5 +26,10 @@ public class Piece {
 
         Piece p = (Piece) obj;
         return (this.owner.equals(p.owner) && this.type.equals(p.type));
+    }
+
+    @Override
+    public String toString() {
+        return type.toString() + " of " +owner.toString();
     }
 }

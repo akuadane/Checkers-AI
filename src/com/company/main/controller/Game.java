@@ -19,7 +19,7 @@ public Game(Player player1, Player player2){
     this.board = new Board();
 }
 
-public Player play() throws InValidMove {
+public Player play() throws InValidMove, CloneNotSupportedException {
     while (true){
         final long startTime = System.currentTimeMillis();
         board.display();

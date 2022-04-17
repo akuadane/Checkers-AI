@@ -6,7 +6,7 @@ import com.company.main.models.move.Move;
 import com.company.main.models.piece.Piece;
 import com.company.main.models.piece.PieceOwner;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class BoardTest {
 
     Board board= new Board();
 
-    @BeforeEach
+    @Before
     public void resetBoard(){
         board = new Board();
     }
@@ -37,7 +37,7 @@ public class BoardTest {
     @Test
     public void findMoveForPlayerTwoTest(){
 
-        List<Move> playerTwoMoves = board.findLegalMoves(PieceOwner.PLAYER2);
+        List<Move> playerTwoMoves = board.findLegalMoves(PieceOwner.PLAYER1);
         assertEquals(7,playerTwoMoves.size()); // at an initial state each player has 7 moves to choose from
         for (Move mv :
                 playerTwoMoves) {
@@ -52,7 +52,7 @@ public class BoardTest {
     public void findJumpTest(){}
 
     @Test(expected = InValidMove.class)
-    public void makeIllegalMoveTest() throws InValidMove {
+    public void makeIllegalMoveTest() throws InValidMove, CloneNotSupportedException {
     board.makeMove(null,PieceOwner.PLAYER1);
     }
 
@@ -65,16 +65,27 @@ public class BoardTest {
             assertEquals(board.board[mv.movement[0]][mv.movement[1]],null);
             assertEquals(board.getPiece(new int[]{mv.movement[2], mv.movement[3]}),p);
         } catch (InValidMove e) {
-            throw new RuntimeException(e);
+            System.out.println("Failure");
+            // TODO assert that an exception is not thrown
         }
     }
 
     @Test
-    public void undoTest(){
+    public void undoTest() throws InValidMove, CloneNotSupportedException {
+        Board prevBoard = board.clone();
+        Move mv = board.findLegalMoves(PieceOwner.PLAYER1).get(0);
+
+        board.makeMove(mv,PieceOwner.PLAYER1);
+        assertNotEquals(prevBoard,board);
+
+        board.undo();
+        assertEquals(prevBoard,board);
 
     }
 
     @Test
-    public void isGameOverTest(){}
+    public void isGameOverTest(){
+        assertEquals(board.isGameOver(),null);
+    }
 
 }

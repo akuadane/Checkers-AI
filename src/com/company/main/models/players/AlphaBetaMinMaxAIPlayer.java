@@ -57,7 +57,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
     }
 
     @Override
-    public Move makeMove(Board board) throws InValidMove {
+    public Move makeMove(Board board) throws InValidMove, CloneNotSupportedException {
         stTime = LocalTime.now();
         double max=Double.MIN_VALUE;
         Move myMove=null ;
@@ -81,7 +81,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         return myMove;
     }
 
-    private double min(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove {
+    private double min(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove, CloneNotSupportedException {
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
 
@@ -118,7 +118,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         return min;
     }
 
-    private double max(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove {
+    private double max(Board prevBoard,PieceOwner inTurn,int depth,double alpha, double beta) throws InValidMove, CloneNotSupportedException {
 
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
