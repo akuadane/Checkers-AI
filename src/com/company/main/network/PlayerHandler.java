@@ -6,9 +6,10 @@ import java.net.Socket;
 
 public class PlayerHandler extends Thread {
     public Socket playerSocket;
-    public String name;
+//    public String name;
 
     public PlayerHandler(Socket playerSocket) {
+        System.out.println("Client Accepted!");
         this.playerSocket = playerSocket;
     }
 
@@ -17,7 +18,9 @@ public class PlayerHandler extends Thread {
         super.run();
         try {
             ObjectInputStream reader = new ObjectInputStream(playerSocket.getInputStream());
+            reader.reset();
             ObjectOutputStream writer = new ObjectOutputStream(playerSocket.getOutputStream());
+            writer.reset();
             Action action;
             while (!((action = (Action) reader.readObject()) instanceof Close)) {
                 if (action instanceof CreateGame createGame) {
