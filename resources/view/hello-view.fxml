@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="526.0" prefWidth="378.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="68.0" layoutY="37.0" prefHeight="48.0" prefWidth="243.0" text="Checkers Al" textAlignment="CENTER" textFill="#b91f1f">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="160.0" layoutY="69.0" text="Game" textFill="#902323">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="24.0" layoutY="111.0" text="Rules" textFill="#d31c1c">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_LEFT" layoutX="24.0" layoutY="158.0" prefHeight="40.0" prefWidth="327.0" text= "checkers Al is played on an 8x8 board with 12 pieces on each side." wrapText="true" />
+      <Label alignment="TOP_LEFT" layoutX="24.0" layoutY="198.0" prefHeight="21.0" prefWidth="327.0" text="The uncrowned pieces can only move and capture forward." wrapText="true" />
+      <Label alignment="TOP_LEFT" layoutX="24.0" layoutY="224.0" prefHeight="59.0" prefWidth="327.0" text="when there is more than one way for a player to jump, one may choose which sequence to make, not necessarily the sequence that will result in greatest number of captures." wrapText="true" />
+      <Label alignment="TOP_LEFT" layoutX="24.0" layoutY="290.0" prefHeight="40.0" prefWidth="327.0" text="However, one must make all the necessary captures in that sequence." wrapText="true" />
+      <Label alignment="TOP_LEFT" layoutX="24.0" layoutY="337.0" prefHeight="21.0" prefWidth="327.0" text="Kings can move more than one square." wrapText="true" />
+   </children>
+</AnchorPane>

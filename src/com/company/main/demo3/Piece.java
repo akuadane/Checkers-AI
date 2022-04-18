@@ -4,7 +4,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import static com.example.demo3.checkers.TILE_SIZE;
+import static com.company.main.demo3.checkers.TILE_SIZE;
 
 public class Piece extends StackPane {
     private PieceType type;
