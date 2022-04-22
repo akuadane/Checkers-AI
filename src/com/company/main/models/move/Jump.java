@@ -6,8 +6,8 @@ import java.util.List;
 public class Jump extends Move{
     public List<int[]> toBeRemoved;
 
-    public Jump(int[] movement) {
-        super(movement);
+    public Jump(Position origin, Position destination) {
+        super(origin,destination);
         toBeRemoved = new ArrayList<>();
     }
 

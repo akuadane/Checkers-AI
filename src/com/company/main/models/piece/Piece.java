@@ -10,12 +10,9 @@ public class Piece {
         this.type = type;
         this.owner= owner;
     }
-
-
     public Piece clone(){
         return new Piece(type,owner);
     }
-
     @Override
     public boolean equals(Object obj) {
         if(this==obj)
