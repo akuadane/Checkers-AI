@@ -3,6 +3,7 @@ package com.company.main.models;
 import com.company.main.models.exceptions.InValidMove;
 import com.company.main.models.move.Move;
 import com.company.main.models.move.Jump;
+import com.company.main.models.move.Position;
 import com.company.main.models.piece.Piece;
 import com.company.main.models.piece.PieceOwner;
 import com.company.main.models.piece.PieceType;
@@ -80,15 +81,15 @@ public class Board {
                 Jump x = queue.remove();
                 boolean addToJumpList = true;
 
-                for (Move nMove : findMoves(piece, x.movement[2], x.movement[3])) {
+                for (Move nMove : findMoves(piece, x.getDestination().getRow(), x.getDestination().getColumn())) {
                     if (!(nMove instanceof Jump))
                         continue;
-
-                    Jump rm = new Jump(new int[]{x.movement[0], x.movement[1], nMove.movement[2], nMove.movement[3]});
+                                new Jump(new Position(x.getOrigin()),nMove.getDestination());
+                    Jump rm = new Jump(new Position(x.getOrigin()),nMove.getDestination());
                     rm.toBeRemoved.addAll(x.toBeRemoved);
                     rm.toBeRemoved.addAll(((Jump) nMove).toBeRemoved);
-                    board[x.movement[2]][x.movement[3]] = new Piece(piece.type, piece.owner); // place temporary pieces to avoid infinite recursion with Kings
-                    tempPieces.add(new int[]{x.movement[2], x.movement[3]});
+                    board[x.getDestination().getRow()][x.getDestination().getColumn()] = new Piece(piece.type, piece.owner); // place temporary pieces to avoid infinite recursion with Kings
+                    tempPieces.add(new int[]{x.getDestination().getRow(),x.getDestination().getColumn()});
                     queue.add(rm);
                     addToJumpList = false;
                 }
@@ -143,7 +144,7 @@ public class Board {
 
             // check if the adjacent square is empty
             if (newPos == null) {
-                Move mv = new Move(new int[]{r, c, newR, newC});
+                Move mv = new Move(new Position(r,c), new Position(newR,newC));
                 tempMoveList.add(mv);
 
             }
@@ -161,8 +162,8 @@ public class Board {
 
                 // if the second adjacent square isn't occupied  this is a valid removing move
                 if (nextNewPos == null) {
-                    Jump rm = new Jump(new int[]{r, c, nextNewR, nextNewC});
-                    rm.addToBeRemovedSquare(new int[]{newR, newC});
+                    Jump rm = new Jump(new Position(r,c),new Position(nextNewR,nextNewC));
+                    rm.addToBeRemovedSquare(new Position(newR,newC));
 
                     tempMoveList.add(rm);
                 }
@@ -187,10 +188,10 @@ public class Board {
             throw new InValidMove("Move object can't be null.");
 
         prevBoard = cloneBoardArray(board);
-        int initR = move.movement[0];
-        int initC = move.movement[1];
-        int newR = move.movement[2];
-        int newC = move.movement[3];
+        int initR = move.getOrigin().getRow();
+        int initC = move.getOrigin().getColumn();
+        int newR = move.getDestination().getRow();
+        int newC = move.getDestination().getColumn();
 
         // Put the piece onto its new destination
         board[newR][newC] = (Piece) board[initR][initC].clone();
@@ -203,8 +204,8 @@ public class Board {
             board[newR][newC].type = PieceType.KING;
 
         if (move instanceof Jump) {
-            for (int[] remove : ((Jump) move).toBeRemoved) {
-                board[remove[0]][remove[1]] = null;  // Remove all piece that are jumped over
+            for (Position remove : ((Jump) move).toBeRemoved) {
+                board[remove.getRow()][remove.getColumn()] = null;  // Remove all piece that are jumped over
             }
         }
 
@@ -233,13 +234,13 @@ public class Board {
 
     }
 
-    public Piece getPiece(int[] square) {
-        if (square.length != 2)
-            return null;
-        if (square[0] < 0 || square[0] >= BOARD_SIZE || square[1] < 0 || square[1] >= BOARD_SIZE)
+    public Piece getPiece(Position pos) {
+        int r = pos.getRow();
+        int c = pos.getColumn();
+        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE)
             return null;
 
-        return board[square[0]][square[1]];
+        return board[r][c];
 
     }
 
@@ -342,7 +343,7 @@ public class Board {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j ++) {
                 {
-                    int[] pos = new int[]{i,j};
+                    Position pos = new Position(i,j);
                     if(b.getPiece(pos)==null && this.getPiece(pos)==null)
                         continue;
                     if(!b.getPiece(pos).equals(this.getPiece(pos)))

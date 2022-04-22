@@ -29,7 +29,7 @@ public class BoardTest {
         for (Move mv :
                 playerOneMoves) {
 
-            assertEquals(mv.movement[0],5); // for player1 the initial movements should start from row 5
+            assertEquals(mv.getOrigin().getRow(),5); // for player1 the initial movements should start from row 5
             assertFalse(mv instanceof Jump);  // the first moves can't be a Jump
         }
 
@@ -37,12 +37,12 @@ public class BoardTest {
     @Test
     public void findMoveForPlayerTwoTest(){
 
-        List<Move> playerTwoMoves = board.findLegalMoves(PieceOwner.PLAYER1);
+        List<Move> playerTwoMoves = board.findLegalMoves(PieceOwner.PLAYER2);
         assertEquals(7,playerTwoMoves.size()); // at an initial state each player has 7 moves to choose from
         for (Move mv :
                 playerTwoMoves) {
 
-            assertEquals(mv.movement[0],5); // for player1 the initial movements should start from row 5
+            assertEquals(mv.getOrigin().getRow(),2); // for player1 the initial movements should start from row 5
             assertFalse(mv instanceof Jump);  // the first moves can't be a Jump
         }
 
@@ -59,14 +59,14 @@ public class BoardTest {
     @Test
     public void makeMoveTest(){
         Move mv = board.findLegalMoves(PieceOwner.PLAYER1).get(0);
-        Piece p = board.getPiece(new int[]{mv.movement[0], mv.movement[1]});
+        Piece p = board.getPiece(mv.getOrigin());
         try {
             board.makeMove(mv,PieceOwner.PLAYER1);
-            assertEquals(board.board[mv.movement[0]][mv.movement[1]],null);
-            assertEquals(board.getPiece(new int[]{mv.movement[2], mv.movement[3]}),p);
+            assertEquals(board.getPiece(mv.getOrigin()),null);
+            assertEquals(board.getPiece(mv.getDestination()),p);
         } catch (InValidMove e) {
             System.out.println("Failure");
-            // TODO assert that an exception is not thrown
+
         }
     }
 

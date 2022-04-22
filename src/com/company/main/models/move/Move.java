@@ -3,15 +3,26 @@ package com.company.main.models.move;
 import java.util.Arrays;
 
 public class Move {
-    public int[] movement ;  // TODO  change this to Position object
 
-    public  Move(int[] movement){
-        this.movement = movement;
+    private Position origin;
+
+
+
+    private Position destination;
+    public  Move(Position origin, Position destination){
+        this.origin = origin;
+        this.destination = destination;
+    }
+    public Position getOrigin() {
+        return origin;
     }
 
+    public Position getDestination() {
+        return destination;
+    }
     @Override
     public String toString() {
-        return String.format("Move from [%d,%d] to [%d,%d]",movement[0],movement[1],movement[2],movement[3]);
+        return String.format("Move from [%d,%d] to [%d,%d]",origin.getRow(),origin.getColumn(),destination.getRow(),destination.getColumn());
     }
 
     @Override
@@ -19,11 +30,7 @@ public class Move {
         if (this == o) return true;
         if (!(o instanceof Move)) return false;
         Move move = (Move) o;
-        return Arrays.equals(movement, move.movement);
+        return (this.origin.equals(move.origin) && this.destination.equals(move.destination));
     }
 
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(movement);
-    }
 }
