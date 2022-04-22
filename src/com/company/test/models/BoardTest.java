@@ -66,7 +66,7 @@ public class BoardTest {
             assertEquals(board.getPiece(mv.getDestination()),p);
         } catch (InValidMove e) {
             System.out.println("Failure");
-            // TODO assert that an exception is not thrown
+
         }
     }
 

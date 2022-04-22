@@ -163,7 +163,7 @@ public class Board {
                 // if the second adjacent square isn't occupied  this is a valid removing move
                 if (nextNewPos == null) {
                     Jump rm = new Jump(new Position(r,c),new Position(nextNewR,nextNewC));
-                    rm.addToBeRemovedSquare(new int[]{newR, newC});
+                    rm.addToBeRemovedSquare(new Position(newR,newC));
 
                     tempMoveList.add(rm);
                 }
@@ -204,8 +204,8 @@ public class Board {
             board[newR][newC].type = PieceType.KING;
 
         if (move instanceof Jump) {
-            for (int[] remove : ((Jump) move).toBeRemoved) {
-                board[remove[0]][remove[1]] = null;  // Remove all piece that are jumped over
+            for (Position remove : ((Jump) move).toBeRemoved) {
+                board[remove.getRow()][remove.getColumn()] = null;  // Remove all piece that are jumped over
             }
         }
 
