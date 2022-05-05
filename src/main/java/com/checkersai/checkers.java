@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 public class checkers extends Application  {
@@ -93,6 +94,7 @@ public class checkers extends Application  {
         //button.setTranslateX(10);
         //button.setTranslateY(10);
         //Group root = new Group(button);
+        primarystage.initStyle(StageStyle.UNDECORATED);
         primarystage.setScene(scene);
         primarystage.setResizable(false);
         primarystage.show();
