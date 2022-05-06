@@ -6,6 +6,5 @@ module com.company {
     requires junit;
 
     opens com.company to javafx.fxml;
-    exports com.company;
     exports com.company.gui;
 }

@@ -1,5 +1,4 @@
-package com.company.test.models;
-import com.company.models.Board;
+package com.company.models;
 import com.company.models.exceptions.InValidMove;
 import com.company.models.move.Jump;
 import com.company.models.move.Move;
@@ -52,7 +51,7 @@ public class BoardTest {
 
     @Test(expected = InValidMove.class)
     public void makeIllegalMoveTest() throws InValidMove, CloneNotSupportedException {
-    board.makeMove(null);
+        board.makeMove(null);
     }
 
     @Test
