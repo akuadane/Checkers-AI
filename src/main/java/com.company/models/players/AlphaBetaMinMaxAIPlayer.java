@@ -20,7 +20,9 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         super(name,myTurn);
     }
 
-
+    public AlphaBetaMinMaxAIPlayer(){
+        super("AlphaBeta", Piece.PieceOwner.PLAYER2);
+    }
 
     @Override
     public double evalBoard(Board board) {

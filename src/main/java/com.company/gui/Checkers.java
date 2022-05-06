@@ -6,17 +6,19 @@ import com.company.models.move.Move;
 import com.company.models.move.Position;
 import com.company.models.piece.Piece;
 
+import com.company.models.players.AlphaBetaMinMaxAIPlayer;
 import com.company.models.players.Player;
 import com.company.models.players.RandomPlayer;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
 import javafx.scene.Scene;
-import javafx.scene.input.MouseButton;
+
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
 
 import java.util.ArrayList;
 
@@ -27,9 +29,10 @@ public class Checkers extends Application {
     private BoardSquare[][] boardSquares;
     private Position origin;
     Player aiPlayer;
+    private boolean aiTurn=false;
     @Override
     public void start(Stage stage){
-        this.aiPlayer= new RandomPlayer();
+        this.aiPlayer= new AlphaBetaMinMaxAIPlayer();
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
         this.initBoardSquares();
@@ -41,6 +44,7 @@ public class Checkers extends Application {
                 gridPane.add(this.boardSquares[i][j],j,i);
             }
         }
+
         Scene scene = new Scene(gridPane,WIDTH,HEIGHT);
         stage.setTitle("Checkers");
         stage.setScene(scene);
@@ -78,6 +82,9 @@ public class Checkers extends Application {
     }
     public void boardClicked(Position clickedPos){
 
+        if(aiTurn)
+            return;
+
         if(this.origin==null){
             Piece p = board.getPiece(clickedPos);
             if(p==null)
@@ -100,45 +107,56 @@ public class Checkers extends Application {
             try {
                 this.board.makeMove(move);
                 updateBoard();
-                Piece.PieceOwner winner = this.board.isGameOver();
-                if(winner!=null){
-                 //   JOptionPane.showMessageDialog(this, winner + " won.", "WINNER ALERT " , JOptionPane.INFORMATION_MESSAGE);
-                }
+
+                isThereWinner();
 
 
+                if(aiPlayer!=null){ //AI will make a move
 
-                Platform.runLater(() -> {
-                    try {
-                        Move aiMove = aiPlayer.makeMove(new Board(board));
-                        Thread.sleep(5000);
-                        board.makeMove(aiMove);
-                        updateBoard();
-                    } catch (InValidMove e) {
-                        throw new RuntimeException(e);
-                    } catch (CloneNotSupportedException e) {
-                        throw new RuntimeException(e);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                    this.aiMove();
 
-
-
-
-                 winner = this.board.isGameOver();
-                if(winner!=null){
-                    //   JOptionPane.showMessageDialog(this, winner + " won.", "WINNER ALERT " , JOptionPane.INFORMATION_MESSAGE);
                 }
 
             } catch (InValidMove e) {
                 System.out.println(e.getMessage());
-            }  finally {
+            } finally {
                 this.origin = null;
                 this.turnOffAllHighlights();
             }
             // create a move and send it to board
             // inside board check for a move that has the same origin and destination, if so execute
         }
+    }
+
+    public void aiMove(){
+        this.aiTurn=true;
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+
+                Move aiMove = aiPlayer.makeMove(new Board(board));
+                board.makeMove(aiMove);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateBoard();
+                    }
+                });
+
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                super.done();
+                aiTurn=false;
+                isThereWinner();
+            }
+        };
+
+         Thread newTask = new Thread(task);
+         newTask.start();
+
     }
 
     private void setHighlight(ArrayList<Move> moves, boolean light){
@@ -157,8 +175,20 @@ public class Checkers extends Application {
         }
     }
 
+   public void isThereWinner(){
+       Piece.PieceOwner winner = this.board.isGameOver();
+       if(winner!=null){
+           //   JOptionPane.showMessageDialog(this, winner + " won.", "WINNER ALERT " , JOptionPane.INFORMATION_MESSAGE);
+           System.out.println(winner + " is the winner");
+       }
+   }
+
+
     public static void main(String[] args) {
 
         launch(args);
     }
+
+
+
 }
