@@ -143,7 +143,6 @@ public class Board {
      * The rows in between are empty.
      */
     public void resetBoard() {
-
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < BOARD_SIZE; j += 2) { // Makes sure the Pieces are placed on squares where i+j is odd
                 if (i <= 2) {  //place player two's pawns in their starting place

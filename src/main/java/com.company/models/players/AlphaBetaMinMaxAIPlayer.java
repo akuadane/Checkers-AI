@@ -14,7 +14,7 @@ import java.util.List;
 public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
     LocalTime stTime;
     final int MAX_SECONDS = 5;
-    final int MAX_DEPTH=50;
+    final int MAX_DEPTH=5; // TODO make this a higher value during end game
 
     public AlphaBetaMinMaxAIPlayer(String name, Piece.PieceOwner myTurn) {
         super(name,myTurn);
