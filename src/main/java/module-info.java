@@ -4,6 +4,7 @@ module com.company {
 
     requires org.controlsfx.controls;
     requires junit;
+    requires mapdb;
 
     opens com.company to javafx.fxml;
     exports com.company.gui;

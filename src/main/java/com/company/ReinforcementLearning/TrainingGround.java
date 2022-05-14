@@ -9,7 +9,7 @@ import com.company.models.players.AlphaBetaMinMaxAIPlayer;
 public class TrainingGround {
     private static final double LEARNING_RATE=0.1;
     private static final double DISCOUNT=0.95;
-    private static final int EPISODES =20_000;
+    private static final int EPISODES = 20_000;
     public static void main(String[] args) {
 
             CheckersEnvironment env = new CheckersEnvironment(new AlphaBetaMinMaxAIPlayer());
