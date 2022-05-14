@@ -12,13 +12,14 @@ public class TrainingGround {
     private static final int EPISODES = 20_000;
     public static void main(String[] args) {
 
-            CheckersEnvironment env = new CheckersEnvironment(new AlphaBetaMinMaxAIPlayer());
+            CheckersEnvironment env = new CheckersEnvironment(new AlphaBetaMinMaxAIPlayer("AI", Piece.PieceOwner.PLAYER1));
             Board state = env.reset();
             QTable qTable = new QTable();
             ActionResult result = new ActionResult();
 
             while ( !result.isDone()){
-                Move action = qTable.getAction(state);
+                int actionIndex = qTable.getAction(state);
+                Move action = state.reachablePositionsByPlayer(state.getTurn()).get(actionIndex);
                 try {
                     ActionResult newState = env.takeAction(action);
                     if(!newState.isDone()){
@@ -29,8 +30,9 @@ public class TrainingGround {
                         qTable.setActionScore(state,new_q);
 
                     }else{
-                        if(state.isGameOver()== Piece.PieceOwner.PLAYER1)
-                            qTable.setActionScore(state,0);
+                        Piece.PieceOwner winner = state.isGameOver();
+                        if(winner== Piece.PieceOwner.PLAYER1)
+                            qTable.setActionScore(state,CheckersEnvironment.HIGHEST_REWARD);
                     }
                     result = newState;
                     state = result.getState();
@@ -39,6 +41,8 @@ public class TrainingGround {
                     System.out.println(e.getMessage());
                 } catch (CloneNotSupportedException e) {
                    System.out.println(e.getMessage());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
             }
     }

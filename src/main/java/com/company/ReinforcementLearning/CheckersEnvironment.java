@@ -9,12 +9,15 @@ import com.company.models.players.Player;
 import java.util.List;
 
 public class CheckersEnvironment{
+    public static final double LOWEST_REWARD = 0;
+    public static double HIGHEST_REWARD = 2;
     private Board state;
-    private Player player2;
+    private Player player1;
 
 
-    public CheckersEnvironment(Player player2){
-        this.player2 = player2;
+    public CheckersEnvironment(Player player1){
+        this.player1 = player1;
+       this.reset();
     }
 
     public ActionResult takeAction(Move mv) throws InValidMove, CloneNotSupportedException {
@@ -22,7 +25,7 @@ public class CheckersEnvironment{
         this.state.makeMove(mv);
         // TODO compare the prev and current board to make a reward
 
-        Move p2Move = this.player2.makeMove(new Board(this.state));
+        Move p2Move = this.player1.makeMove(new Board(this.state));
 
 
         this.state.makeMove(p2Move);
@@ -32,6 +35,14 @@ public class CheckersEnvironment{
     }
     public Board reset(){
         this.state = new Board();
+        try {
+            Move mv = this.player1.makeMove(new Board(this.state));
+            this.state.makeMove(mv);
+        } catch (InValidMove e) {
+            throw new RuntimeException(e);
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
         return new Board(state);
     }
 

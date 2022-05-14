@@ -296,4 +296,26 @@ public class Board {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        String boardStr="";
+        for (int r = 0; r < BOARD_SIZE; r++) {
+            for (int c = (1 - r % 2); c < BOARD_SIZE; c += 2) {
+                Piece piece = this.board[r][c];
+                char p = '-';
+                if (piece != null) {
+                    if (piece.owner == Piece.PieceOwner.PLAYER1) {
+                        p = 'a';
+                    } else {
+                        p = 'b';
+                    }
+                    if (piece instanceof King)
+                        p = Character.toUpperCase(p);
+                }
+                boardStr+=p;
+            }
+        }
+        return boardStr;
+    }
 }
