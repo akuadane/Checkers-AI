@@ -27,12 +27,15 @@ public class TrainingGround {
                         double current_q = qTable.getMaxActionScore(state);
                         double new_q = (1-LEARNING_RATE) * current_q + LEARNING_RATE * (newState.getReward() + DISCOUNT* max_future);
 
-                        qTable.setActionScore(state,new_q);
+                        qTable.setActionScore(state,actionIndex, new_q);
 
                     }else{
                         Piece.PieceOwner winner = state.isGameOver();
-                        if(winner== Piece.PieceOwner.PLAYER1)
-                            qTable.setActionScore(state,CheckersEnvironment.HIGHEST_REWARD);
+                        if(winner== Piece.PieceOwner.PLAYER2)
+                            qTable.setActionScore(state,actionIndex,CheckersEnvironment.HIGHEST_REWARD);
+                        else
+                            qTable.setActionScore(state,actionIndex,CheckersEnvironment.LOWEST_REWARD);
+
                     }
                     result = newState;
                     state = result.getState();

@@ -53,13 +53,32 @@ public class QTable {
 
 
     }
-    public double getMaxActionScore(Board state){
-        return 0;
+    public double getMaxActionScore(Board state) throws Exception {
+
+        double[] actions = this.map.get(state.toString());
+        if(actions==null)
+            throw  new Exception("No entry found.");
+
+        double max = Double.MIN_VALUE;
+        int maxIndex = 0;
+        for (int i = 0; i < actions.length; i++) {
+            if(actions[i]>max){
+                max = actions[i];
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+
+
     }
-    public void setActionScore(Board state, double score) throws Exception {
+    public void setActionScore(Board state,int index, double score) throws Exception {
         double[] actions = this.map.get(state.toString());
         if(actions==null)
             throw new Exception("Entry not found.");
 
+        actions[index] = score;
+
+        this.map.put(state.toString(),actions);
+        db.commit();
     }
 }
