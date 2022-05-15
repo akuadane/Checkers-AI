@@ -3,6 +3,7 @@ package com.company.ReinforcementLearning;
 import com.company.models.Board;
 import com.company.models.exceptions.InValidMove;
 import com.company.models.move.Move;
+import com.company.models.piece.Pawn;
 import com.company.models.piece.Piece;
 import com.company.models.players.Player;
 
@@ -17,21 +18,31 @@ public class CheckersEnvironment{
 
     public CheckersEnvironment(Player player1){
         this.player1 = player1;
-       this.reset();
+        this.reset();
     }
 
     public ActionResult takeAction(Move mv) throws InValidMove, CloneNotSupportedException {
-
+        double reward = 0;
         this.state.makeMove(mv);
         // TODO compare the prev and current board to make a reward
 
+        reward = this.rewardFunc();
+
+        Piece.PieceOwner winner = this.state.isGameOver();
+        if(winner!=null && winner!=player1.myTurn){
+            return new ActionResult(new Board(this.state),HIGHEST_REWARD,true);
+        }
+
         Move p2Move = this.player1.makeMove(new Board(this.state));
-
-
         this.state.makeMove(p2Move);
-        // TODO assess the board state and update reward
 
-        return null;
+        // TODO assess the board state and update reward
+        winner = this.state.isGameOver();
+        if(winner!=null && winner==player1.myTurn){
+            return new ActionResult(new Board(this.state),LOWEST_REWARD,true);
+        }
+
+        return new ActionResult(new Board(this.state),reward,false);
     }
     public Board reset(){
         this.state = new Board();
@@ -47,7 +58,61 @@ public class CheckersEnvironment{
     }
 
     public double rewardFunc(){
-        return 0;
+        double reward = ( HIGHEST_REWARD +LOWEST_REWARD )/2;
+        int[] myCurrPieces = new int[2]; // Pawns on index 0 and kings on index 1
+        int[] oppCurrPieces = new int[2];
+        int[] myPrevPieces = new int[2];
+        int[] oppPrevPieces = new int[2];
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            for (int j = (1 - i % 2); j < Board.BOARD_SIZE; j += 2) {
+                Piece currP = this.state.getPiece(i,j);
+                Piece prevP = this.state.prevBoard[i][j];
+
+                if(currP!=null){
+                    if(currP.owner == player1.myTurn){
+                        if(currP instanceof Pawn)
+                            oppCurrPieces[0]++;
+                        else
+                            oppCurrPieces[1]++;
+                    }else{
+                        if(currP instanceof Pawn)
+                            myCurrPieces[0]++;
+                        else
+                            myCurrPieces[1]++;
+                    }
+                }
+                if(prevP!=null){
+                    if(prevP.owner == player1.myTurn){
+                        if(prevP instanceof Pawn)
+                            oppPrevPieces[0]++;
+                        else
+                            oppPrevPieces[1]++;
+                    }else{
+                        if(prevP instanceof Pawn)
+                            myPrevPieces[0]++;
+                        else
+                            myPrevPieces[1]++;
+                    }
+                }
+            }
+        }
+
+        if(oppCurrPieces[0]-oppPrevPieces[0]<0) // when we jump over opponent's pawn
+            reward= reward + reward*0.20*(oppPrevPieces[0]-oppCurrPieces[0]);
+        if(oppCurrPieces[1]-oppPrevPieces[1]<0)
+            reward= reward + reward*0.25*(oppPrevPieces[1]-oppCurrPieces[1]); // when we jump over opponent's king
+
+        if(myCurrPieces[0]-myPrevPieces[0]<0) // When our pawn gets jumped over
+            reward*=0.9*(1/(myPrevPieces[0]-myCurrPieces[0]));
+        if(myCurrPieces[1]-myPrevPieces[1]<0) // When our king gets jumped over
+            reward*=0.85*(1/(myPrevPieces[1]-myCurrPieces[1]));
+        if(myCurrPieces[1]-myPrevPieces[1]>0) // when we become a king
+            reward = reward + reward * 0.20;
+
+        if(reward>HIGHEST_REWARD)
+            reward = HIGHEST_REWARD;
+
+        return reward;
     }
     public double rewardFunc(double preReward){
         return 0;

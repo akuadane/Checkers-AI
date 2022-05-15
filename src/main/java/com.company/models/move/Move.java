@@ -3,9 +3,6 @@ package com.company.models.move;
 public class Move {
 
     private Position origin;
-
-
-
     private Position destination;
     public  Move(Position origin, Position destination){
         this.origin = origin;

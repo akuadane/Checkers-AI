@@ -4,7 +4,7 @@ import com.company.models.exceptions.InValidMove;
 import com.company.models.move.Move;
 import com.company.models.piece.Piece;
 
-public abstract class Player {
+public abstract class Player{
     String name;
     public Piece.PieceOwner myTurn;
     Player(String name, Piece.PieceOwner myTurn){
@@ -15,7 +15,6 @@ public abstract class Player {
         this.name = name;
         this.myTurn = Piece.PieceOwner.PLAYER1;
     }
-
     public abstract Move makeMove(Board board) throws InValidMove, CloneNotSupportedException;
 
     @Override
