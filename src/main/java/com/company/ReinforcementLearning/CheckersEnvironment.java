@@ -37,6 +37,7 @@ public class CheckersEnvironment{
         this.state.makeMove(p2Move);
 
         // TODO assess the board state and update reward
+        reward = (reward + this.rewardFunc())/2; //TODO change the ratios and see the result
         winner = this.state.isGameOver();
         if(winner!=null && winner==player1.myTurn){
             return new ActionResult(new Board(this.state),LOWEST_REWARD,true);
@@ -63,6 +64,7 @@ public class CheckersEnvironment{
         int[] oppCurrPieces = new int[2];
         int[] myPrevPieces = new int[2];
         int[] oppPrevPieces = new int[2];
+
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < Board.BOARD_SIZE; j += 2) {
                 Piece currP = this.state.getPiece(i,j);
@@ -114,9 +116,7 @@ public class CheckersEnvironment{
 
         return reward;
     }
-    public double rewardFunc(double preReward){
-        return 0;
-    }
+
     public void display(){
         this.state.display();
     }

@@ -18,6 +18,7 @@ public class TrainingGround {
             ActionResult result = new ActionResult();
 
             while ( !result.isDone()){
+                env.display();
                 int actionIndex = qTable.getAction(state);
                 Move action = state.reachablePositionsByPlayer(state.getTurn()).get(actionIndex);
                 try {

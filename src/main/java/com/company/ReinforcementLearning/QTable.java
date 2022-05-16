@@ -50,25 +50,24 @@ public class QTable {
                 }
             }
             return maxIndex;
-
-
     }
     public double getMaxActionScore(Board state) throws Exception {
-
+        int index = this.getAction(state);
         double[] actions = this.map.get(state.toString());
-        if(actions==null)
-            throw  new Exception("No entry found.");
+//        if(actions==null)
+//            throw  new Exception("No entry found.");
+//
+//        double max = Double.MIN_VALUE;
+//        int maxIndex = 0;
+//        for (int i = 0; i < actions.length; i++) {
+//            if(actions[i]>max){
+//                max = actions[i];
+//                maxIndex = i;
+//            }
+//        }
+//        return max;
 
-        double max = Double.MIN_VALUE;
-        int maxIndex = 0;
-        for (int i = 0; i < actions.length; i++) {
-            if(actions[i]>max){
-                max = actions[i];
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
-
+        return actions[index];
 
     }
     public void setActionScore(Board state,int index, double score) throws Exception {
