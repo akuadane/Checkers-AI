@@ -13,7 +13,7 @@ public abstract class Player{
     }
     Player(String name){
         this.name = name;
-        this.myTurn = Piece.PieceOwner.PLAYER1;
+        this.myTurn = Piece.PieceOwner.PLAYER2;
     }
     public abstract Move makeMove(Board board) throws InValidMove, CloneNotSupportedException;
 

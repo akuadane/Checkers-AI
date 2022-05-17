@@ -30,7 +30,7 @@ public class CheckersEnvironment{
 
         Piece.PieceOwner winner = this.state.isGameOver();
         if(winner!=null && winner!=player1.myTurn){
-            return new ActionResult(new Board(this.state),HIGHEST_REWARD,true);
+            return new ActionResult(new Board(this.state),HIGHEST_REWARD,winner,true);
         }
 
         Move p2Move = this.player1.makeMove(new Board(this.state));
@@ -40,10 +40,10 @@ public class CheckersEnvironment{
         reward = (reward + this.rewardFunc())/2; //TODO change the ratios and see the result
         winner = this.state.isGameOver();
         if(winner!=null && winner==player1.myTurn){
-            return new ActionResult(new Board(this.state),LOWEST_REWARD,true);
+            return new ActionResult(new Board(this.state),LOWEST_REWARD,winner,true);
         }
 
-        return new ActionResult(new Board(this.state),reward,false);
+        return new ActionResult(new Board(this.state),reward,null,false);
     }
     public Board reset(){
         this.state = new Board();
@@ -105,14 +105,17 @@ public class CheckersEnvironment{
             reward= reward + reward*0.25*(oppPrevPieces[1]-oppCurrPieces[1]); // when we jump over opponent's king
 
         if(myCurrPieces[0]-myPrevPieces[0]<0) // When our pawn gets jumped over
-            reward*=0.9*(1/(myPrevPieces[0]-myCurrPieces[0]));
+            reward*=0.6*(1/(myPrevPieces[0]-myCurrPieces[0]));
         if(myCurrPieces[1]-myPrevPieces[1]<0) // When our king gets jumped over
-            reward*=0.85*(1/(myPrevPieces[1]-myCurrPieces[1]));
+            reward*=0.5*(1/(myPrevPieces[1]-myCurrPieces[1]));
         if(myCurrPieces[1]-myPrevPieces[1]>0) // when we become a king
             reward = reward + reward * 0.20;
 
         if(reward>HIGHEST_REWARD)
             reward = HIGHEST_REWARD;
+
+        if(oppCurrPieces[0]+oppCurrPieces[1]==oppPrevPieces[0]+oppPrevPieces[1])
+            reward*=0.9;
 
         return reward;
     }

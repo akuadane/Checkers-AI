@@ -18,7 +18,7 @@ public class QTable {
     public QTable(String name){
         db = DBMaker.fileDB(DEFAULT_PATH).make();
         map = db.hashMap(name,Serializer.STRING,Serializer.DOUBLE_ARRAY).createOrOpen();
-
+        System.out.println(map.size());
     }
     public QTable(){
     this("v1");
@@ -35,7 +35,8 @@ public class QTable {
 
             Random random = new Random();
             for (int i = 0; i < actions.length; i++) {
-               actions[i] = random.nextDouble(CheckersEnvironment.LOWEST_REWARD,CheckersEnvironment.HIGHEST_REWARD);
+               actions[i] = random.nextDouble(CheckersEnvironment.LOWEST_REWARD,CheckersEnvironment.HIGHEST_REWARD+0.000001);
+
             }
 
             this.map.put(state.toString(),actions);
