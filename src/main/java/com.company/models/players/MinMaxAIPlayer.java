@@ -14,7 +14,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer {
 
     LocalTime stTime;
     final int MAX_SECONDS = 5;
-    final int MAX_DEPTH=50;
+    final int MAX_DEPTH=5;
 
     public MinMaxAIPlayer(String name, Piece.PieceOwner myTurn) {
         super(name,myTurn);
@@ -27,7 +27,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer {
 
     @Override
     public double evalBoard(Board board) {
-
+    // TODO check for end game and amend the algorithm to adapt to that
         int myValue=0;
         int otherValue=0;
 
