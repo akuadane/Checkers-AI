@@ -6,9 +6,7 @@ import com.company.models.move.Move;
 import com.company.models.move.Position;
 import com.company.models.piece.Piece;
 
-import com.company.models.players.AlphaBetaMinMaxAIPlayer;
-import com.company.models.players.Player;
-import com.company.models.players.RandomPlayer;
+import com.company.models.players.*;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -32,7 +30,7 @@ public class Checkers extends Application {
     private boolean aiTurn=false;
     @Override
     public void start(Stage stage){
-        this.aiPlayer= new AlphaBetaMinMaxAIPlayer();
+        this.aiPlayer= new BackRowAIPlayer();
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
         this.initBoardSquares();
