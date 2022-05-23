@@ -1,6 +1,7 @@
 package com.company.models.players.mcts;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class MCTSNode {
@@ -36,7 +37,15 @@ public class MCTSNode {
     public ArrayList<MCTSNode> getChildren() {
         return children;
     }
+    public MCTSNode getRandomChild(){
+        if(this.children.size()==0)
+            return null;
+        Random random = new Random();
+        return this.children.get(random.nextInt(0, this.children.size()));
+    }
     public void addChild(MCTSNode child){
         this.children.add(child);
     }
+    public void incrementPlays(){this.state.incrementPlays();}
+    public void incrementWins(){this.state.incrementWins();}
 }

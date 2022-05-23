@@ -30,11 +30,17 @@ public class NodeState {
         return myTurn;
     }
 
-    public long getWins() {
+    public int getWins() {
         return wins;
     }
 
     public int getPlays() {
         return plays;
     }
+
+    public void incrementPlays() {
+    this.plays++;
+    }
+
+    public void incrementWins() {this.wins++;}
 }
