@@ -13,7 +13,13 @@ public class NodeState {
         this.board = board;
         this.wins = 0;
         this.plays = 0;
-        this.myTurn = Piece.PieceOwner.PLAYER1;
+        this.myTurn = Piece.PieceOwner.PLAYER1; //TODO check if you really need this
+    }
+    public NodeState(NodeState nodeState){
+        this.board = new Board(nodeState.board);
+        this.wins = nodeState.wins;
+        this.plays = nodeState.plays;
+        this.myTurn = nodeState.myTurn;
     }
 
     public Board getBoard() {

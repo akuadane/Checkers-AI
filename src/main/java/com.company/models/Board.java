@@ -127,6 +127,15 @@ public class Board {
     }
 
     /**
+     * Returns the possible moves of the current player.
+     *
+     * @return ArrayList of moves
+     * */
+    public ArrayList<Move> reachablePositionsByPlayer(){
+        return this.reachablePositionsByPlayer(this.turn);
+    }
+
+    /**
      * Returns whose turn it is.
      *
      * @return the PieceOwner type whose turn it is.
