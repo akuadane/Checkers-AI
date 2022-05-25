@@ -5,6 +5,6 @@ module com.company {
     requires org.controlsfx.controls;
     requires junit;
 
-    opens com.company to javafx.fxml;
-    exports com.company.gui;
+    opens com.checkers to javafx.fxml;
+    exports com.checkers.gui;
 }
