@@ -1,4 +1,4 @@
-module com.company {
+module com.checkers {
     requires javafx.controls;
     requires javafx.fxml;
 
