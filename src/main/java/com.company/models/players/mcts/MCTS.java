@@ -1,9 +1,12 @@
 package com.company.models.players.mcts;
 
+import com.company.controller.Game;
 import com.company.models.Board;
 import com.company.models.exceptions.InValidMove;
 import com.company.models.move.Move;
 import com.company.models.piece.Piece;
+import com.company.models.players.Player;
+import com.company.models.players.RandomPlayer;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,7 +17,7 @@ public class MCTS {
     final int MAX_SECONDS = 5;
     
 
-    public Move getBestMove(MCTSNode node){
+    public Move getBestMove(MCTSNode node) throws InValidMove, CloneNotSupportedException {
         this.stTime = LocalTime.now();
         int noPlays =0;
         while(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==1){ //While time isn't up look for a good move
@@ -99,8 +102,12 @@ public class MCTS {
         }
 
     }
-    private Piece.PieceOwner simulateGame(MCTSNode node){
-        return null; // TODO implement simulation
+    private Piece.PieceOwner simulateGame(MCTSNode node) throws InValidMove, CloneNotSupportedException {
+        Game simulation = new Game(new RandomPlayer("P1", Piece.PieceOwner.PLAYER1),
+                                    new RandomPlayer("P2", Piece.PieceOwner.PLAYER2),
+                                   new Board(node.getState().getBoard()));
+        Player winner = simulation.play();
+        return winner.myTurn; // TODO implement simulation
     }
 
     private void backPropagate(MCTSNode cpPromisingNode, Piece.PieceOwner winner) {

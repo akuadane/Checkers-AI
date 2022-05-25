@@ -18,6 +18,12 @@ public Game(Player player1, Player player2){
     this.playerInTurn = player1;
     this.board = new Board();
 }
+public Game(Player player1, Player player2,Board board){
+    this.player1 = player1;
+    this.player2 = player2;
+    this.playerInTurn = (board.getTurn()==player1.myTurn)? player1: player2;
+    this.board = board;
+}
 
 public Player play() throws InValidMove, CloneNotSupportedException {
     while (true){
