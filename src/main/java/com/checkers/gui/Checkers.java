@@ -5,44 +5,42 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.move.Position;
 import com.checkers.models.piece.Piece;
-
-import com.checkers.models.players.*;
+import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
+import com.checkers.models.players.Player;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-
 import javafx.scene.Scene;
-
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 
 import java.util.ArrayList;
 
 public class Checkers extends Application {
-    private final int WIDTH =Board.BOARD_SIZE *  BoardSquare.SIZE;
-    private final int HEIGHT =Board.BOARD_SIZE *  BoardSquare.SIZE;
+    private final int WIDTH = Board.BOARD_SIZE * BoardSquare.SIZE;
+    private final int HEIGHT = Board.BOARD_SIZE * BoardSquare.SIZE;
     private Board board;
     private BoardSquare[][] boardSquares;
     private Position origin;
     Player aiPlayer;
-    private boolean aiTurn=false;
+    private boolean aiTurn = false;
+
     @Override
-    public void start(Stage stage){
-        this.aiPlayer= new AlphaBetaMinMaxAIPlayer();
+    public void start(Stage stage) {
+        this.aiPlayer = new AlphaBetaMinMaxAIPlayer();
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
         this.initBoardSquares();
 
         GridPane gridPane = new GridPane();
-        gridPane.setPrefSize( WIDTH,HEIGHT);
+        gridPane.setPrefSize(WIDTH, HEIGHT);
         for (int i = 0; i < this.boardSquares.length; i++) {
             for (int j = 0; j < this.boardSquares.length; j++) {
-                gridPane.add(this.boardSquares[i][j],j,i);
+                gridPane.add(this.boardSquares[i][j], j, i);
             }
         }
 
-        Scene scene = new Scene(gridPane,WIDTH,HEIGHT);
+        Scene scene = new Scene(gridPane, WIDTH, HEIGHT);
         stage.setTitle("Checkers");
         stage.setScene(scene);
         stage.setResizable(false);
@@ -50,14 +48,15 @@ public class Checkers extends Application {
 
 
     }
-    public void initBoardSquares(){
+
+    public void initBoardSquares() {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                BoardSquare square = new BoardSquare(i,j);
-                if(this.board.getPiece(i,j)==null)
+                BoardSquare square = new BoardSquare(i, j);
+                if (this.board.getPiece(i, j) == null)
                     square.setPiece();
                 else
-                    square.setPiece(this.board.getPiece(i,j).toString());
+                    square.setPiece(this.board.getPiece(i, j).toString());
 
                 square.setHighlight(false);
                 square.setOnAction(actionEvent -> boardClicked(square.getCoordinate()));
@@ -65,42 +64,44 @@ public class Checkers extends Application {
             }
         }
     }
-    public void updateBoard(){
+
+    public void updateBoard() {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < Board.BOARD_SIZE; j += 2) {
 
-                if(this.board.getPiece(i,j)==null)
+                if (this.board.getPiece(i, j) == null)
                     this.boardSquares[i][j].setPiece();
                 else
-                    this.boardSquares[i][j].setPiece(this.board.getPiece(i,j).toString());
+                    this.boardSquares[i][j].setPiece(this.board.getPiece(i, j).toString());
 
             }
         }
     }
-    public void boardClicked(Position clickedPos){
 
-        if(aiTurn)
+    public void boardClicked(Position clickedPos) {
+
+        if (aiTurn)
             return;
 
-        if(this.origin==null){
+        if (this.origin == null) {
             Piece p = board.getPiece(clickedPos);
-            if(p==null)
+            if (p == null)
                 return;
 
-            if(p.owner==board.getTurn()){
+            if (p.owner == board.getTurn()) {
                 this.origin = clickedPos;
-                this.setHighlight(this.board.reachablePositions(clickedPos),true);
+                this.setHighlight(this.board.reachablePositions(clickedPos), true);
             }
-        }else{
+        } else {
             Piece p = board.getPiece(clickedPos);
-            if(p!=null && p.owner==board.getTurn()){
+            if (p != null && p.owner == board.getTurn()) {
                 this.origin = clickedPos;
                 this.turnOffAllHighlights();
-                this.setHighlight(this.board.reachablePositions(this.origin),true);
+                this.setHighlight(this.board.reachablePositions(this.origin), true);
                 return;
             }
 
-            Move move = new Move(this.origin,clickedPos);
+            Move move = new Move(this.origin, clickedPos);
             try {
                 this.board.makeMove(move);
                 updateBoard();
@@ -108,7 +109,7 @@ public class Checkers extends Application {
                 isThereWinner();
 
 
-                if(aiPlayer!=null){ //AI will make a move
+                if (aiPlayer != null) { //AI will make a move
 
                     this.aiMove();
 
@@ -125,8 +126,8 @@ public class Checkers extends Application {
         }
     }
 
-    public void aiMove(){
-        this.aiTurn=true;
+    public void aiMove() {
+        this.aiTurn = true;
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
@@ -146,25 +147,25 @@ public class Checkers extends Application {
             @Override
             protected void done() {
                 super.done();
-                aiTurn=false;
+                aiTurn = false;
                 isThereWinner();
             }
         };
 
-         Thread newTask = new Thread(task);
-         newTask.start();
+        Thread newTask = new Thread(task);
+        newTask.start();
 
     }
 
-    private void setHighlight(ArrayList<Move> moves, boolean light){
+    private void setHighlight(ArrayList<Move> moves, boolean light) {
         for (Move mv :
                 moves) {
             this.boardSquares[mv.getDestination().getRow()][mv.getDestination().getColumn()].setHighlight(light);
         }
     }
 
-    private void turnOffAllHighlights(){
-        for (BoardSquare[] boardSquare : this.boardSquares){
+    private void turnOffAllHighlights() {
+        for (BoardSquare[] boardSquare : this.boardSquares) {
             for (BoardSquare bs :
                     boardSquare) {
                 bs.setHighlight(false);
@@ -172,20 +173,19 @@ public class Checkers extends Application {
         }
     }
 
-   public void isThereWinner(){
-       Piece.PieceOwner winner = this.board.isGameOver();
-       if(winner!=null){
-           //   JOptionPane.showMessageDialog(this, winner + " won.", "WINNER ALERT " , JOptionPane.INFORMATION_MESSAGE);
-           System.out.println(winner + " is the winner");
-       }
-   }
+    public void isThereWinner() {
+        Piece.PieceOwner winner = this.board.isGameOver();
+        if (winner != null) {
+            //   JOptionPane.showMessageDialog(this, winner + " won.", "WINNER ALERT " , JOptionPane.INFORMATION_MESSAGE);
+            System.out.println(winner + " is the winner");
+        }
+    }
 
 
     public static void main(String[] args) {
 
         launch(args);
     }
-
 
 
 }

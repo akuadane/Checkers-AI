@@ -4,6 +4,7 @@ module com.checkers {
 
     requires org.controlsfx.controls;
     requires junit;
+    requires javafx.graphics;
 
     opens com.checkers to javafx.fxml;
     exports com.checkers.gui;
