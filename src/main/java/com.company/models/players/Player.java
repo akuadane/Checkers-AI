@@ -7,11 +7,11 @@ import com.company.models.piece.Piece;
 public abstract class Player {
     String name;
     public Piece.PieceOwner myTurn;
-    Player(String name, Piece.PieceOwner myTurn){
+    public Player(String name, Piece.PieceOwner myTurn){
         this.name = name;
         this.myTurn = myTurn;
     }
-    Player(String name){
+    public Player(String name){
         this.name = name;
         this.myTurn = Piece.PieceOwner.PLAYER2;
     }

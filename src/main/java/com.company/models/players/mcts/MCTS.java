@@ -22,7 +22,7 @@ public class MCTS {
         int noPlays =0;
         while(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==1){ //While time isn't up look for a good move
             MCTSNode promisingNode = this.selectBestNode(node);
-            this.expandNode(node);
+            this.expandNode(promisingNode);
 
             MCTSNode cpPromisingNode = promisingNode;
             if(cpPromisingNode.getChildren().size()!=0)
@@ -85,17 +85,13 @@ public class MCTS {
         
     }
 
-    private void expandNode(MCTSNode parent) {
+    private void expandNode(MCTSNode parent) throws InValidMove {
         ArrayList<Move> possibleMoves = parent.getState().getBoard().reachablePositionsByPlayer();
 
         for (Move mv :
                 possibleMoves) {
             Board board = new Board(parent.getState().getBoard());
-            try {
-                board.makeMove(mv);
-            } catch (InValidMove e) {
-                throw new RuntimeException(e);
-            }
+            board.makeMove(mv);
             NodeState childState = new NodeState(board);
             MCTSNode child = new MCTSNode(childState,parent);
             parent.addChild(child);
@@ -106,7 +102,7 @@ public class MCTS {
         Game simulation = new Game(new RandomPlayer("P1", Piece.PieceOwner.PLAYER1),
                                     new RandomPlayer("P2", Piece.PieceOwner.PLAYER2),
                                    new Board(node.getState().getBoard()));
-        Player winner = simulation.play();
+        Player winner = simulation.playWithoutDebugging();
         return winner.myTurn; // TODO implement simulation
     }
 

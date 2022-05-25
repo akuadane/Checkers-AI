@@ -52,4 +52,19 @@ public Player play() throws InValidMove, CloneNotSupportedException {
 
 }
 
+public Player playWithoutDebugging() throws InValidMove, CloneNotSupportedException {
+  while(true){
+      Move playerMove = playerInTurn.makeMove(new Board(board));
+      board.makeMove(playerMove);
+
+      Piece.PieceOwner winner = board.isGameOver();
+      if(winner!=null){
+          Player winnerPlayer = ((player1.myTurn==winner)?(player1):(player2));
+          return winnerPlayer;
+      }
+      playerInTurn = (playerInTurn.equals(player1))?player2:player1;
+  }
+
+}
+
 }
