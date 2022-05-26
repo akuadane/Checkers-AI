@@ -103,7 +103,7 @@ public class MCTS {
                                     new RandomPlayer("P2", Piece.PieceOwner.PLAYER2),
                                    new Board(node.getState().getBoard()));
         Player winner = simulation.playWithoutDebugging();
-        return winner.myTurn; // TODO implement simulation
+        return winner.myTurn;
     }
 
     private void backPropagate(MCTSNode cpPromisingNode, Piece.PieceOwner winner) {

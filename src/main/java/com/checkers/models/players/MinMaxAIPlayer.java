@@ -72,7 +72,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer {
             temp.makeMove(mv);
             double moveVal  = min(temp,nextInTurn,MAX_DEPTH);
 
-            if(max<moveVal || myMove==null){
+            if( myMove==null || max<moveVal ){
                 myMove = mv;
                 max=moveVal;
             }
@@ -82,6 +82,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer {
     }
 
     private double min(Board prevBoard, Piece.PieceOwner inTurn, int depth) throws InValidMove {
+
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
 
