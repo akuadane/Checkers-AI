@@ -1,13 +1,16 @@
 package com.checkers.gui;
 
+import com.checkers.gui.BoardSquare;
 import com.checkers.models.Board;
+import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.move.Position;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
 import com.checkers.models.players.Player;
-import javafx.application.Application;
+import com.checkers.models.players.RemotePlayer;
+import com.checkers.models.prefs.Config;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -16,17 +19,35 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class Checkers extends Application {
+public class Checkers {
     private final int WIDTH = Board.BOARD_SIZE * BoardSquare.SIZE;
     private final int HEIGHT = Board.BOARD_SIZE * BoardSquare.SIZE;
     private Board board;
     private BoardSquare[][] boardSquares;
     private Position origin;
     Player aiPlayer;
+    Player player;
     private boolean aiTurn = false;
+    public Config config;
+    public static Checkers instance;
 
-    @Override
-    public void start(Stage stage) {
+    private Checkers() {
+
+    }
+
+    public synchronized static Checkers getInstance() {
+        if (instance != null)
+            return instance;
+        instance = new Checkers();
+        return instance;
+    }
+
+    public void start(Stage stage) throws CouldntConnectToServerException {
+        config = (Config) (stage.getUserData());
+        switch (config.getGameType()) {
+            case COMPUTER -> this.player = new AlphaBetaMinMaxAIPlayer();
+            case REMOTE -> this.player = new RemotePlayer("John", Piece.PieceOwner.PLAYER1);
+        }
         this.aiPlayer = new AlphaBetaMinMaxAIPlayer();
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
@@ -45,8 +66,6 @@ public class Checkers extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
-
-
     }
 
     public void initBoardSquares() {
@@ -68,7 +87,6 @@ public class Checkers extends Application {
     public void updateBoard() {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < Board.BOARD_SIZE; j += 2) {
-
                 if (this.board.getPiece(i, j) == null)
                     this.boardSquares[i][j].setPiece();
                 else
@@ -79,7 +97,6 @@ public class Checkers extends Application {
     }
 
     public void boardClicked(Position clickedPos) {
-
         if (aiTurn)
             return;
 
@@ -179,12 +196,6 @@ public class Checkers extends Application {
             //   JOptionPane.showMessageDialog(this, winner + " won.", "WINNER ALERT " , JOptionPane.INFORMATION_MESSAGE);
             System.out.println(winner + " is the winner");
         }
-    }
-
-
-    public static void main(String[] args) {
-
-        launch(args);
     }
 
 
