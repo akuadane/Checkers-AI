@@ -12,6 +12,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 
+/**
+ * Builds the tree and performs all the necessary actions needed to implement Monte Carlo Tree Search.
+ * It selects, expands, Simulate and Updates the tree.
+ * */
 public class MCTS {
     LocalTime stTime;
     final int MAX_SECONDS = 5;
@@ -47,8 +51,14 @@ public class MCTS {
         }
         return  cpNode;
     }
+    /**
+     * Selects the best out of the possible moves for the root node.
+     *
+     * @param root The root of the tree.
+     * @param noPlays The total number games simulated.
+     * @return The index of the best move.
+     * */
     private int selectBestMove(MCTSNode root,int noPlays){
-
 
         int bestMvIndex=0;
         double winRate=0;
@@ -85,6 +95,13 @@ public class MCTS {
         
     }
 
+    /**
+     * Creates nodes based on the possible moves from that state. The newly created nodes
+     * will have the same parent and are different from each other by the move made to reach their state from
+     * their parent.
+     *
+     * @param parent The parent node from which they are created.
+     * */
     private void expandNode(MCTSNode parent) throws InValidMove {
         ArrayList<Move> possibleMoves = parent.getState().getBoard().reachablePositionsByPlayer();
 
@@ -98,6 +115,12 @@ public class MCTS {
         }
 
     }
+    /**
+     * Simulates the game to know what the end state of the node will be.
+     *
+     * @param node The node from which we will start our simulation.
+     * @return The winner of the simulation.
+     * */
     private Piece.PieceOwner simulateGame(MCTSNode node) throws InValidMove, CloneNotSupportedException {
         Game simulation = new Game(new RandomPlayer("P1", Piece.PieceOwner.PLAYER1),
                                     new RandomPlayer("P2", Piece.PieceOwner.PLAYER2),
@@ -106,6 +129,13 @@ public class MCTS {
         return winner.myTurn;
     }
 
+
+    /**
+     * Updates all of a node's parents with the result obtained from a simulation.
+     *
+     * @param cpPromisingNode The node and its parents are going to be updated.
+     * @param winner The result from the simulation.
+     * */
     private void backPropagate(MCTSNode cpPromisingNode, Piece.PieceOwner winner) {
         MCTSNode temp = cpPromisingNode;
 

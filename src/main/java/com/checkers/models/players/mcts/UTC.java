@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class UTC {
-    public static double uctValue(
+    public static double uctValue( // determines which child to value more.
             int parentVisit, double nodeWinScore, int nodeVisit) {
         if (nodeVisit == 0) {
-            return Integer.MAX_VALUE;
+            return Integer.MAX_VALUE; // To prioritize exploration over expansion.
         }
         return (nodeWinScore / (double) nodeVisit)
                 + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) nodeVisit);
