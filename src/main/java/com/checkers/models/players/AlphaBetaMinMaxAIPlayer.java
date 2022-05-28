@@ -62,7 +62,6 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         stTime = LocalTime.now();
         double max=Double.MIN_VALUE;
         Move myMove=null ;
-        Piece.PieceOwner nextInTurn = (myTurn== Piece.PieceOwner.PLAYER1)? Piece.PieceOwner.PLAYER2: Piece.PieceOwner.PLAYER1;
 
 
         for (Move mv :
@@ -70,7 +69,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
 
             Board temp = new Board(board);
             temp.makeMove(mv);
-            double moveVal  = min(temp,nextInTurn,MAX_DEPTH,Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY);
+            double moveVal  = min(temp,MAX_DEPTH,Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY);
 
             if(max<moveVal || myMove==null){
                 myMove = mv;
@@ -81,18 +80,16 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         return myMove;
     }
 
-    private double min(Board prevBoard, Piece.PieceOwner inTurn, int depth, double alpha, double beta) throws InValidMove, CloneNotSupportedException {
+    private double min(Board prevBoard, int depth, double alpha, double beta) throws InValidMove, CloneNotSupportedException {
+        if(prevBoard.isGameOver()!=null)
+            return evalBoard(prevBoard);
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
 
         if(depth==0)
             return evalBoard(prevBoard);
 
-        List<Move> moveList = prevBoard.reachablePositionsByPlayer(inTurn);
-        Piece.PieceOwner nextInTurn = (inTurn== Piece.PieceOwner.PLAYER1)? Piece.PieceOwner.PLAYER2: Piece.PieceOwner.PLAYER1;
-
-        if(moveList.size()==0)
-            return evalBoard(prevBoard);
+        List<Move> moveList = prevBoard.reachablePositionsByPlayer();
 
         Collections.shuffle(moveList);
         double min=Double.MAX_VALUE;
@@ -102,7 +99,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             Board temp = new Board(prevBoard);
             temp.makeMove(mv);
 
-            double moveVal = max(temp,nextInTurn,depth-1,alpha,beta);
+            double moveVal = max(temp,depth-1,alpha,beta);
             min = Math.min(min,moveVal);
             beta = Math.min(beta, moveVal);
 
@@ -115,18 +112,17 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
         return min;
     }
 
-    private double max(Board prevBoard, Piece.PieceOwner inTurn, int depth, double alpha, double beta) throws InValidMove, CloneNotSupportedException {
-
+    private double max(Board prevBoard,  int depth, double alpha, double beta) throws InValidMove, CloneNotSupportedException {
+        if(prevBoard.isGameOver()!=null)
+            return evalBoard(prevBoard);
         if(stTime.plusSeconds(MAX_SECONDS).compareTo(LocalTime.now())==-1)
             return evalBoard(prevBoard);
         if(depth==0)
             return evalBoard(prevBoard);
 
-        List<Move> moveList = prevBoard.reachablePositionsByPlayer(inTurn);
-        Piece.PieceOwner nextInTurn = (inTurn== Piece.PieceOwner.PLAYER1)? Piece.PieceOwner.PLAYER2: Piece.PieceOwner.PLAYER1;
+        List<Move> moveList = prevBoard.reachablePositionsByPlayer();
 
-        if(moveList.size()==0)
-            return evalBoard(prevBoard);
+
         Collections.shuffle(moveList);
         double max=Double.MIN_VALUE;
 
@@ -135,7 +131,7 @@ public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
             Board temp = new Board(prevBoard);
             temp.makeMove(mv);
 
-            double moveVal = min(temp,nextInTurn,depth-1,alpha,beta);
+            double moveVal = min(temp,depth-1,alpha,beta);
             max = Math.max(max,moveVal);
             alpha = Math.max(alpha,moveVal);
 

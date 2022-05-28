@@ -5,6 +5,7 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
 import com.checkers.models.players.BackRowAIPlayer;
+import com.checkers.models.players.MinMaxAIPlayer;
 
 public class Main {
 
