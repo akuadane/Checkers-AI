@@ -54,7 +54,11 @@
             <version>4.13.1</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx</artifactId>
+            <version>18.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,11 +1,12 @@
-module com.company {
+module com.checkers {
     requires javafx.controls;
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
     requires junit;
+    requires javafx.graphics;
     requires mapdb;
 
-    opens com.company to javafx.fxml;
-    exports com.company.gui;
+    opens com.checkers to javafx.fxml;
+    exports com.checkers.gui;
 }
