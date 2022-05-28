@@ -13,7 +13,7 @@ public class CheckersEnvironment{
     public static final double LOWEST_REWARD = 0;
     public static double HIGHEST_REWARD = 2;
     private Board state;
-    private Player player1;
+    private final Player player1;
 
 
     public CheckersEnvironment(Player player1){
@@ -22,7 +22,7 @@ public class CheckersEnvironment{
     }
 
     public ActionResult takeAction(Move mv) throws InValidMove, CloneNotSupportedException {
-        double reward = 0;
+        double reward ;
         this.state.makeMove(mv);
         // TODO compare the prev and current board to make a reward
 
@@ -50,9 +50,7 @@ public class CheckersEnvironment{
         try {
             Move mv = this.player1.makeMove(new Board(this.state));
             this.state.makeMove(mv);
-        } catch (InValidMove e) {
-            throw new RuntimeException(e);
-        } catch (CloneNotSupportedException e) {
+        } catch (InValidMove | CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
         return new Board(state);
