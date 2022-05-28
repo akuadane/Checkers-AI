@@ -125,6 +125,9 @@ public class Board {
             return jumps;
         return moves;
     }
+    public ArrayList<Move> reachablePositionsByPlayer(){
+        return this.reachablePositionsByPlayer(this.turn);
+    }
 
     /**
      * Returns whose turn it is.
