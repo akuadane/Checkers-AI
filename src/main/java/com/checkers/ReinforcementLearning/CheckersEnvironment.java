@@ -3,11 +3,13 @@ package com.checkers.ReinforcementLearning;
 import com.checkers.models.Board;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
+import com.checkers.models.piece.King;
 import com.checkers.models.piece.Pawn;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.Player;
 
 import java.util.List;
+import java.util.Random;
 
 public class CheckersEnvironment{
     public static final double LOWEST_REWARD = 0;
@@ -18,7 +20,6 @@ public class CheckersEnvironment{
 
     public CheckersEnvironment(Player player1){
         this.player1 = player1;
-        this.reset();
     }
 
     public ActionResult takeAction(Move mv) throws InValidMove, CloneNotSupportedException {
@@ -54,6 +55,53 @@ public class CheckersEnvironment{
             throw new RuntimeException(e);
         }
         return new Board(state);
+    }
+    public Board randomReset(int n){
+        this.state = new Board();
+        this.state.board = new Piece[Board.BOARD_SIZE][Board.BOARD_SIZE];
+
+        Random random = new Random();
+        int tempN = n;
+        while(tempN>0){
+                 int r = random.nextInt(0,Board.BOARD_SIZE);
+                 int c = random.nextInt(0,Board.BOARD_SIZE);
+
+                 if((r+c)%2==0 || !this.state.isEmpty(r,c))
+                     continue;
+
+                 Piece piece = null;
+                 Piece.PieceOwner turn = null;
+
+                if(random.nextBoolean())
+                    turn = Piece.PieceOwner.PLAYER1;
+                else
+                    turn = Piece.PieceOwner.PLAYER2;
+
+                 if(random.nextBoolean() | r==0 || r==Board.BOARD_SIZE-1)
+                     piece = new King(turn);
+                 else
+                     piece = new Pawn(turn);
+
+                this.state.setPiece(r,c,piece);
+                tempN--;
+        }
+        if(this.state.isGameOver()!=null)  // Makes sure the random game generated isn't over
+            return this.randomReset(n);
+
+        try {
+            Move mv= this.player1.makeMove(new Board(this.state));
+            this.state.makeMove(mv);
+        } catch (InValidMove e) {
+            throw new RuntimeException(e);
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        if(this.state.isGameOver()!=null)  // Makes sure the random game generated isn't over
+            return this.randomReset(n);
+
+        return new Board(this.state);
     }
 
     public double rewardFunc(){

@@ -21,14 +21,14 @@ public class TrainingGround {
     private static double epsilon_decay_value = epsilon / ( END_EPSILON_DECAYING - START_EPSILON_DECAYING);
     public static void main(String[] args) {
 
-            CheckersEnvironment env = new CheckersEnvironment(new AlphaBetaMinMaxAIPlayer("AI", Piece.PieceOwner.PLAYER1));
+            CheckersEnvironment env = new CheckersEnvironment(new RandomPlayer("AI", Piece.PieceOwner.PLAYER1));
 
-            QTable qTable = new QTable();
+            QTable qTable = new QTable("Four-Player");
 
         Random random = new Random();
         for (int i = 0; i < EPISODES+1; i++) {
             ActionResult result = new ActionResult();
-            Board state = env.reset();
+            Board state = env.randomReset(4);
             System.out.println(i+"\r");
             while ( !result.isDone()){
                 if(i%SHOW==0){
@@ -36,7 +36,7 @@ public class TrainingGround {
                     System.out.println("=========================");
                 }
                 int actionIndex = qTable.getAction(state);
-                List<Move> possibleMoves = state.reachablePositionsByPlayer(state.getTurn());
+                List<Move> possibleMoves = state.reachablePositionsByPlayer();
 
                 if(random.nextDouble()<=epsilon ){  // introduces randomness
                     actionIndex = random.nextInt(0,possibleMoves.size());

@@ -7,6 +7,7 @@ import com.checkers.models.move.Position;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
 import com.checkers.models.players.Player;
+import com.checkers.models.players.ReinforcedMinMax;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -27,7 +28,7 @@ public class Checkers extends Application {
 
     @Override
     public void start(Stage stage) {
-        this.aiPlayer = new AlphaBetaMinMaxAIPlayer();
+        this.aiPlayer = new ReinforcedMinMax();
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
         this.initBoardSquares();

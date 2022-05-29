@@ -13,13 +13,11 @@ public class ReinforcedPlayer extends Player{
         this.qTable = new QTable(version);
     }
 
-    public ReinforcedPlayer(String name) {
-        super(name);
-        this.qTable = new QTable();
+    public ReinforcedPlayer(String version) {
+        super("Reinforced Player");
+        this.qTable = new QTable(version);
     }
-    public ReinforcedPlayer(){
-        this("Reinforced Player");
-    }
+
 
     @Override
     public Move makeMove(Board board) throws InValidMove, CloneNotSupportedException {

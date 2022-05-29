@@ -190,6 +190,14 @@ public class Board {
 
     }
 
+    public boolean isEmpty(int r, int c){
+        return this.getPiece(r,c) == null;
+    }
+
+    public boolean isEmpty(Position pos){
+        return this.getPiece(pos) == null;
+    }
+
     /**
      * Restores the previous state of the board
      * prevBoard holds the board state just before the last move
