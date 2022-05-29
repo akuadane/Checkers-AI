@@ -1,0 +1,5 @@
+package com.checkers.models;
+
+public enum ActionStatus {
+    NOT_STARTED, CONNECTING_TO_SERVER, JOINING_GAME,CREATING_GAME, WAITING_FOR_OPPONENT, COMPLETED, FAILED
+}

@@ -42,7 +42,7 @@ public class Checkers {
         return instance;
     }
 
-    public void start(Stage stage) throws CouldntConnectToServerException {
+    public void start(Stage stage) throws Exception {
         config = (Config) (stage.getUserData());
         switch (config.getGameType()) {
             case COMPUTER -> this.player = new AlphaBetaMinMaxAIPlayer();

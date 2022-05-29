@@ -63,6 +63,8 @@ public class ChooseLevel {
             game.start(stage);
         } catch (CouldntConnectToServerException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
