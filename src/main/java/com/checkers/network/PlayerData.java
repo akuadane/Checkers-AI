@@ -13,4 +13,9 @@ public class PlayerData {
         this.reader = reader;
         this.writer = writer;
     }
+
+    public PlayerData(ObjectOutputStream writer, ObjectInputStream reader) {
+        this.writer = writer;
+        this.reader = reader;
+    }
 }
