@@ -1,8 +1,6 @@
 package com.checkers.gui;
 
-import com.checkers.gui.BoardSquare;
 import com.checkers.models.Board;
-import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.move.Position;
@@ -46,9 +44,22 @@ public class Checkers {
         config = (Config) (stage.getUserData());
         switch (config.getGameType()) {
             case COMPUTER -> this.player = new AlphaBetaMinMaxAIPlayer();
-            case REMOTE -> this.player = new RemotePlayer("John", Piece.PieceOwner.PLAYER1);
+            case REMOTE -> {
+                this.player = config.getPlayer();
+                ((RemotePlayer) this.player).setOnMakeMoveCallbackFunc((mv) -> {
+                    try {
+                        board.makeMove(mv);
+                        updateBoard();
+                    } catch (InValidMove e) {
+                        throw new RuntimeException(e);
+                    }
+                    return null;
+                });
+            }
         }
-        this.aiPlayer = new AlphaBetaMinMaxAIPlayer();
+
+//        this.aiPlayer = new AlphaBetaMinMaxAIPlayer();
+        System.out.println(player);
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
         this.initBoardSquares();
@@ -123,14 +134,12 @@ public class Checkers {
             try {
                 this.board.makeMove(move);
                 updateBoard();
-
                 isThereWinner();
-
-
-                if (aiPlayer != null) { //AI will make a move
-
+                if (player instanceof AlphaBetaMinMaxAIPlayer) { //AI will make a move
                     this.aiMove();
-
+                }
+                if (player instanceof RemotePlayer) {
+                    player.makeMove(move);
                 }
 
             } catch (InValidMove e) {
@@ -144,13 +153,18 @@ public class Checkers {
         }
     }
 
+    public void remoteMove(Move move) throws InValidMove {
+        board.makeMove(move);
+        Platform.runLater(this::updateBoard);
+    }
+
     public void aiMove() {
         this.aiTurn = true;
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
 
-                Move aiMove = aiPlayer.makeMove(new Board(board));
+                Move aiMove = player.makeMove(new Board(board));
                 board.makeMove(aiMove);
                 Platform.runLater(new Runnable() {
                     @Override

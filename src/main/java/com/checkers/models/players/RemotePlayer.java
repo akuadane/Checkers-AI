@@ -1,7 +1,6 @@
 package com.checkers.models.players;
 
 import com.checkers.models.Board;
-import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
@@ -36,7 +35,7 @@ public class RemotePlayer extends Player {
     CompletableFuture<Void> waitOpponentFuture;
     Function<Void, Void> onErrorCallback;
     Function<Void, Void> onCloseCallback;
-    Function<Move, Void> onMakeMoveCallback;
+    Function<Move, Void> onMakeMoveCallbackFunc;
 
     public RemotePlayer(String name, Piece.PieceOwner myTurn) throws Exception {
         super(name, myTurn);
@@ -164,7 +163,7 @@ public class RemotePlayer extends Player {
     }
 
     public void onMakeMoveCallback(MakeMove action) {
-        this.makeMoveFuture.complete(action.move);
+        this.onMakeMoveCallbackFunc.apply(action.move);
     }
 
     public void onCloseCallback(Close action) {
@@ -245,11 +244,11 @@ public class RemotePlayer extends Player {
         this.onCloseCallback = onCloseCallback;
     }
 
-    public Function<Move, Void> getOnMakeMoveCallback() {
-        return onMakeMoveCallback;
+    public Function<Move, Void> getOnMakeMoveCallbackFunc() {
+        return onMakeMoveCallbackFunc;
     }
 
-    public void setOnMakeMoveCallback(Function<Move, Void> onMakeMoveCallback) {
-        this.onMakeMoveCallback = onMakeMoveCallback;
+    public void setOnMakeMoveCallbackFunc(Function<Move, Void> onMakeMoveCallbackFunc) {
+        this.onMakeMoveCallbackFunc = onMakeMoveCallbackFunc;
     }
 }

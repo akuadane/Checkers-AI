@@ -1,16 +1,19 @@
 package com.checkers.models.move;
 
-public class Move {
+import java.io.Serializable;
+
+public class Move implements Serializable {
 
     private Position origin;
 
 
-
     private Position destination;
-    public  Move(Position origin, Position destination){
+
+    public Move(Position origin, Position destination) {
         this.origin = origin;
         this.destination = destination;
     }
+
     public Position getOrigin() {
         return origin;
     }
@@ -18,9 +21,10 @@ public class Move {
     public Position getDestination() {
         return destination;
     }
+
     @Override
     public String toString() {
-        return String.format("Move from [%d,%d] to [%d,%d]",origin.getRow(),origin.getColumn(),destination.getRow(),destination.getColumn());
+        return String.format("Move from [%d,%d] to [%d,%d]", origin.getRow(), origin.getColumn(), destination.getRow(), destination.getColumn());
     }
 
     @Override

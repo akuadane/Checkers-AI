@@ -53,7 +53,7 @@ public class ChoosePlayer implements Initializable {
      * Handler method for play remote choice
      * */
     public void playRemote(ActionEvent actionEvent) throws IOException {
-        gameType = GameType.PLAYER;
+    gameType = GameType.REMOTE;
         FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.gui.ChoosePlayer.class.getResource("/remote-setup.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         Scene currentScene = ((Node) actionEvent.getSource()).getScene();
@@ -66,7 +66,7 @@ public class ChoosePlayer implements Initializable {
      * Handler method for play with player choice
      * */
     public void playWithPlayer(ActionEvent actionEvent) {
-        gameType = GameType.REMOTE;
+        gameType = GameType.PLAYER;
         startGame(actionEvent);
     }
 
