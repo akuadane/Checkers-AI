@@ -60,12 +60,13 @@ public class Checkers {
                 gridPane.add(this.boardSquares[i][j], j, i);
             }
         }
-
-        Scene scene = new Scene(gridPane, WIDTH, HEIGHT);
-        stage.setTitle("Checkers");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        Platform.runLater(() -> {
+            Scene scene = new Scene(gridPane, WIDTH, HEIGHT);
+            stage.setTitle("Checkers");
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        });
     }
 
     public void initBoardSquares() {

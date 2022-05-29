@@ -5,6 +5,8 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
 
+import java.util.concurrent.Future;
+
 public abstract class Player {
     String name;
     String opponentName;
@@ -22,6 +24,10 @@ public abstract class Player {
     }
 
     public abstract Move makeMove(Board board) throws InValidMove, CloneNotSupportedException;
+
+    public boolean makeMove(Move move) throws InValidMove {
+        return false;
+    }
 
     @Override
     public String toString() {

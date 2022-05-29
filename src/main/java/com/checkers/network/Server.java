@@ -1,3 +1,5 @@
+
+/*
 package com.checkers.network;
 
 import java.io.ObjectOutputStream;
@@ -35,3 +37,5 @@ public class Server {
         }
     }
 }
+
+*/

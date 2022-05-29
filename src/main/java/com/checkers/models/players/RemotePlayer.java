@@ -2,140 +2,254 @@ package com.checkers.models.players;
 
 import com.checkers.models.Board;
 import com.checkers.models.exceptions.CouldntConnectToServerException;
+import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
 import com.checkers.network.*;
 import com.checkers.network.Error;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.*;
+import java.util.function.Function;
 
 
 public class RemotePlayer extends Player {
-    public Socket socket;
-    public ObjectInputStream reader;
-    public ObjectOutputStream writer;
-    public String HOST = "127.0.0.1";
-    public int PORT = 6060;
+    public String opponentName;
+    private static final String LOCALHOST = "127.0.0.1";
+    public static final int PORT = 6060;
+    Socket mySocket;
+    ServerSocket myServerSocket;
+    ObjectOutputStream writer;
+    ObjectInputStream reader;
+    CompletableFuture<Move> makeMoveFuture;
 
-    public int playerID;
-    public String gameID;
+    public CompletableFuture<Void> getWaitOpponentFuture() {
+        return waitOpponentFuture;
+    }
+
+    public void setWaitOpponentFuture(CompletableFuture<Void> waitOpponentFuture) {
+        this.waitOpponentFuture = waitOpponentFuture;
+    }
+
+    CompletableFuture<Void> waitOpponentFuture;
+    Function<Void, Void> onErrorCallback;
+    Function<Void, Void> onCloseCallback;
+    Function<Move, Void> onMakeMoveCallback;
 
     public RemotePlayer(String name, Piece.PieceOwner myTurn) throws Exception {
         super(name, myTurn);
-        System.out.println("Creating Remote Player");
-        this.connectToServer();
-        System.out.println("Waiting for confirmation");
-        acceptConfirmation();
-        System.out.println("Confirmation Succeeded");
+        if (myTurn == Piece.PieceOwner.PLAYER1) {
+            if (!this.host().get()) throw new Exception("Couldn't Host");
+        } else {
+            if (!this.join().get()) throw new Exception("Couldn't Join Game");
+        }
+        CommunicationService communicationService = new CommunicationService();
+        communicationService.start();
     }
 
-    public boolean connectToServer(String host, int port) {
-        try {
-            this.socket = new Socket(host, port);
-            getStreams();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+    public RemotePlayer(String name, Piece.PieceOwner myTurn, String hostname, int port) throws Exception {
+        super(name, myTurn);
+        if (myTurn == Piece.PieceOwner.PLAYER1) {
+            if (!this.host(port).get()) throw new Exception("Couldn't Host");
+        } else {
+            if (!this.join(hostname, port).get()) throw new Exception("Couldn't Join Game");
+        }
+        CommunicationService communicationService = new CommunicationService();
+        communicationService.start();
+    }
+
+    public Future<Boolean> join(String host, int port) {
+        Callable<Boolean> joinCallable = () -> {
+            try {
+                mySocket = new Socket(host, port);
+                writer = new ObjectOutputStream(mySocket.getOutputStream());
+                reader = new ObjectInputStream(mySocket.getInputStream());
+                writer.writeObject(new ConnectionInfo(name));
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return false;
-        }
-        return false;
+        };
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        return executorService.submit(joinCallable);
     }
 
-    private void getStreams() throws IOException {
-        System.out.println("Getting reader");
-        this.reader = new ObjectInputStream(socket.getInputStream());
-        System.out.println("Getting writer");
-        this.writer = new ObjectOutputStream(socket.getOutputStream());
-        System.out.println("Finished getting streams");
+    public Future<Boolean> join(String host) {
+        return join(host, PORT);
     }
 
+    public Future<Boolean> join(int port) {
+        return join(LOCALHOST, port);
+    }
 
-    public boolean connectToServer(String host) {
-        try {
-            this.socket = new Socket(host, this.PORT);
-            getStreams();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+    public Future<Boolean> join() {
+        return join(LOCALHOST, PORT);
+    }
+
+    public Future<Boolean> host(int port) {
+        Callable<Boolean> hostTask = () -> {
+            try {
+                myServerSocket = new ServerSocket(port);
+                mySocket = myServerSocket.accept();
+                writer = new ObjectOutputStream(mySocket.getOutputStream());
+                reader = new ObjectInputStream(mySocket.getInputStream());
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return false;
-        }
-        return false;
+        };
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        return executorService.submit(hostTask);
     }
 
-    public void connectToServer(int port) throws Exception {
-        this.socket = new Socket(this.HOST, port);
-        getStreams();
+    public Future<Boolean> host() {
+        return host(PORT);
     }
 
-    public void connectToServer() throws Exception {
-        System.out.println("Establishing Socket Connection");
-        this.socket = new Socket(this.HOST, this.PORT);
-        System.out.println("Socket Connection Established");
-        getStreams();
-        System.out.println("Connection established");
-    }
 
-    public void joinGame(String gameID) throws Exception {
-        Action action = new JoinGame(gameID, playerID, name);
-        writer.writeObject(action);
-    }
-
-    public void createGame(String id) throws Exception {
-        Action action = new CreateGame(id, playerID, name);
-        writer.writeObject(action);
-    }
-
-    public void acceptConfirmation() throws Exception {
-        System.out.println("Waiting Confirmation");
-        Action action;
-        action = (Action) reader.readObject();
-        while (!(action instanceof Close || action instanceof ConnectionInfo)) {
-            action = (Action) reader.readObject();
-        }
-        if (action instanceof ConnectionInfo connectionInfo) {
-
-            this.playerID = connectionInfo.playerID;
-        }
-        System.out.println("Connection Established!!");
+    @Override
+    public Move makeMove(Board board) throws InValidMove, CloneNotSupportedException {
+        return null;
     }
 
     @Override
-    public Move makeMove(Board board) {
-        // TODO implement this method
-        return null;
+    public boolean makeMove(Move move) throws InValidMove {
+        Action action = new MakeMove(move);
+        try {
+            writer.writeObject(action);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public Move makeMove(Move move) {
+    private class CommunicationService extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            try {
+                Action action;
+                while (!((action = (Action) reader.readObject()) instanceof Close)) {
+                    if (action instanceof MakeMove makeMove)
+                        onMakeMoveCallback(makeMove);
+                    else if (action instanceof ConnectionInfo connectionInfo)
+                        onConnectionInfoCallback(connectionInfo);
+                    else if (action instanceof Error error)
+                        onErrorCallback(error);
+                }
+                Close close = (Close) action;
+                onCloseCallback(close);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void onErrorCallback(Error error) {
+
+    }
+
+    public void onConnectionInfoCallback(ConnectionInfo action) throws IOException {
+        if (myTurn == Piece.PieceOwner.PLAYER1) {
+            writer.writeObject(new ConnectionInfo(name));
+        }
+        opponentName = action.playerName;
+        this.getWaitOpponentFuture().complete(null);
+    }
+
+    public void onMakeMoveCallback(MakeMove action) {
+        this.makeMoveFuture.complete(action.move);
+    }
+
+    public void onCloseCallback(Close action) {
+    }
+
+    public boolean writeAction(Action action) {
         try {
-            Action action = new MakeMove(move, this.gameID, this.playerID);
             writer.writeObject(action);
-            action = (Action) reader.readObject();
-            while (!(action instanceof Error || action instanceof MakeMove)) {
-                action = (Action) reader.readObject();
-            }
-            if (action instanceof MakeMove makeMove) {
-                return makeMove.move;
-            }
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return false;
     }
 
-    public void waitForOpponent() throws Exception {
-        System.out.println("Waiting for opponent joined confirmation");
-        Action action;
-        reader = new ObjectInputStream(socket.getInputStream());
-        reader.reset();
-        action = (Action) reader.readObject();
-        System.out.println("Read action");
-        while (!(action instanceof Close || action instanceof OpponentJoined)) {
-            action = (Action) reader.readObject();
-        }
-        if (action instanceof OpponentJoined opponentJoined) {
-            this.opponentName = opponentJoined.opponentName;
-        } else {
-            throw new CouldntConnectToServerException("Couldn't connect to opponent");
-        }
-        System.out.println("Waiting for opponent joined confirmation arrived");
+
+    public String getOpponentName() {
+        return opponentName;
+    }
+
+    public void setOpponentName(String opponentName) {
+        this.opponentName = opponentName;
+    }
+
+    public Socket getMySocket() {
+        return mySocket;
+    }
+
+    public void setMySocket(Socket mySocket) {
+        this.mySocket = mySocket;
+    }
+
+    public ServerSocket getMyServerSocket() {
+        return myServerSocket;
+    }
+
+    public void setMyServerSocket(ServerSocket myServerSocket) {
+        this.myServerSocket = myServerSocket;
+    }
+
+    public ObjectOutputStream getWriter() {
+        return writer;
+    }
+
+    public void setWriter(ObjectOutputStream writer) {
+        this.writer = writer;
+    }
+
+    public ObjectInputStream getReader() {
+        return reader;
+    }
+
+    public void setReader(ObjectInputStream reader) {
+        this.reader = reader;
+    }
+
+    public CompletableFuture<Move> getMakeMoveFuture() {
+        return makeMoveFuture;
+    }
+
+    public void setMakeMoveFuture(CompletableFuture<Move> makeMoveFuture) {
+        this.makeMoveFuture = makeMoveFuture;
+    }
+
+    public Function<Void, Void> getOnErrorCallback() {
+        return onErrorCallback;
+    }
+
+    public void setOnErrorCallback(Function<Void, Void> onErrorCallback) {
+        this.onErrorCallback = onErrorCallback;
+    }
+
+    public Function<Void, Void> getOnCloseCallback() {
+        return onCloseCallback;
+    }
+
+    public void setOnCloseCallback(Function<Void, Void> onCloseCallback) {
+        this.onCloseCallback = onCloseCallback;
+    }
+
+    public Function<Move, Void> getOnMakeMoveCallback() {
+        return onMakeMoveCallback;
+    }
+
+    public void setOnMakeMoveCallback(Function<Move, Void> onMakeMoveCallback) {
+        this.onMakeMoveCallback = onMakeMoveCallback;
     }
 }

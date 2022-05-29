@@ -10,7 +10,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -18,15 +17,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 public class CreateJoin {
     @FXML
     TextField name;
     @FXML
-    TextField gameID;
+    TextField hostname;
+    @FXML
+    TextField port;
     @FXML
     Button joinButton;
     @FXML
@@ -45,44 +44,39 @@ public class CreateJoin {
 
     public void onJoinAction(ActionEvent actionEvent) {
         setStage(actionEvent);
-        if (connectionStatus.getConnectionStatus() == ActionStatus.CONNECTING_TO_SERVER || connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT)
+        if (connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT || connectionStatus.getConnectionStatus() == ActionStatus.COMPLETED)
             return;
-        String name, gameID;
+        String port, name, hostname;
         name = this.name.getText().trim();
-        gameID = this.gameID.getText().trim();
+        hostname = this.hostname.getText().trim();
+        port = this.port.getText().trim();
         try {
-            Runnable connectToServerRunnable = () -> {
-                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.CONNECTING_TO_SERVER));
-                try {
-                    player = new RemotePlayer(name, Piece.PieceOwner.PLAYER2);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            };
             Runnable joinGameRunnable = () -> {
                 Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.JOINING_GAME));
                 try {
-                    player.joinGame(gameID);
+                    player = new RemotePlayer(name, Piece.PieceOwner.PLAYER2, hostname, Integer.parseInt(port));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             };
             Runnable waitOpponentRunnable = () -> {
                 Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.WAITING_FOR_OPPONENT));
-
                 try {
-                    player.waitForOpponent();
-                    System.out.println("Waiting opponent is over");
+                    Thread.sleep((long) Double.POSITIVE_INFINITY);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             };
-            CompletableFuture<Void> connectToServerFuture = CompletableFuture.runAsync(connectToServerRunnable);
-            CompletableFuture<Void> createGameFuture = connectToServerFuture.thenRunAsync(joinGameRunnable);
-            CompletableFuture<Void> waitOpponentFuture = createGameFuture.thenRunAsync(waitOpponentRunnable);
-            CompletableFuture<Void> finalFuture = waitOpponentFuture.thenRunAsync(() -> connectionStatus.setConnectionStatus(ActionStatus.COMPLETED));
-            finalFuture.thenRun(() -> {
+
+            CompletableFuture<Void> joinGameFuture = CompletableFuture.runAsync(joinGameRunnable);
+            CompletableFuture<Void> waitOpponentFuture = CompletableFuture.runAsync(waitOpponentRunnable);
+
+            joinGameFuture.thenRun(() -> player.setWaitOpponentFuture(waitOpponentFuture));
+
+            waitOpponentFuture.thenRun(() -> {
+                connectionStatus.setConnectionStatus(ActionStatus.COMPLETED);
             });
+
 
         } catch (Exception e) {
             connectionStatus.setConnectionStatus(ActionStatus.FAILED);
@@ -96,45 +90,36 @@ public class CreateJoin {
 
     public void onCreateAction(ActionEvent actionEvent) {
         setStage(actionEvent);
-        if (connectionStatus.getConnectionStatus() == ActionStatus.CONNECTING_TO_SERVER || connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT)
+        if (connectionStatus.getConnectionStatus() == ActionStatus.COMPLETED || connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT)
             return;
         String name, gameID;
         name = this.name.getText().trim();
-        gameID = this.gameID.getText().trim();
+        gameID = this.hostname.getText().trim();
         try {
 
-            Runnable connectToServerRunnable = () -> {
-                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.CONNECTING_TO_SERVER));
+            Runnable hostGameRunnable = () -> {
+                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.HOSTING_GAME));
                 try {
-                    player = new RemotePlayer(name, Piece.PieceOwner.PLAYER2);
+                    player = new RemotePlayer(name, Piece.PieceOwner.PLAYER1);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             };
 
-            Runnable createGameRunnable = () -> {
-                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.CREATING_GAME));
-                try {
-                    player.createGame(gameID);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            };
             Runnable waitOpponentRunnable = () -> {
                 Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.WAITING_FOR_OPPONENT));
                 try {
-                    player.waitForOpponent();
-                    System.out.println("Waiting opponent is over");
+                    Thread.sleep((long) Double.POSITIVE_INFINITY);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             };
+            CompletableFuture<Void> waitOpponentFuture = CompletableFuture.runAsync(waitOpponentRunnable);
+            CompletableFuture<Void> hostGameFuture = CompletableFuture.runAsync(hostGameRunnable);
+            hostGameFuture.thenRun(() -> player.setWaitOpponentFuture(waitOpponentFuture));
 
-            CompletableFuture<Void> connectToServerFuture = CompletableFuture.runAsync(connectToServerRunnable);
-            CompletableFuture<Void> createGameFuture = connectToServerFuture.thenRunAsync(createGameRunnable);
-            CompletableFuture<Void> waitOpponentFuture = createGameFuture.thenRunAsync(waitOpponentRunnable);
-            CompletableFuture<Void> finalFuture = waitOpponentFuture.thenRunAsync(() -> connectionStatus.setConnectionStatus(ActionStatus.COMPLETED));
-            finalFuture.thenRunAsync(() -> {
+            waitOpponentFuture.thenRun(() -> {
+                connectionStatus.setConnectionStatus(ActionStatus.COMPLETED);
             });
         } catch (Exception e) {
             Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.FAILED));
@@ -164,18 +149,16 @@ public class CreateJoin {
             this.connectionStatus = connectionStatus;
             switch (this.connectionStatus) {
                 case FAILED -> handleOnFailed(previousState);
-                case CONNECTING_TO_SERVER -> handleConnectingToServer(previousState);
                 case JOINING_GAME -> handleJoiningGame(previousState);
-                case CREATING_GAME -> handleCreatingGame(previousState);
+                case HOSTING_GAME -> handleHostingGame(previousState);
                 case WAITING_FOR_OPPONENT -> handleWaitingForOpponent(previousState);
                 case COMPLETED -> handleCompleted(previousState);
             }
         }
     }
 
-    private void handleCreatingGame(ActionStatus previousStatus) {
-        overlayPane.setVisible(true);
-        statusLabel.setText(ActionStatus.CREATING_GAME.name());
+    private void handleHostingGame(ActionStatus previousState) {
+
     }
 
     private void handleJoiningGame(ActionStatus previousStatus) {
@@ -189,15 +172,12 @@ public class CreateJoin {
 
     }
 
-    private void handleConnectingToServer(ActionStatus previousStatus) {
-        overlayPane.setVisible(true);
-        statusLabel.setText(ActionStatus.CONNECTING_TO_SERVER.name());
-
-    }
-
     private void handleCompleted(ActionStatus previousStatus) {
-        overlayPane.setVisible(false);
-        statusLabel.setText(ActionStatus.COMPLETED.name());
+        Platform.runLater(() -> {
+            overlayPane.setVisible(false);
+            statusLabel.setText(ActionStatus.COMPLETED.name());
+        });
+
         try {
             showScene();
         } catch (Exception e) {
