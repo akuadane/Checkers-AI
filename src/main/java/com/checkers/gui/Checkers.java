@@ -5,10 +5,9 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.move.Position;
 import com.checkers.models.piece.Piece;
-import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
-import com.checkers.models.players.Player;
-import com.checkers.models.players.RemotePlayer;
+import com.checkers.models.players.*;
 import com.checkers.models.prefs.Config;
+import com.checkers.models.prefs.Level;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -23,9 +22,8 @@ public class Checkers {
     private Board board;
     private BoardSquare[][] boardSquares;
     private Position origin;
-    Player aiPlayer;
+    private boolean myTurn = true;
     Player player;
-    private boolean aiTurn = false;
     public Config config;
     public static Checkers instance;
 
@@ -43,7 +41,7 @@ public class Checkers {
     public void start(Stage stage) throws Exception {
         config = (Config) (stage.getUserData());
         switch (config.getGameType()) {
-            case COMPUTER -> this.player = new AlphaBetaMinMaxAIPlayer();
+            case COMPUTER -> this.player = getAgentByDifficulty(config.getLevel());
             case REMOTE -> {
                 this.player = config.getPlayer();
                 ((RemotePlayer) this.player).setOnMakeMoveCallbackFunc((mv) -> {
@@ -55,11 +53,12 @@ public class Checkers {
                     }
                     return null;
                 });
+                ((RemotePlayer) this.player).setOnMakeMoveCallbackFunc(this::remoteMove);
+
             }
         }
+        this.myTurn = this.player.myTurn == Piece.PieceOwner.PLAYER1;
 
-//        this.aiPlayer = new AlphaBetaMinMaxAIPlayer();
-        System.out.println(player);
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
         this.initBoardSquares();
@@ -78,6 +77,20 @@ public class Checkers {
             stage.setResizable(false);
             stage.show();
         });
+    }
+
+    private Player getAgentByDifficulty(Level level) throws Exception {
+        if (level == null)
+            throw new Exception("Level cannot be null");
+        Player player;
+        switch (level) {
+            case EASY -> player = new RandomPlayer();
+            case HARD -> player = new AlphaBetaMinMaxAIPlayer();
+            case MEDIUM -> player = new MinMaxAIPlayer();
+            case EXPERT -> player = new BackRowAIPlayer();
+            default -> player = new IterativeDeepeningAIPlayer("John Doe", Piece.PieceOwner.PLAYER2);
+        }
+        return player;
     }
 
     public void initBoardSquares() {
@@ -109,11 +122,11 @@ public class Checkers {
     }
 
     public void boardClicked(Position clickedPos) {
-        if (aiTurn)
+        if (!myTurn)
             return;
 
+        Piece p = board.getPiece(clickedPos);
         if (this.origin == null) {
-            Piece p = board.getPiece(clickedPos);
             if (p == null)
                 return;
 
@@ -122,7 +135,6 @@ public class Checkers {
                 this.setHighlight(this.board.reachablePositions(clickedPos), true);
             }
         } else {
-            Piece p = board.getPiece(clickedPos);
             if (p != null && p.owner == board.getTurn()) {
                 this.origin = clickedPos;
                 this.turnOffAllHighlights();
@@ -139,6 +151,7 @@ public class Checkers {
                     this.aiMove();
                 }
                 if (player instanceof RemotePlayer) {
+                    this.myTurn = !this.myTurn;
                     player.makeMove(move);
                 }
 
@@ -153,25 +166,26 @@ public class Checkers {
         }
     }
 
-    public void remoteMove(Move move) throws InValidMove {
-        board.makeMove(move);
-        Platform.runLater(this::updateBoard);
+    public Void remoteMove(Move move) {
+        try {
+            board.makeMove(move);
+            updateBoard();
+        } catch (InValidMove e) {
+            throw new RuntimeException(e);
+        }
+        this.myTurn = !this.myTurn;
+        return null;
     }
 
     public void aiMove() {
-        this.aiTurn = true;
+        this.myTurn = !this.myTurn;
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
 
                 Move aiMove = player.makeMove(new Board(board));
                 board.makeMove(aiMove);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateBoard();
-                    }
-                });
+                Platform.runLater(() -> updateBoard());
 
                 return null;
             }
@@ -179,7 +193,7 @@ public class Checkers {
             @Override
             protected void done() {
                 super.done();
-                aiTurn = false;
+                myTurn = !myTurn;
                 isThereWinner();
             }
         };

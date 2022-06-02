@@ -5,7 +5,7 @@ import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
 
 public class IterativeDeepeningAIPlayer extends Player implements AIPlayer {
-    IterativeDeepeningAIPlayer(String name, Piece.PieceOwner myTurn) {
+    public IterativeDeepeningAIPlayer(String name, Piece.PieceOwner myTurn) {
         super(name,myTurn);
     }
 
