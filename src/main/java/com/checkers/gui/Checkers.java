@@ -44,15 +44,6 @@ public class Checkers {
             case COMPUTER -> this.player = getAgentByDifficulty(config.getLevel());
             case REMOTE -> {
                 this.player = config.getPlayer();
-                ((RemotePlayer) this.player).setOnMakeMoveCallbackFunc((mv) -> {
-                    try {
-                        board.makeMove(mv);
-                        updateBoard();
-                    } catch (InValidMove e) {
-                        throw new RuntimeException(e);
-                    }
-                    return null;
-                });
                 ((RemotePlayer) this.player).setOnMakeMoveCallbackFunc(this::remoteMove);
 
             }
