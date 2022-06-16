@@ -10,6 +10,7 @@ import com.checkers.models.prefs.Config;
 import com.checkers.models.prefs.Level;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -58,7 +59,7 @@ public class Checkers {
             }
         }
         this.myTurn = this.player.myTurn == Piece.PieceOwner.PLAYER1;
-
+        FXMLLoader fxmlLoader = new FXMLLoader(ChoosePlayer.class.getResource("/main.fxml"));
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
         this.initBoardSquares();
@@ -70,6 +71,7 @@ public class Checkers {
                 gridPane.add(this.boardSquares[i][j], j, i);
             }
         }
+
         Platform.runLater(() -> {
             Scene scene = new Scene(gridPane, WIDTH, HEIGHT);
             stage.setTitle("Checkers");
