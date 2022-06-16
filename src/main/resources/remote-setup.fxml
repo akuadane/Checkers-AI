@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" stylesheets="@choose-level.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.checkers.controller.CreateJoin">
+   <children>
+      <Text layoutX="192.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Join or Create" textAlignment="CENTER" wrappingWidth="261.57421875">
+         <font>
+            <Font name="System Bold" size="30.0" />
+         </font>
+      </Text>
+      <TextField fx:id="hostname" layoutX="204.0" layoutY="133.0" prefHeight="40.0" prefWidth="180.0" promptText="hostname" text="127.0.0.1" />
+      <TextField fx:id="port" layoutX="392.0" layoutY="133.0" prefHeight="40.0" prefWidth="52.0" promptText="port" text="6060" />
+      <ButtonBar layoutX="179.0" layoutY="209.0" prefHeight="40.0" prefWidth="243.0" style="-fx-font-weight: bold;">
+        <buttons>
+          <Button fx:id="joinButton" defaultButton="true" mnemonicParsing="false" onAction="#onJoinAction" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #d65050; -fx-font-weight: bold;" text="Join" />
+            <Button fx:id="createButton" mnemonicParsing="false" onAction="#onCreateAction" style="-fx-background-color: #d65050; -fx-font-weight: bold;" text="Create" />
+        </buttons>
+      </ButtonBar>
+      <TextField fx:id="name" layoutX="204.0" layoutY="83.0" prefHeight="40.0" prefWidth="237.0" promptText="Name" text="John" />
+      <AnchorPane fx:id="overlayPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #fdfd;" visible="false">
+         <children>
+            <ProgressIndicator fx:id="progressIndicator" layoutX="276.0" layoutY="180.0" />
+            <Label fx:id="statusLabel" alignment="CENTER" layoutX="145.0" layoutY="120.0" prefHeight="16.0" prefWidth="310.0" text="Connecting to Server" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <Label fx:id="errorLabel" layoutX="204.0" layoutY="184.0" prefHeight="16.0" prefWidth="237.0" text="Invalid input or connection trouble" textFill="RED" visible="false" />
+   </children>
+</AnchorPane>

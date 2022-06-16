@@ -1,9 +1,9 @@
 package com.checkers.network;
 
 public class ConnectionInfo extends Action {
-    public int playerID;
+    public String playerName;
 
-    public ConnectionInfo(int playerID) {
-        this.playerID = playerID;
+    public ConnectionInfo(String playerName) {
+        this.playerName = playerName;
     }
 }
