@@ -58,6 +58,8 @@ public class ChooseLevel {
     public void startGame(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         Checkers game = Checkers.getInstance();
+        stage.setTitle("Choose Level");
+        stage.centerOnScreen();
         ((Config) stage.getUserData()).setLevel(difficulty);
         try {
             game.start(stage);

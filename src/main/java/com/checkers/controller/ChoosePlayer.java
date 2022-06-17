@@ -45,6 +45,8 @@ public class ChoosePlayer implements Initializable {
         Scene scene = new Scene(fxmlLoader.load());
         Scene currentScene = ((Node) actionEvent.getSource()).getScene();
         Stage stage = (Stage) currentScene.getWindow();
+        stage.setTitle("Checkers AI");
+        stage.centerOnScreen();
         ((Config) stage.getUserData()).setGameType(gameType);
         SceneUtils.switchScene(currentScene, scene);
     }
@@ -53,11 +55,13 @@ public class ChoosePlayer implements Initializable {
      * Handler method for play remote choice
      * */
     public void playRemote(ActionEvent actionEvent) throws IOException {
-    gameType = GameType.REMOTE;
+        gameType = GameType.REMOTE;
         FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.gui.ChoosePlayer.class.getResource("/remote-setup.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         Scene currentScene = ((Node) actionEvent.getSource()).getScene();
         Stage stage = (Stage) currentScene.getWindow();
+        stage.setTitle("Checkers AI");
+        stage.centerOnScreen();
         ((Config) stage.getUserData()).setGameType(gameType);
         SceneUtils.switchScene(currentScene, scene);
     }
@@ -73,6 +77,8 @@ public class ChoosePlayer implements Initializable {
     public void startGame(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         Checkers game = Checkers.getInstance();
+        stage.setTitle("Checkers AI");
+        stage.centerOnScreen();
         ((Config) stage.getUserData()).setGameType(gameType);
         System.out.println(stage.getUserData());
         try {

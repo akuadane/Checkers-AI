@@ -18,6 +18,7 @@ public class ChoosePlayer extends Application {
         stage.setUserData(config);
         stage.setTitle("Choose Player");
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
     }
 
