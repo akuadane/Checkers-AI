@@ -13,7 +13,7 @@ import java.util.*;
 public class TrainingGround {
     private static final double LEARNING_RATE=0.1;
     private static final double DISCOUNT=0.95;
-    private static final int EPISODES = 1000;
+    private static final int EPISODES = 1000_000;
     private static final int SHOW=10;
     private static double epsilon = 0.5;
     private static int START_EPSILON_DECAYING=1;
@@ -51,7 +51,7 @@ public class TrainingGround {
             double episodeReward = 0;
             ActionResult result = new ActionResult();
             Board state = env.randomReset(4);
-            System.out.println(i+"\r");
+            System.out.print(i+"\r");
             while ( !result.isDone()){
                 if(i%SHOW==0){
                     env.display();
