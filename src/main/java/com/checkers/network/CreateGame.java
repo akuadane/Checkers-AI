@@ -1,5 +1,8 @@
 package com.checkers.network;
 
+/**
+ * Class CreateGame represents an action to create a remote game.
+ */
 public class CreateGame extends Action {
     public String id;
     public int playerID;

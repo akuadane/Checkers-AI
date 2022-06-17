@@ -29,6 +29,9 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Class main checkers game UI and behavior controller
+ */
 public class Checkers {
     private final int WIDTH = Board.BOARD_SIZE * BoardSquare.SIZE;
     private final int HEIGHT = Board.BOARD_SIZE * BoardSquare.SIZE;
@@ -49,6 +52,12 @@ public class Checkers {
         return new Checkers();
     }
 
+    /**
+     * Method start initializes ui elements and specifies behaviour of the ui components
+     *
+     * @param stage: Window stage
+     * @throws Exception: Thread or Network connection exception
+     */
     public void start(Stage stage) throws Exception {
         this.mainStage = stage;
         config = (Config) (stage.getUserData());
@@ -92,6 +101,11 @@ public class Checkers {
         startTime = new Date();
     }
 
+    /**
+     * Method initScoreBoard initializes upper UI components that shows player names, scores and actions
+     *
+     * @return a JavaFX parent Node
+     */
     private VBox initScoreBoard() {
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.TOP_CENTER);
@@ -189,6 +203,9 @@ public class Checkers {
         return vbox;
     }
 
+    /**
+     * Class ScheduledTimer represents a timer task that periodically updates the elapsed time every second
+     */
     private class ScheduledTimer extends TimerTask {
 
         @Override
@@ -197,6 +214,11 @@ public class Checkers {
         }
     }
 
+    /**
+     * Method setLowerActionButtons sets buttom UI components hint, and home
+     *
+     * @return a JavaFx HBox Node
+     */
     private HBox setLowerActionButtons() {
         HBox hBox4 = new HBox();
         hBox4.setAlignment(Pos.CENTER);
@@ -218,6 +240,10 @@ public class Checkers {
         return hBox4;
     }
 
+    /**
+     * Method gotoHome is a helper method to go to the start of game,
+     * to reconfigure game parameters
+     */
     private void gotoHome() {
         mainStage.close();
         System.out.println(config.getChoosePlayerScene());
@@ -227,7 +253,13 @@ public class Checkers {
         System.out.println("Done");
     }
 
-
+    /**
+     * Helper method getAgentByDifficulty gives an AI agent based on selected difficulty level
+     *
+     * @param level: game difficulty level
+     * @return an AI player
+     * @throws Exception: signifies a level cannot be null
+     */
     private Player getAgentByDifficulty(Level level) throws Exception {
         if (level == null) throw new Exception("Level cannot be null");
         Player player;
@@ -242,6 +274,9 @@ public class Checkers {
         return player;
     }
 
+    /**
+     * Method initBoardSquares initializes board squares and attachs event handlers
+     */
     public void initBoardSquares() {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             for (int j = 0; j < Board.BOARD_SIZE; j++) {
@@ -256,6 +291,9 @@ public class Checkers {
         }
     }
 
+    /**
+     * Method updateBoard updates the pieces on a board based on moves taken a prior
+     */
     public void updateBoard() {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < Board.BOARD_SIZE; j += 2) {
@@ -266,6 +304,11 @@ public class Checkers {
         }
     }
 
+    /**
+     * Method for handling user clicks on the game board
+     *
+     * @param clickedPos: the position where a mouse click was captured
+     */
     public void boardClicked(Position clickedPos) {
         if (!myTurn) return;
 
@@ -311,6 +354,12 @@ public class Checkers {
         }
     }
 
+    /**
+     * A Callback method to update local board when a remote move has been made by our opponent
+     *
+     * @param move: move taken by our remote opponent
+     * @return void
+     */
     public Void remoteMove(Move move) {
         try {
             board.makeMove(move);
@@ -322,6 +371,11 @@ public class Checkers {
         return null;
     }
 
+    /**
+     * Helper method showDialog displays a dialog after a game is over.
+     *
+     * @param won: represents weather the player has won or lost
+     */
     public void showDialog(boolean won) {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Game Over");
@@ -341,7 +395,9 @@ public class Checkers {
         }));
     }
 
-
+    /**
+     * Method aiMove lets an AI agent make a move based on its algorithms and heuristics
+     */
     public void aiMove() {
         Task<Void> task = new Task<>() {
             @Override
@@ -350,7 +406,6 @@ public class Checkers {
                 Move aiMove = player.makeMove(new Board(board));
                 board.makeMove(aiMove);
                 Platform.runLater(() -> updateBoard());
-
                 return null;
             }
 
@@ -367,12 +422,21 @@ public class Checkers {
 
     }
 
+    /**
+     * Method setHighlight makes squares on a board highlighted
+     *
+     * @param moves: positions to highlight
+     * @param light: weather to turn on or off the moves
+     */
     private void setHighlight(ArrayList<Move> moves, boolean light) {
         for (Move mv : moves) {
             this.boardSquares[mv.getDestination().getRow()][mv.getDestination().getColumn()].setHighlight(light);
         }
     }
 
+    /**
+     * Method turnOffAllHighlights turns of highlighted squares in a board
+     */
     private void turnOffAllHighlights() {
         for (BoardSquare[] boardSquare : this.boardSquares) {
             for (BoardSquare bs : boardSquare) {
@@ -381,6 +445,9 @@ public class Checkers {
         }
     }
 
+    /**
+     * Method isThereWinner checks weather there is a winner in response to a move
+     */
     public void isThereWinner() {
         Piece.PieceOwner winner = this.board.isGameOver();
         if (winner != null) {
@@ -397,6 +464,4 @@ public class Checkers {
             });
         }
     }
-
-
 }

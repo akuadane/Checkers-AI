@@ -11,6 +11,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+/**
+ * Controller class for choosing game level
+ */
 public class ChooseLevel {
     @FXML
     public Button easyButton;
@@ -23,38 +26,41 @@ public class ChooseLevel {
 
     private Level difficulty;
 
-    /*
+    /**
      * Called on easy button action
-     * */
+     */
     public void easy(ActionEvent actionEvent) {
         difficulty = Level.EASY;
         startGame(actionEvent);
     }
 
-    /*
+    /**
      * Called on medium button action
-     * */
+     */
     public void medium(ActionEvent actionEvent) {
         difficulty = Level.MEDIUM;
         startGame(actionEvent);
     }
 
-    /*
+    /**
      * Called on hard button action
-     * */
+     */
     public void hard(ActionEvent actionEvent) {
         difficulty = Level.HARD;
         startGame(actionEvent);
     }
 
-    /*
+    /**
      * Called on expert button action
-     * */
+     */
     public void expert(ActionEvent actionEvent) {
         difficulty = Level.EXPERT;
         startGame(actionEvent);
     }
 
+    /**
+     * Method startGame starts the checkers game
+     */
     public void startGame(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         Checkers game = Checkers.getInstance();

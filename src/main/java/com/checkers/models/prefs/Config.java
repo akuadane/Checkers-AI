@@ -3,12 +3,14 @@ package com.checkers.models.prefs;
 import com.checkers.models.players.Player;
 import javafx.scene.Scene;
 
+/**
+ * Class Config is a configuration class that specifies different parameters set by a player
+ */
 public class Config {
     private GameType gameType;
     private Level level;
     private Player player;
     private Scene choosePlayerScene;
-
 
     public Player getPlayer() {
         return player;

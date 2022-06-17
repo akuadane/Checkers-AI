@@ -8,6 +8,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Class ChoosePlayer represents a controller for choosing a player
+ */
 public class ChoosePlayer extends Application {
     @Override
     public void start(Stage stage) throws IOException {

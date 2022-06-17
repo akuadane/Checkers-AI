@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/*
+/**
  * Controller class for choosing opponent player.
- * */
+ */
 public class ChoosePlayer implements Initializable {
     @FXML
     public Button playWithComputerButton;
@@ -36,9 +36,12 @@ public class ChoosePlayer implements Initializable {
 
     }
 
-    /*
-     * Handler method for play with computer choice
-     * */
+    /**
+     * Event Handler method for play with computer choice
+     * stats the checkers game after configuring the type of game chosen by the player
+     *
+     * @param actionEvent: represents the mouse click event on the type of game 'Computer'.
+     */
     public void playWithComputer(ActionEvent actionEvent) throws IOException {
         this.gameType = GameType.COMPUTER;
         FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.controller.ChoosePlayer.class.getResource("/choose-level.fxml"));
@@ -51,9 +54,11 @@ public class ChoosePlayer implements Initializable {
         SceneUtils.switchScene(currentScene, scene);
     }
 
-    /*
-     * Handler method for play remote choice
-     * */
+    /**
+     * Event Handler method for play remote choice
+     *
+     * @param actionEvent: represents the mouse click event on the type of game 'Remote'.
+     */
     public void playRemote(ActionEvent actionEvent) throws IOException {
         gameType = GameType.REMOTE;
         FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.gui.ChoosePlayer.class.getResource("/remote-setup.fxml"));
@@ -66,14 +71,21 @@ public class ChoosePlayer implements Initializable {
         SceneUtils.switchScene(currentScene, scene);
     }
 
-    /*
+    /**
      * Handler method for play with player choice
-     * */
+     *
+     * @param actionEvent: represents the mouse click event on the type of game 'Player'.
+     */
     public void playWithPlayer(ActionEvent actionEvent) {
         gameType = GameType.PLAYER;
         startGame(actionEvent);
     }
 
+    /**
+     * Method startGame starts the checkers game after configuring the type of game a player wnats to play
+     *
+     * @param actionEvent: represents any action event from the gui to extract the stage
+     */
     public void startGame(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         Checkers game = Checkers.getInstance();
