@@ -14,6 +14,7 @@ public class Board {
     public static final int BOARD_SIZE = 8;
     public Piece[][] board;
     private Piece[][] prevBoard;
+    private Piece[][] futureBoard;
     private Piece.PieceOwner turn;
 
     private int player1Score = 0 ;
@@ -232,11 +233,24 @@ public class Board {
      */
     public void undo() {
         if (prevBoard != null) {
+            futureBoard = cloneBoardArray(board);
             board = cloneBoardArray(prevBoard);
             prevBoard = null;
             this.turn = (this.turn == Piece.PieceOwner.PLAYER1) ? Piece.PieceOwner.PLAYER2 : Piece.PieceOwner.PLAYER1;
         }
 
+    }
+    /**
+     * Restores the state of the board before the undo.
+     * futureBoard holds the board state just before the last undo
+     */
+    public void redo(){
+        if(futureBoard!=null){
+            prevBoard = cloneBoardArray(board);
+            board = cloneBoardArray(futureBoard);
+            futureBoard = null;
+            this.turn = (this.turn == Piece.PieceOwner.PLAYER1) ? Piece.PieceOwner.PLAYER2 : Piece.PieceOwner.PLAYER1;
+        }
     }
 
 
