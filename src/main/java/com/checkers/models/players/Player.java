@@ -5,17 +5,23 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
 
-import java.util.concurrent.Future;
-
 public abstract class Player {
-    String name;
-    String opponentName;
+    public String name;
+    public String opponentName = this.getClass().getSimpleName();
 
     public Piece.PieceOwner myTurn;
 
     Player(String name, Piece.PieceOwner myTurn) {
         this.name = name;
         this.myTurn = myTurn;
+    }
+
+    public String getOpponentName() {
+        return this.opponentName;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     Player(String name) {

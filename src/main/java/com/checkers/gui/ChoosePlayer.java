@@ -12,9 +12,11 @@ public class ChoosePlayer extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(ChoosePlayer.class.getResource("/choose-player.fxml"));
-        stage.setUserData(new Config());
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Hello!");
+        Config config = new Config();
+        config.setChoosePlayerScene(scene);
+        stage.setUserData(config);
+        stage.setTitle("Choose Player");
         stage.setScene(scene);
         stage.show();
     }
