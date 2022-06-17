@@ -6,6 +6,8 @@ module com.checkers {
     requires junit;
     requires javafx.graphics;
     requires mapdb;
+    requires jmathplot;
+
 
     opens com.checkers to javafx.fxml;
     exports com.checkers.gui;

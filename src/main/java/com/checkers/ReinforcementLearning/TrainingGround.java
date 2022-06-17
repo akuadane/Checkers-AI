@@ -4,16 +4,16 @@ import com.checkers.models.Board;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
-import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
 import com.checkers.models.players.RandomPlayer;
 
-import java.util.List;
-import java.util.Random;
+
+import java.io.*;
+import java.util.*;
 
 public class TrainingGround {
     private static final double LEARNING_RATE=0.1;
     private static final double DISCOUNT=0.95;
-    private static final int EPISODES = 20_000;
+    private static final int EPISODES = 1000;
     private static final int SHOW=10;
     private static double epsilon = 0.5;
     private static int START_EPSILON_DECAYING=1;
@@ -25,8 +25,30 @@ public class TrainingGround {
 
             QTable qTable = new QTable("Four-Player");
 
-        Random random = new Random();
-        for (int i = 0; i < EPISODES+1; i++) {
+            Random random = new Random();
+        PrintWriter writer;
+        try {
+         writer = new PrintWriter(new FileOutputStream("stat.csv"));
+          writer.println("ep,min,max,avg");
+
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        double totalRewards = 0;
+            double minReward = Double.MAX_VALUE;
+            double maxReward = Double.MIN_VALUE;
+//            Map<String,List<Double>> stat = new HashMap<>(){
+//                {
+//                    put("ep",new ArrayList<>());
+//                    put("avg",new ArrayList<>());
+//                    put("min",new ArrayList<>());
+//                    put("max",new ArrayList<>());
+//
+//                }
+//            };
+        for (int i = 0; i < EPISODES; i++) {
+            double episodeReward = 0;
             ActionResult result = new ActionResult();
             Board state = env.randomReset(4);
             System.out.println(i+"\r");
@@ -45,6 +67,7 @@ public class TrainingGround {
 
                 try {
                     ActionResult newState = env.takeAction(action);
+                    episodeReward+=newState.getReward();
                     if(!newState.isDone()){
                         double max_future = qTable.getMaxActionScore(newState.getState());
                         double current_q = qTable.getMaxActionScore(state);
@@ -76,7 +99,29 @@ public class TrainingGround {
             }
             if (START_EPSILON_DECAYING <= i && i <= END_EPSILON_DECAYING)
                 epsilon -= epsilon_decay_value;
+
+            totalRewards += episodeReward;
+            if(episodeReward < minReward)
+                minReward = episodeReward;
+            if(episodeReward > maxReward)
+                maxReward = episodeReward;
+
+            if(i%SHOW==0){
+                double av = totalRewards /SHOW;
+//                stat.get("ep").add((double) i);
+//                stat.get("min").add(minReward);
+//                stat.get("min").add(maxReward);
+//                stat.get("avg").add(av);
+
+                writer.println(String.format("%f, %f, %f, %f,",(double)i,minReward,maxReward,av));
+                writer.flush();
+                totalRewards = 0;
+                minReward = Double.MAX_VALUE;
+                maxReward = Double.MIN_VALUE;
+
+            }
         }
+        writer.close();
 
 
     }

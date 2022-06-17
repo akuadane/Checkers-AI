@@ -16,7 +16,7 @@ public class CheckersEnvironment{
     public static double HIGHEST_REWARD = 2;
     private Board state;
     private final Player player1;
-
+    private int steps = 0;
 
     public CheckersEnvironment(Player player1){
         this.player1 = player1;
