@@ -128,11 +128,22 @@ public class MCTS {
      * @return The winner of the simulation.
      * */
     private Piece.PieceOwner simulateGame(MCTSNode node) throws InValidMove, CloneNotSupportedException {
-        Game simulation = new Game(new RandomPlayer("P1", Piece.PieceOwner.PLAYER1),
-                                    new RandomPlayer("P2", Piece.PieceOwner.PLAYER2),
-                                   new Board(node.getState().getBoard()));
-        Player winner = simulation.playWithoutDebugging();
-        return winner.myTurn;
+        int player1 = 0, player2 = 0;
+
+        for (int i = 0; i < this.numberOfSimulations; i++) {
+            Game simulation = new Game(new RandomPlayer("P1", Piece.PieceOwner.PLAYER1),
+                    new RandomPlayer("P2", Piece.PieceOwner.PLAYER2),
+                    new Board(node.getState().getBoard()));
+            Player winner = simulation.playWithoutDebugging();
+
+            if(winner.myTurn == Piece.PieceOwner.PLAYER1)
+                player1++;
+            else
+                player2++;
+
+        }
+
+        return (player1>=player2)? Piece.PieceOwner.PLAYER1: Piece.PieceOwner.PLAYER2;
     }
 
 
