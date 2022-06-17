@@ -16,6 +16,9 @@ public class Board {
     private Piece[][] prevBoard;
     private Piece.PieceOwner turn;
 
+    private int player1Score = 0 ;
+    private int player2Score = 0;
+
 
     public Board() {
         this.board = new Piece[BOARD_SIZE][BOARD_SIZE];
@@ -77,9 +80,22 @@ public class Board {
                     board[newR][newC] = new King(this.turn);
 
                 if (move instanceof Jump) {
+                    int score = 0;
                     for (Position remove : ((Jump) move).toBeRemoved) {
                         board[remove.getRow()][remove.getColumn()] = null;  // Remove all piece that are jumped over
+
+                        if(this.getPiece(remove) instanceof King)
+                            score +=2;
+                        else
+                            score ++;
+
                     }
+
+                    if(this.turn == Piece.PieceOwner.PLAYER1)
+                        this.player1Score += score;
+                    else
+                        this.player2Score += score;
+
                 }
 
                 this.turn = (this.turn == Piece.PieceOwner.PLAYER1) ? Piece.PieceOwner.PLAYER2 : Piece.PieceOwner.PLAYER1;
@@ -139,6 +155,23 @@ public class Board {
 
     public Piece.PieceOwner getTurn() {
         return this.turn;
+    }
+    /**
+     * Returns player one's score
+     *
+     * @return an integer representing player one's score.
+     * */
+    public int getPlayer1Score() {
+        return player1Score;
+    }
+
+    /**
+     * Returns player two's score
+     *
+     * @return an integer representing player two's score.
+     * */
+    public int getPlayer2Score() {
+        return player2Score;
     }
 
     /**
