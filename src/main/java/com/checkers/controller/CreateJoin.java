@@ -6,23 +6,33 @@ import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.RemotePlayer;
 import com.checkers.models.prefs.Config;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.Duration;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * Class CreateJoin represents a controller class for choosing and establishing a remote game
  */
-public class CreateJoin {
+public class CreateJoin implements Initializable {
+    @FXML
+    AnchorPane anchorPane;
     @FXML
     TextField name;
     @FXML
@@ -44,6 +54,7 @@ public class CreateJoin {
     RemotePlayer player;
     ConnectionProgress connectionStatus = new ConnectionProgress();
     Stage stage;
+    private Scene currentScene;
 
     /**
      * Event Handler method for joining a remote game hosted by another player
@@ -98,6 +109,7 @@ public class CreateJoin {
      * @param actionEvent
      */
     private void setStage(ActionEvent actionEvent) {
+        currentScene = ((Node) actionEvent.getSource()).getScene();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
     }
 
@@ -152,12 +164,46 @@ public class CreateJoin {
      */
     private void showScene() throws CouldntConnectToServerException {
         ((Config) stage.getUserData()).setPlayer(player);
-        Checkers game = Checkers.getInstance();
-        try {
-            game.start(stage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        fadeOutTransition(currentScene.getRoot(), (arg) -> {
+            Checkers game = Checkers.getInstance();
+            try {
+                game.start(stage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        anchorPane.setOpacity(0.0);
+        fadeInTransition(anchorPane);
+    }
+
+    private void fadeInTransition(AnchorPane anchorPane) {
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setNode(anchorPane);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
+    }
+
+    private void fadeOutTransition(Parent parent, Callback<Void, Void> function) {
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setNode(parent);
+        fadeTransition.setFromValue(1);
+        fadeTransition.setToValue(0);
+        fadeTransition.setOnFinished(actionEvent -> {
+            try {
+                function.call(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        fadeTransition.play();
     }
 
     /**
