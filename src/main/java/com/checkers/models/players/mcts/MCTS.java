@@ -19,7 +19,13 @@ import java.util.ArrayList;
 public class MCTS {
     LocalTime stTime;
     final int MAX_SECONDS = 5;
-    
+
+    private int numberOfSimulations = 10;
+
+    public MCTS(){}
+    public MCTS(int numberOfSimulations){
+        this.numberOfSimulations = numberOfSimulations;
+    }
 
     public Move getBestMove(MCTSNode node) throws InValidMove, CloneNotSupportedException {
         this.stTime = LocalTime.now();
