@@ -18,7 +18,8 @@ public class BoardSquare extends Button {
     private final Color RED = Color.RED;
     private final String BASE_PATH = "/resources";
     private final Color squareColor;
-    public static final int SIZE = 80;
+    public static final int SIZE = 70;
+    private final double PIECE_SIZE = SIZE - 10.0;
     private final int r;
     private final int c;
 
@@ -40,17 +41,25 @@ public class BoardSquare extends Button {
         String[] pieces = piece.split(" ");
         String type = pieces[0];
         String owner = pieces[1];
+        ImageView player1King = new ImageView(String.valueOf(getClass().getResource("/player1king.png")));
+        ImageView player1 = new ImageView(String.valueOf(getClass().getResource("/player1.png")));
+        ImageView player2King = new ImageView(String.valueOf(getClass().getResource("/player2king.png")));
+        ImageView player2 = new ImageView(String.valueOf(getClass().getResource("/player2.png")));
+        player1.setFitWidth(PIECE_SIZE);
+        player1.setFitHeight(PIECE_SIZE);
+        player2.setFitWidth(PIECE_SIZE);
+        player2.setFitHeight(PIECE_SIZE);
         if (type.equalsIgnoreCase("King"))
             if (owner.equalsIgnoreCase("player1")) {
-                Platform.runLater(() -> setGraphic(new ImageView(String.valueOf(getClass().getResource("/player1King.png")))));
+                Platform.runLater(() -> setGraphic(player1King));
             } else {
-                Platform.runLater(() -> setGraphic(new ImageView(String.valueOf(getClass().getResource("/player2King.png")))));
+                Platform.runLater(() -> setGraphic(player2King));
             }
 
         else if (owner.equalsIgnoreCase("player1")) {
-            Platform.runLater(() -> setGraphic(new ImageView(String.valueOf(getClass().getResource("/player1.png")))));
+            Platform.runLater(() -> setGraphic(player1));
         } else {
-            Platform.runLater(() -> setGraphic(new ImageView(String.valueOf(getClass().getResource("/player2.png")))));
+            Platform.runLater(() -> setGraphic(player2));
         }
 
     }

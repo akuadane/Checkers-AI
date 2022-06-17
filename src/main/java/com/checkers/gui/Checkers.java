@@ -9,11 +9,14 @@ import com.checkers.models.players.*;
 import com.checkers.models.prefs.Config;
 import com.checkers.models.prefs.GameType;
 import com.checkers.models.prefs.Level;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Task;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -23,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,13 +47,20 @@ public class Checkers {
     public Config config;
     public Stage mainStage;
     public boolean highlightOnClick = true;
-    public IntegerProperty player1Score = new SimpleIntegerProperty(0);
-    public IntegerProperty player2Score = new SimpleIntegerProperty(0);
     public IntegerProperty elapsedTime = new SimpleIntegerProperty(0);
     public Date startTime;
 
     public static Checkers getInstance() {
         return new Checkers();
+    }
+
+    public void fadeInTransition(Parent root) {
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setNode(root);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
     }
 
     /**
@@ -88,17 +99,21 @@ public class Checkers {
         }
 
         outerLayout.getChildren().addAll(gridPane, setLowerActionButtons());
+        outerLayout.setAlignment(Pos.CENTER);
+        outerLayout.setPadding(new Insets(10.0, 50.0, 10.0, 50.0));
+        outerLayout.setOpacity(0.0);
         Platform.runLater(() -> {
-            Scene scene = new Scene(outerLayout, WIDTH, HEIGHT + 200);
+            Scene scene = new Scene(outerLayout);
             stage.setTitle("Checkers");
             stage.setScene(scene);
             stage.setResizable(false);
+            stage.centerOnScreen();
             stage.show();
+            fadeInTransition(outerLayout);
         });
         Timer timer = new Timer();
         ScheduledTimer st = new ScheduledTimer();
         timer.schedule(st, 0, 1000);
-        startTime = new Date();
     }
 
     /**
@@ -116,7 +131,7 @@ public class Checkers {
         vbox.setStyle("-fx-background-color: #ffccffff");
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
-        hBox.setSpacing(200.0);
+        hBox.setSpacing(100);
 //        VBox hBox = new VBox();
         HBox newHBox1 = new HBox();
         HBox newHBox2 = new HBox();
@@ -127,8 +142,10 @@ public class Checkers {
         Label player1Label = new Label(player != null ? player.getName() : "Player 1");
         player1Label.setFont(new Font(16.0));
         Label player1Score = new Label("0");
-        this.player1Score.addListener((observableValue, number, t1) -> {
-            player1Score.setText(observableValue.getValue().toString());
+        this.board.player1Score.addListener((observableValue, number, t1) -> {
+            Platform.runLater(() -> {
+                player1Score.setText(observableValue.getValue().toString());
+            });
         });
         player1Score.setFont(new Font(16.0));
         newHBox2.getChildren().addAll(player1Label, player1Score);
@@ -140,8 +157,11 @@ public class Checkers {
         Label player2Label = new Label(player != null ? player.getOpponentName() : "Player 2");
         player2Label.setFont(new Font(16.0));
         Label player2Score = new Label("0");
-        this.player2Score.addListener((observableValue, number, t1) -> {
-            player2Score.setText(observableValue.getValue().toString());
+        this.board.player2Score.addListener((observableValue, number, t1) -> {
+            Platform.runLater(() -> {
+                player2Score.setText(observableValue.getValue().toString());
+            });
+
         });
         player2Score.setFont(new Font(16.0));
         newHBox3.getChildren().addAll(player2Score, player2Label);
@@ -221,6 +241,7 @@ public class Checkers {
      */
     private HBox setLowerActionButtons() {
         HBox hBox4 = new HBox();
+        hBox4.setPadding(new Insets(5.0));
         hBox4.setAlignment(Pos.CENTER);
         hBox4.setSpacing(20.0);
         Button hintButton = new Button("HINT");

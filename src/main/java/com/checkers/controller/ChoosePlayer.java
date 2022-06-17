@@ -10,8 +10,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,6 +25,8 @@ import java.util.ResourceBundle;
  */
 public class ChoosePlayer implements Initializable {
     @FXML
+    AnchorPane anchorPane;
+    @FXML
     public Button playWithComputerButton;
     @FXML
     public Button playWithPlayerButton;
@@ -33,7 +37,8 @@ public class ChoosePlayer implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        anchorPane.setOpacity(0.0);
+        SceneUtils.fadeInTransition(anchorPane);
     }
 
     /**
@@ -44,14 +49,23 @@ public class ChoosePlayer implements Initializable {
      */
     public void playWithComputer(ActionEvent actionEvent) throws IOException {
         this.gameType = GameType.COMPUTER;
-        FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.controller.ChoosePlayer.class.getResource("/choose-level.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+
         Scene currentScene = ((Node) actionEvent.getSource()).getScene();
-        Stage stage = (Stage) currentScene.getWindow();
-        stage.setTitle("Checkers AI");
-        stage.centerOnScreen();
-        ((Config) stage.getUserData()).setGameType(gameType);
-        SceneUtils.switchScene(currentScene, scene);
+        SceneUtils.fakeOutTransition(currentScene.getRoot(), (arg) -> {
+            FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.controller.ChoosePlayer.class.getResource("/choose-level.fxml"));
+            Scene scene = null;
+            try {
+                scene = new Scene(fxmlLoader.load());
+                Stage stage = (Stage) currentScene.getWindow();
+                stage.setTitle("Checkers AI");
+                stage.centerOnScreen();
+                ((Config) stage.getUserData()).setGameType(gameType);
+                SceneUtils.switchScene(currentScene, scene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
     }
 
     /**
@@ -61,14 +75,23 @@ public class ChoosePlayer implements Initializable {
      */
     public void playRemote(ActionEvent actionEvent) throws IOException {
         gameType = GameType.REMOTE;
-        FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.gui.ChoosePlayer.class.getResource("/remote-setup.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
         Scene currentScene = ((Node) actionEvent.getSource()).getScene();
-        Stage stage = (Stage) currentScene.getWindow();
-        stage.setTitle("Checkers AI");
-        stage.centerOnScreen();
-        ((Config) stage.getUserData()).setGameType(gameType);
-        SceneUtils.switchScene(currentScene, scene);
+        SceneUtils.fakeOutTransition(currentScene.getRoot(), (arg) -> {
+            FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.gui.ChoosePlayer.class.getResource("/remote-setup.fxml"));
+            try {
+                AnchorPane anchorPane = fxmlLoader.load();
+                Scene scene = new Scene(anchorPane);
+                Stage stage = (Stage) currentScene.getWindow();
+                stage.setTitle("Checkers AI");
+                stage.centerOnScreen();
+                ((Config) stage.getUserData()).setGameType(gameType);
+                SceneUtils.switchScene(currentScene, scene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+
     }
 
     /**
@@ -87,18 +110,23 @@ public class ChoosePlayer implements Initializable {
      * @param actionEvent: represents any action event from the gui to extract the stage
      */
     public void startGame(ActionEvent actionEvent) {
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Checkers game = Checkers.getInstance();
-        stage.setTitle("Checkers AI");
-        stage.centerOnScreen();
-        ((Config) stage.getUserData()).setGameType(gameType);
-        System.out.println(stage.getUserData());
-        try {
-            game.start(stage);
-        } catch (CouldntConnectToServerException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Scene currentScene = ((Node) actionEvent.getSource()).getScene();
+        Parent root = currentScene.getRoot();
+        SceneUtils.fakeOutTransition(root, (arg) -> {
+            Stage stage = (Stage) currentScene.getWindow();
+            Checkers game = Checkers.getInstance();
+            stage.setTitle("Checkers AI");
+            stage.centerOnScreen();
+            ((Config) stage.getUserData()).setGameType(gameType);
+            System.out.println(stage.getUserData());
+            try {
+                game.start(stage);
+            } catch (CouldntConnectToServerException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
     }
 }
