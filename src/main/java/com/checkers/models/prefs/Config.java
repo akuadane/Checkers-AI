@@ -1,11 +1,14 @@
 package com.checkers.models.prefs;
 
 import com.checkers.models.players.Player;
+import javafx.scene.Scene;
 
 public class Config {
     private GameType gameType;
     private Level level;
     private Player player;
+    private Scene choosePlayerScene;
+
 
     public Player getPlayer() {
         return player;
@@ -37,5 +40,13 @@ public class Config {
                 "gameType=" + gameType +
                 ", level=" + level +
                 '}';
+    }
+
+    public Scene getChoosePlayerScene() {
+        return choosePlayerScene;
+    }
+
+    public void setChoosePlayerScene(Scene choosePlayerScene) {
+        this.choosePlayerScene = choosePlayerScene;
     }
 }
