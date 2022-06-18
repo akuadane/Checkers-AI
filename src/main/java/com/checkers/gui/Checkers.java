@@ -52,9 +52,10 @@ public class Checkers {
     public IntegerProperty elapsedTime = new SimpleIntegerProperty(0);
     public Background boxBackground = new Background(new BackgroundFill(Color.valueOf("#9E4B1A"), CornerRadii.EMPTY, Insets.EMPTY));
     public DropShadow dropShadow;
-    private Insets padding = new Insets(10.0), margin = new Insets(10.0);
-    private Font textFont = Font.font(null, FontWeight.BOLD, 20);
-    private Color fillColor = Color.WHITE;
+    private final Insets padding = new Insets(10.0);
+    private final Insets margin = new Insets(10.0);
+    private final Font textFont = Font.font(null, FontWeight.BOLD, 20);
+    private final Color fillColor = Color.WHITE;
 
     public Checkers() {
         this.dropShadow = new DropShadow();
