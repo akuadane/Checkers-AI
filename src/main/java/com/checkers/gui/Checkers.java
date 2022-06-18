@@ -151,9 +151,10 @@ public class Checkers {
         String player2 = "Player 2";
         if (this.player != null && this.player instanceof AIPlayer || this.player instanceof RandomPlayer) {
             player2 = this.player.getClass().getSimpleName();
+            player1 = "You";
         } else if (this.player != null && this.player instanceof RemotePlayer) {
-            player1 = this.player.getName();
-            player2 = this.player.getOpponentName();
+            player1 = player.myTurn == Piece.PieceOwner.PLAYER1 ? "You" : player.getOpponentName();
+            player2 = player.myTurn == Piece.PieceOwner.PLAYER2 ? "You" : player.getOpponentName();
         }
         Label player1Label = new Label(player1);
         player1Label.setFont(textFont);
