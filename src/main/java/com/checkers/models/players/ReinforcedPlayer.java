@@ -18,7 +18,6 @@ public class ReinforcedPlayer extends Player{
         this.qTable = new QTable(version);
     }
 
-
     @Override
     public Move makeMove(Board board) throws InValidMove, CloneNotSupportedException {
         int moveIndex = this.qTable.getAction(board);

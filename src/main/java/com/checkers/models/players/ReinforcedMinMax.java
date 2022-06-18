@@ -17,8 +17,13 @@ public class ReinforcedMinMax extends Player {
 
     public ReinforcedMinMax() {
         super("BackRowAIPlayer");
-        this.minMaxAIPlayer = new AlphaBetaMinMaxAIPlayer();
-        this.reinforcedPlayer = new ReinforcedPlayer("Four-Player");
+        this.minMaxAIPlayer = new AlphaBetaMinMaxAIPlayer(name, myTurn);
+        this.reinforcedPlayer = new ReinforcedPlayer(name,"Four-Player",myTurn);
+    }
+    public ReinforcedMinMax(String name, Piece.PieceOwner myTurn){
+        super(name, myTurn);
+        this.minMaxAIPlayer = new AlphaBetaMinMaxAIPlayer(name, myTurn);
+        this.reinforcedPlayer = new ReinforcedPlayer(name, "Four-Player", myTurn);
     }
 
     @Override
