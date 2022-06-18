@@ -5,10 +5,12 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.move.Position;
 import com.checkers.models.piece.Piece;
+
 import com.checkers.models.players.*;
 import com.checkers.models.prefs.Config;
 import com.checkers.models.prefs.GameType;
 import com.checkers.models.prefs.Level;
+
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -67,6 +69,7 @@ public class Checkers {
         return new Checkers();
     }
 
+
     public void fadeInTransition(Parent root) {
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(1000));
@@ -96,6 +99,7 @@ public class Checkers {
         if (player instanceof RemotePlayer) {
             this.myTurn = this.player.myTurn == Piece.PieceOwner.PLAYER1;
         }
+
         this.board = new Board();
         this.boardSquares = new BoardSquare[Board.BOARD_SIZE][Board.BOARD_SIZE];
 
