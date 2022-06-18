@@ -20,19 +20,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Timer;
 import java.util.TimerTask;
 
 /**
@@ -50,7 +49,19 @@ public class Checkers {
     public Stage mainStage;
     public boolean highlightOnClick = true;
     public IntegerProperty elapsedTime = new SimpleIntegerProperty(0);
-    public Date startTime;
+    public Background boxBackground = new Background(new BackgroundFill(Color.valueOf("#9E4B1A"), CornerRadii.EMPTY, Insets.EMPTY));
+    public DropShadow dropShadow;
+    private Insets padding = new Insets(10.0), margin = new Insets(10.0);
+    private Font textFont = Font.font(null, FontWeight.BOLD, 20);
+    private Color fillColor = Color.WHITE;
+
+    public Checkers() {
+        this.dropShadow = new DropShadow();
+        dropShadow.setRadius(10.0);
+        dropShadow.setOffsetX(2.0);
+        dropShadow.setOffsetY(3.0);
+        dropShadow.setColor(Color.valueOf("#6F2308"));
+    }
 
     public static Checkers getInstance() {
         return new Checkers();
@@ -91,8 +102,11 @@ public class Checkers {
         VBox outerLayout = initScoreBoard();
 
         GridPane gridPane = new GridPane();
-
+        gridPane.setBackground(new Background(new BackgroundFill(Color.valueOf("#FFF0DC"), CornerRadii.EMPTY, Insets.EMPTY)));
         gridPane.setPrefSize(WIDTH, HEIGHT);
+        gridPane.setEffect(dropShadow);
+        GridPane.setMargin(gridPane, margin);
+        gridPane.setStyle("-fx-border-color: #e3d9d9; -fx-border-style: solid; -fx-border-width: 5px");
         this.initBoardSquares();
         for (int i = 0; i < this.boardSquares.length; i++) {
             for (int j = 0; j < this.boardSquares.length; j++) {
@@ -113,9 +127,6 @@ public class Checkers {
             stage.show();
             fadeInTransition(outerLayout);
         });
-        Timer timer = new Timer();
-        ScheduledTimer st = new ScheduledTimer();
-        timer.schedule(st, 0, 1000);
     }
 
     /**
@@ -129,99 +140,51 @@ public class Checkers {
         vbox.setMaxHeight(Double.NEGATIVE_INFINITY);
         vbox.setMaxWidth(Double.NEGATIVE_INFINITY);
         vbox.setMinHeight(Double.NEGATIVE_INFINITY);
-//        vbox.setPrefSize(768.0, 500.0);
-        vbox.setStyle("-fx-background-color: #ffccffff");
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
-        hBox.setSpacing(100);
-//        VBox hBox = new VBox();
+        vbox.setStyle("-fx-background-color: #A14B1B");
         HBox newHBox1 = new HBox();
         HBox newHBox2 = new HBox();
         HBox newHBox3 = new HBox();
         newHBox1.setSpacing(30);
-//        HBox hBox1 = new HBox();
-        newHBox2.setSpacing(20.0);
+        newHBox2.setSpacing(15.0);
         Label player1Label = new Label(player != null ? player.getName() : "Player 1");
-        player1Label.setFont(new Font(16.0));
+        player1Label.setFont(textFont);
+        player1Label.setTextFill(fillColor);
         Label player1Score = new Label("0");
+        player1Score.setFont(textFont);
+        player1Score.setTextFill(fillColor);
         this.board.player1Score.addListener((observableValue, number, t1) -> {
             Platform.runLater(() -> {
                 player1Score.setText(observableValue.getValue().toString());
             });
         });
-        player1Score.setFont(new Font(16.0));
+
         newHBox2.getChildren().addAll(player1Label, player1Score);
         newHBox2.setAlignment(Pos.CENTER_RIGHT);
 
-//        HBox hBox2 = new HBox();
-        newHBox3.setSpacing(20.0);
+        newHBox3.setSpacing(15.0);
         newHBox3.setAlignment(Pos.CENTER_LEFT);
         Label player2Label = new Label(player != null ? player.getOpponentName() : "Player 2");
-        player2Label.setFont(new Font(16.0));
+        player2Label.setFont(textFont);
+        player2Label.setTextFill(fillColor);
         Label player2Score = new Label("0");
+        player2Score.setFont(textFont);
+        player2Score.setTextFill(fillColor);
         this.board.player2Score.addListener((observableValue, number, t1) -> {
             Platform.runLater(() -> {
                 player2Score.setText(observableValue.getValue().toString());
             });
 
         });
-        player2Score.setFont(new Font(16.0));
         newHBox3.getChildren().addAll(player2Score, player2Label);
         newHBox1.getChildren().addAll(newHBox2, newHBox3);
         newHBox1.setAlignment(Pos.CENTER);
 
-
-        HBox hBox3 = new HBox();
-        hBox3.setAlignment(Pos.CENTER);
-        hBox3.setSpacing(20.0);
-        ImageView imageView = new ImageView();
-        imageView.setImage(new Image("/undo.png"));
-        imageView.setOnMouseClicked((e) -> {
-            board.undo();
-            updateBoard();
-            myTurn = !myTurn;
-            if (!myTurn) {
-                aiMove();
-            }
-
-        });
-        imageView.setFitHeight(25.0);
-        imageView.setFitWidth(25.0);
-
-        ImageView imageView2 = new ImageView();
-        imageView2.setFitHeight(25.0);
-        imageView2.setFitWidth(25.0);
-        imageView2.setImage(new Image("/refresh.png"));
-        imageView2.setOnMouseClicked((e) -> {
-            updateBoard();
-        });
-        imageView.setFitHeight(25.0);
-        imageView.setFitWidth(25.0);
-
-        ImageView imageView3 = new ImageView();
-        imageView3.setFitHeight(25.0);
-        imageView3.setFitWidth(25.0);
-        imageView3.setImage(new Image("/redo.png"));
-        imageView3.setOnMouseClicked((e) -> {
-
-        });
-
-        hBox3.getChildren().addAll(imageView, imageView2, imageView3);
-//        hBox.getChildren().addAll(vBox1, hBox2);
-        Label timeLabel = new Label("00:00");
-        elapsedTime.addListener((observableValue, number, t1) -> {
-            int minutes = elapsedTime.getValue() / 60;
-            int seconds = elapsedTime.getValue() - (minutes * 60);
-            String min = String.format("%2d", minutes).replace(' ', '0');
-            String sec = String.format("%2d", seconds).replace(' ', '0');
-            Platform.runLater(() -> {
-                timeLabel.setText(min + ":" + sec);
-            });
-
-        });
-        timeLabel.setFont(new Font(16.0));
-        hBox.getChildren().addAll(newHBox1, hBox3);
-        vbox.getChildren().addAll(hBox, timeLabel);
+        newHBox1.setBackground(boxBackground);
+        newHBox1.setPadding(new Insets(5.0));
+        newHBox1.setEffect(dropShadow);
+        HBox.setMargin(newHBox1, margin);
+        vbox.getChildren().addAll(newHBox1);
+        vbox.setSpacing(10.0);
         return vbox;
     }
 
@@ -243,23 +206,96 @@ public class Checkers {
      */
     private HBox setLowerActionButtons() {
         HBox hBox4 = new HBox();
+        hBox4.setBackground(boxBackground);
         hBox4.setPadding(new Insets(5.0));
         hBox4.setAlignment(Pos.CENTER);
-        hBox4.setSpacing(20.0);
-        Button hintButton = new Button("HINT");
+        hBox4.setSpacing(25.0);
+        ImageView imageView4 = new ImageView();
+        imageView4.setImage(new Image("/idea.png"));
+        imageView4.setFitWidth(25);
+        imageView4.setFitHeight(25);
+        Button hintButton = new Button();
+        hintButton.setGraphic(imageView4);
+        hintButton.setBackground(Background.EMPTY);
+        hintButton.setPadding(Insets.EMPTY);
+        hintButton.setTooltip(new Tooltip(highlightOnClick ? "Turn off highlighting" : "Turn on highlighting"));
         hintButton.setOnAction((e) -> {
             this.highlightOnClick = !this.highlightOnClick;
             updateBoard();
         });
+
         ImageView imageView1 = new ImageView();
         imageView1.setImage(new Image("/home.png"));
-        imageView1.setOnMouseClicked((e) -> {
+        imageView1.setFitWidth(25);
+        imageView1.setFitHeight(25);
+        Button homeButton = new Button();
+        homeButton.setGraphic(imageView1);
+        homeButton.setBackground(Background.EMPTY);
+        homeButton.setPadding(Insets.EMPTY);
+        homeButton.setTooltip(new Tooltip("Go to home menu"));
+        homeButton.setOnAction((e) -> {
             gotoHome();
         });
-        imageView1.setFitHeight(25.0);
-        imageView1.setFitWidth(25.0);
-        hBox4.getChildren().addAll(hintButton, imageView1);
+
+
+        ImageView imageView = new ImageView();
+        imageView.setImage(new Image("/undo.png"));
+        imageView.setFitWidth(25);
+        imageView.setFitHeight(25);
+        Button undoButton = new Button();
+        undoButton.setGraphic(imageView);
+        undoButton.setBackground(Background.EMPTY);
+        undoButton.setPadding(Insets.EMPTY);
+        undoButton.setTooltip(new Tooltip("Undo last move"));
+        undoButton.setOnAction((e) -> {
+            board.undo();
+            updateBoard();
+            myTurn = !myTurn;
+            if (!myTurn) {
+                aiMove();
+            }
+
+        });
+
+
+        ImageView imageView2 = new ImageView();
+        imageView2.setFitHeight(25.0);
+        imageView2.setFitWidth(25.0);
+        imageView2.setImage(new Image("/refresh.png"));
+        Button refreshButton = new Button();
+        refreshButton.setGraphic(imageView2);
+        refreshButton.setPadding(Insets.EMPTY);
+        imageView.setFitHeight(25.0);
+        imageView.setFitWidth(25.0);
+        refreshButton.setBackground(Background.EMPTY);
+        refreshButton.setOnMouseClicked((e) -> {
+            board.resetBoard();
+            updateBoard();
+            board.player1Score.set(0);
+            board.player2Score.set(0);
+            myTurn = true;
+            if (player instanceof RemotePlayer) myTurn = player.myTurn == Piece.PieceOwner.PLAYER1;
+        });
+
+
+        ImageView imageView3 = new ImageView();
+        imageView3.setFitHeight(25.0);
+        imageView3.setFitWidth(25.0);
+        Button redoButton = new Button();
+        redoButton.setGraphic(imageView3);
+        redoButton.setPadding(Insets.EMPTY);
+        redoButton.setBackground(Background.EMPTY);
+        imageView3.setImage(new Image("/redo.png"));
+        redoButton.setOnMouseClicked((e) -> {
+            board.redo();
+            updateBoard();
+        });
+
+
+        hBox4.getChildren().addAll(undoButton, refreshButton, redoButton, hintButton, homeButton);
         hBox4.setAlignment(Pos.CENTER);
+        hBox4.setEffect(dropShadow);
+        HBox.setMargin(hBox4, margin);
         return hBox4;
     }
 
@@ -409,19 +445,9 @@ public class Checkers {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Game Over");
         dialog.setContentText(won ? "You WON!" : "You Lost!");
-        ButtonType homeButton = new ButtonType("HOME", ButtonBar.ButtonData.OK_DONE);
-        ButtonType rematchButton = new ButtonType("REMATCH", ButtonBar.ButtonData.YES);
-        dialog.getDialogPane().getButtonTypes().addAll(homeButton, rematchButton);
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(cancelButton);
         dialog.showAndWait();
-        dialog.setResultConverter((buttonType -> {
-            if (buttonType == rematchButton) {
-                board.resetBoard();
-                updateBoard();
-            } else {
-                gotoHome();
-            }
-            return null;
-        }));
     }
 
     /**
