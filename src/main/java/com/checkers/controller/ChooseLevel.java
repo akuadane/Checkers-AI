@@ -17,9 +17,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import org.junit.Test;
-import org.testfx.api.FxAssert;
-import org.testfx.matcher.control.LabeledMatchers;
 
 import java.net.URL;
 import java.util.ResourceBundle;

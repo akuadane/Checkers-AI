@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 public class FxBaseTest extends ApplicationTest {
     @Override
@@ -19,6 +20,9 @@ public class FxBaseTest extends ApplicationTest {
     @Before
     public void setUpClass() throws Exception {
         ApplicationTest.launch(ChoosePlayer.class);
+        clickOn("#playWithComputerButton");
+        Thread.sleep(1000);
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     @After
