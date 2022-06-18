@@ -16,7 +16,7 @@ public class Board {
     public static final int BOARD_SIZE = 8;
 
     public Piece[][] board;
-    private Piece[][] prevBoard;
+    public Piece[][] prevBoard;
     private Piece[][] futureBoard;
     private Piece.PieceOwner turn;
 
