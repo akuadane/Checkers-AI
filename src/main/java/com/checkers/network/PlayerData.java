@@ -3,6 +3,9 @@ package com.checkers.network;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+/**
+ * Class PlayerData holds connection information in remote game
+ */
 public class PlayerData {
     String name;
     public ObjectInputStream reader;

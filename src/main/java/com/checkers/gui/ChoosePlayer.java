@@ -4,10 +4,14 @@ import com.checkers.models.prefs.Config;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Class ChoosePlayer represents a controller for choosing a player
+ */
 public class ChoosePlayer extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -19,6 +23,7 @@ public class ChoosePlayer extends Application {
         stage.setTitle("Choose Player");
         stage.setScene(scene);
         stage.centerOnScreen();
+        stage.getIcons().add(new Image("/pattern.png"));
         stage.show();
     }
 

@@ -6,20 +6,33 @@ import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.RemotePlayer;
 import com.checkers.models.prefs.Config;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.Duration;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
-public class CreateJoin {
+/**
+ * Class CreateJoin represents a controller class for choosing and establishing a remote game
+ */
+public class CreateJoin implements Initializable {
+    @FXML
+    AnchorPane anchorPane;
     @FXML
     TextField name;
     @FXML
@@ -41,7 +54,13 @@ public class CreateJoin {
     RemotePlayer player;
     ConnectionProgress connectionStatus = new ConnectionProgress();
     Stage stage;
+    private Scene currentScene;
 
+    /**
+     * Event Handler method for joining a remote game hosted by another player
+     *
+     * @param actionEvent: represents a mouse event selection of Join Game
+     */
     public void onJoinAction(ActionEvent actionEvent) {
         setStage(actionEvent);
         if (connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT || connectionStatus.getConnectionStatus() == ActionStatus.COMPLETED)
@@ -84,10 +103,21 @@ public class CreateJoin {
         }
     }
 
+    /**
+     * Helper method for setting the stage of the GUI used to attach scenes on it
+     *
+     * @param actionEvent
+     */
     private void setStage(ActionEvent actionEvent) {
+        currentScene = ((Node) actionEvent.getSource()).getScene();
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
     }
 
+    /**
+     * Method onCreateAction represents an Event Handler method for creating a Remote Game.
+     *
+     * @param actionEvent: represents a mouse event on Create Action selection
+     */
     public void onCreateAction(ActionEvent actionEvent) {
         setStage(actionEvent);
         if (connectionStatus.getConnectionStatus() == ActionStatus.COMPLETED || connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT)
@@ -127,16 +157,59 @@ public class CreateJoin {
         }
     }
 
+    /**
+     * Method showScene sets the scene of the stage to the checkers game and launches it
+     *
+     * @throws CouldntConnectToServerException: exception in connecting to remote host or hosting on specific port
+     */
     private void showScene() throws CouldntConnectToServerException {
         ((Config) stage.getUserData()).setPlayer(player);
-        Checkers game = Checkers.getInstance();
-        try {
-            game.start(stage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        fadeOutTransition(currentScene.getRoot(), (arg) -> {
+            Checkers game = Checkers.getInstance();
+            try {
+                game.start(stage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        anchorPane.setOpacity(0.0);
+        fadeInTransition(anchorPane);
+    }
+
+    private void fadeInTransition(AnchorPane anchorPane) {
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setNode(anchorPane);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
+    }
+
+    private void fadeOutTransition(Parent parent, Callback<Void, Void> function) {
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setNode(parent);
+        fadeTransition.setFromValue(1);
+        fadeTransition.setToValue(0);
+        fadeTransition.setOnFinished(actionEvent -> {
+            try {
+                function.call(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        fadeTransition.play();
+    }
+
+    /**
+     * Class ConnectionProgress represents the connection status of remote game
+     * and the transition between states.
+     */
     private class ConnectionProgress {
         private ActionStatus connectionStatus = ActionStatus.NOT_STARTED;
 
@@ -144,6 +217,11 @@ public class CreateJoin {
             return connectionStatus;
         }
 
+        /**
+         * Method setConnectionStatus updates the connection status
+         *
+         * @param connectionStatus: new connection status
+         */
         public void setConnectionStatus(ActionStatus connectionStatus) {
             ActionStatus previousState = this.connectionStatus;
             this.connectionStatus = connectionStatus;
@@ -157,21 +235,41 @@ public class CreateJoin {
         }
     }
 
+    /**
+     * Method handles status change to Hosting game state
+     *
+     * @param previousState
+     */
     private void handleHostingGame(ActionStatus previousState) {
 
     }
 
+    /**
+     * Method handles status change to Joining game state
+     *
+     * @param previousStatus: previous state of the connection
+     */
     private void handleJoiningGame(ActionStatus previousStatus) {
         overlayPane.setVisible(true);
         statusLabel.setText(ActionStatus.JOINING_GAME.name());
     }
 
+    /**
+     * Method handles status change to Waiting for opponent state
+     *
+     * @param previousStatus: previous state of the connection
+     */
     private void handleWaitingForOpponent(ActionStatus previousStatus) {
         overlayPane.setVisible(true);
         statusLabel.setText(ActionStatus.WAITING_FOR_OPPONENT.name());
 
     }
 
+    /**
+     * Method handles status change to connection establishment Completed state
+     *
+     * @param previousStatus: previous connection state
+     */
     private void handleCompleted(ActionStatus previousStatus) {
         Platform.runLater(() -> {
             overlayPane.setVisible(false);
@@ -185,6 +283,11 @@ public class CreateJoin {
         }
     }
 
+    /**
+     * Method handles status change to failure in establishing remote game connection
+     *
+     * @param previousStatus: previous state of the connection
+     */
     private void handleOnFailed(ActionStatus previousStatus) {
         statusLabel.setText(ActionStatus.FAILED.name());
         overlayPane.setVisible(false);

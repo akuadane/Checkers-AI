@@ -7,17 +7,21 @@ import com.checkers.models.move.Position;
 import com.checkers.models.piece.King;
 import com.checkers.models.piece.Pawn;
 import com.checkers.models.piece.Piece;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.ArrayList;
 
 public class Board {
     public static final int BOARD_SIZE = 8;
+
     public Piece[][] board;
     private Piece[][] prevBoard;
+    private Piece[][] futureBoard;
     private Piece.PieceOwner turn;
 
-    private int player1Score = 0 ;
-    private int player2Score = 0;
+    public final IntegerProperty player1Score = new SimpleIntegerProperty(0);
+    public final IntegerProperty player2Score = new SimpleIntegerProperty(0);
 
 
     public Board() {
@@ -54,14 +58,11 @@ public class Board {
      * in there are null so that they are removed.
      */
     public Move makeMove(Move mv) throws InValidMove {
-        if (mv == null)
-            throw new InValidMove("Move object can't be null.");
+        if (mv == null) throw new InValidMove("Move object can't be null.");
 
-        if (this.getPiece(mv.getOrigin()).owner != this.turn)
-            throw new InValidMove("Not your turn.");
+        if (this.getPiece(mv.getOrigin()).owner != this.turn) throw new InValidMove("Not your turn.");
 
-        for (Move move :
-                this.reachablePositionsByPlayer(this.getPiece(mv.getOrigin()).owner)) {
+        for (Move move : this.reachablePositionsByPlayer(this.getPiece(mv.getOrigin()).owner)) {
             if (mv.equals(move)) {
                 prevBoard = cloneBoardArray(board);
                 int initR = move.getOrigin().getRow();
@@ -73,8 +74,7 @@ public class Board {
                 board[newR][newC] = board[initR][initC].clone();
                 board[initR][initC] = null;  // Make the previous position empty
 
-                if (newR == 0 && this.turn == Piece.PieceOwner.PLAYER1)
-                    board[newR][newC] = new King(this.turn);
+                if (newR == 0 && this.turn == Piece.PieceOwner.PLAYER1) board[newR][newC] = new King(this.turn);
 
                 if (newR == BOARD_SIZE - 1 && this.turn == Piece.PieceOwner.PLAYER2)
                     board[newR][newC] = new King(this.turn);
@@ -84,17 +84,14 @@ public class Board {
                     for (Position remove : ((Jump) move).toBeRemoved) {
                         board[remove.getRow()][remove.getColumn()] = null;  // Remove all piece that are jumped over
 
-                        if(this.getPiece(remove) instanceof King)
-                            score +=2;
-                        else
-                            score ++;
+                        if (this.getPiece(remove) instanceof King) score += 2;
+                        else score++;
 
                     }
 
-                    if(this.turn == Piece.PieceOwner.PLAYER1)
-                        this.player1Score += score;
-                    else
-                        this.player2Score += score;
+                    if (this.turn == Piece.PieceOwner.PLAYER1)
+                        this.player1Score.setValue(this.player1Score.getValue() + score);
+                    else this.player2Score.setValue(this.player2Score.getValue() + score);
 
                 }
 
@@ -107,8 +104,7 @@ public class Board {
     }
 
     public ArrayList<Move> reachablePositions(Position position) {
-        if (position == null || this.getPiece(position) == null)
-            return null;
+        if (position == null || this.getPiece(position) == null) return null;
         return this.getPiece(position).generateMoves(new Board(this), position);
     }
 
@@ -129,21 +125,18 @@ public class Board {
                 if (piece != null && piece.owner == owner) {
                     ArrayList<Move> tempMoves = this.reachablePositions(new Position(i, j));
 
-                    if (tempMoves.size() == 0)
-                        continue;
+                    if (tempMoves.size() == 0) continue;
 
-                    else if (tempMoves.get(0) instanceof Jump)
-                        jumps.addAll(tempMoves);
-                    else
-                        moves.addAll(tempMoves);
+                    else if (tempMoves.get(0) instanceof Jump) jumps.addAll(tempMoves);
+                    else moves.addAll(tempMoves);
                 }
             }
         }
-        if (jumps.size() != 0)
-            return jumps;
+        if (jumps.size() != 0) return jumps;
         return moves;
     }
-    public ArrayList<Move> reachablePositionsByPlayer(){
+
+    public ArrayList<Move> reachablePositionsByPlayer() {
         return this.reachablePositionsByPlayer(this.turn);
     }
 
@@ -156,22 +149,23 @@ public class Board {
     public Piece.PieceOwner getTurn() {
         return this.turn;
     }
+
     /**
      * Returns player one's score
      *
      * @return an integer representing player one's score.
-     * */
+     */
     public int getPlayer1Score() {
-        return player1Score;
+        return player1Score.get();
     }
 
     /**
      * Returns player two's score
      *
      * @return an integer representing player two's score.
-     * */
+     */
     public int getPlayer2Score() {
-        return player2Score;
+        return player2Score.get();
     }
 
     /**
@@ -181,7 +175,6 @@ public class Board {
      * The rows in between are empty.
      */
     public void resetBoard() {
-
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < BOARD_SIZE; j += 2) { // Makes sure the Pieces are placed on squares where i+j is odd
                 if (i <= 2) {  //place player two's pawns in their starting place
@@ -205,8 +198,7 @@ public class Board {
     public Piece getPiece(Position pos) {
         int r = pos.getRow();
         int c = pos.getColumn();
-        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE)
-            return null;
+        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return null;
 
         return board[r][c];
 
@@ -220,10 +212,17 @@ public class Board {
      * @return Piece - returns the piece at the specified position.
      */
     public Piece getPiece(int r, int c) {
-        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE)
-            return null;
+        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return null;
         return board[r][c];
 
+    }
+
+    public boolean isEmpty(int r, int c){
+        return this.getPiece(r,c) == null;
+    }
+
+    public boolean isEmpty(Position pos){
+        return this.getPiece(pos) == null;
     }
 
     /**
@@ -232,11 +231,25 @@ public class Board {
      */
     public void undo() {
         if (prevBoard != null) {
+            futureBoard = cloneBoardArray(board);
             board = cloneBoardArray(prevBoard);
             prevBoard = null;
             this.turn = (this.turn == Piece.PieceOwner.PLAYER1) ? Piece.PieceOwner.PLAYER2 : Piece.PieceOwner.PLAYER1;
         }
 
+    }
+
+    /**
+     * Restores the state of the board before the undo.
+     * futureBoard holds the board state just before the last undo
+     */
+    public void redo() {
+        if (futureBoard != null) {
+            prevBoard = cloneBoardArray(board);
+            board = cloneBoardArray(futureBoard);
+            futureBoard = null;
+            this.turn = (this.turn == Piece.PieceOwner.PLAYER1) ? Piece.PieceOwner.PLAYER2 : Piece.PieceOwner.PLAYER1;
+        }
     }
 
 
@@ -255,36 +268,29 @@ public class Board {
                 Piece piece = this.board[r][c];
                 if (piece != null) {
                     if (piece.generateMoves(new Board(this), new Position(r, c)).size() != 0) {
-                        if (piece.owner == Piece.PieceOwner.PLAYER1)
-                            p1HasMoves = true;
-                        else
-                            p2HasMoves = true;
+                        if (piece.owner == Piece.PieceOwner.PLAYER1) p1HasMoves = true;
+                        else p2HasMoves = true;
 
-                        if (p1HasMoves && p2HasMoves)
-                            return null;
+                        if (p1HasMoves && p2HasMoves) return null;
                     }
 
                 }
             }
         }
-        if (p1HasMoves)
-            return Piece.PieceOwner.PLAYER1;
+        if (p1HasMoves) return Piece.PieceOwner.PLAYER1;
 
         return Piece.PieceOwner.PLAYER2;
     }
 
 
     public Piece[][] cloneBoardArray(Piece[][] b) {
-        if (b == null)
-            return b;
+        if (b == null) return b;
         Piece[][] newBoard = new Piece[BOARD_SIZE][BOARD_SIZE];
 
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < BOARD_SIZE; j += 2) {
-                if (b[i][j] != null)
-                    newBoard[i][j] = b[i][j].clone();
-                else
-                    newBoard[i][j] = null;
+                if (b[i][j] != null) newBoard[i][j] = b[i][j].clone();
+                else newBoard[i][j] = null;
             }
         }
         return newBoard;
@@ -301,8 +307,7 @@ public class Board {
                     } else {
                         p = 'b';
                     }
-                    if (piece instanceof King)
-                        p = Character.toUpperCase(p);
+                    if (piece instanceof King) p = Character.toUpperCase(p);
                 }
                 String box = "|" + p + ((j == BOARD_SIZE - 1) ? "|" : "");
 
@@ -315,10 +320,8 @@ public class Board {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Board))
-            return false;
+        if (this == obj) return true;
+        if (!(obj instanceof Board)) return false;
 
         Board b = (Board) obj;
 
@@ -326,13 +329,33 @@ public class Board {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 {
                     Position pos = new Position(i, j);
-                    if (b.getPiece(pos) == null && this.getPiece(pos) == null)
-                        continue;
-                    if (!b.getPiece(pos).equals(this.getPiece(pos)))
-                        return false;
+                    if (b.getPiece(pos) == null && this.getPiece(pos) == null) continue;
+                    if (!b.getPiece(pos).equals(this.getPiece(pos))) return false;
                 }
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        String boardStr="";
+        for (int r = 0; r < BOARD_SIZE; r++) {
+            for (int c = (1 - r % 2); c < BOARD_SIZE; c += 2) {
+                Piece piece = this.board[r][c];
+                char p = '-';
+                if (piece != null) {
+                    if (piece.owner == Piece.PieceOwner.PLAYER1) {
+                        p = 'a';
+                    } else {
+                        p = 'b';
+                    }
+                    if (piece instanceof King)
+                        p = Character.toUpperCase(p);
+                }
+                boardStr+=p;
+            }
+        }
+        return boardStr;
     }
 }
