@@ -44,7 +44,8 @@ hs_err_pid*
 *.iws
 .idea/
 ## Plugin-specific files:
-
+q
+Checkers_Workshop_GUI.iml
 # IntelliJ
 /out/
 /target/

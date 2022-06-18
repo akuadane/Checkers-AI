@@ -2,10 +2,10 @@ package com.checkers.models.move;
 
 import java.io.Serializable;
 
+
 public class Move implements Serializable {
 
     private Position origin;
-
 
     private Position destination;
 

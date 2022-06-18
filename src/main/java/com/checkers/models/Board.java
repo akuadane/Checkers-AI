@@ -14,8 +14,9 @@ import java.util.ArrayList;
 
 public class Board {
     public static final int BOARD_SIZE = 8;
+
     public Piece[][] board;
-    private Piece[][] prevBoard;
+    public Piece[][] prevBoard;
     private Piece[][] futureBoard;
     private Piece.PieceOwner turn;
 
@@ -174,7 +175,6 @@ public class Board {
      * The rows in between are empty.
      */
     public void resetBoard() {
-
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = (1 - i % 2); j < BOARD_SIZE; j += 2) { // Makes sure the Pieces are placed on squares where i+j is odd
                 if (i <= 2) {  //place player two's pawns in their starting place
@@ -215,6 +215,14 @@ public class Board {
         if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return null;
         return board[r][c];
 
+    }
+
+    public boolean isEmpty(int r, int c){
+        return this.getPiece(r,c) == null;
+    }
+
+    public boolean isEmpty(Position pos){
+        return this.getPiece(pos) == null;
     }
 
     /**
@@ -327,5 +335,27 @@ public class Board {
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        String boardStr="";
+        for (int r = 0; r < BOARD_SIZE; r++) {
+            for (int c = (1 - r % 2); c < BOARD_SIZE; c += 2) {
+                Piece piece = this.board[r][c];
+                char p = '-';
+                if (piece != null) {
+                    if (piece.owner == Piece.PieceOwner.PLAYER1) {
+                        p = 'a';
+                    } else {
+                        p = 'b';
+                    }
+                    if (piece instanceof King)
+                        p = Character.toUpperCase(p);
+                }
+                boardStr+=p;
+            }
+        }
+        return boardStr;
     }
 }

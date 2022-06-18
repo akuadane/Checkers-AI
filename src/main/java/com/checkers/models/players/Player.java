@@ -5,6 +5,7 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
 
+
 public abstract class Player {
     public String name;
     public String opponentName = this.getClass().getSimpleName();
@@ -28,7 +29,6 @@ public abstract class Player {
         this.name = name;
         this.myTurn = Piece.PieceOwner.PLAYER2;
     }
-
     public abstract Move makeMove(Board board) throws InValidMove, CloneNotSupportedException;
 
     public boolean makeMove(Move move) throws InValidMove {
