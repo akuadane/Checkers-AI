@@ -5,10 +5,8 @@ module com.checkers {
     requires org.controlsfx.controls;
     requires junit;
     requires javafx.graphics;
-    requires mapdb;
-    requires jmathplot;
 
+    opens com.checkers.gui to javafx.graphics, javafx.fxml;
+    opens com.checkers.controller to javafx.fxml;
 
-    opens com.checkers to javafx.fxml;
-    exports com.checkers.gui;
 }
