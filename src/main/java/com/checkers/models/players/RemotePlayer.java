@@ -4,10 +4,12 @@ import com.checkers.models.Board;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
-import com.checkers.network.*;
 import com.checkers.network.Error;
+import com.checkers.network.*;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;

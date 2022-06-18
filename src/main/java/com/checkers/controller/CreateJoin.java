@@ -6,6 +6,7 @@ import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.RemotePlayer;
 import com.checkers.models.prefs.Config;
+import com.checkers.util.SceneUtils;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -183,7 +184,7 @@ public class CreateJoin implements Initializable {
 
     private void fadeInTransition(AnchorPane anchorPane) {
         FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setDuration(Duration.millis(SceneUtils.ANIMATION_DURATION));
         fadeTransition.setNode(anchorPane);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
@@ -192,7 +193,7 @@ public class CreateJoin implements Initializable {
 
     private void fadeOutTransition(Parent parent, Callback<Void, Void> function) {
         FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setDuration(Duration.millis(SceneUtils.ANIMATION_DURATION));
         fadeTransition.setNode(parent);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);

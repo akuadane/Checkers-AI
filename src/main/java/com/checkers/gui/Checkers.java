@@ -9,6 +9,7 @@ import com.checkers.models.players.*;
 import com.checkers.models.prefs.Config;
 import com.checkers.models.prefs.GameType;
 import com.checkers.models.prefs.Level;
+import com.checkers.util.SceneUtils;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -69,7 +70,7 @@ public class Checkers {
 
     public void fadeInTransition(Parent root) {
         FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setDuration(Duration.millis(SceneUtils.ANIMATION_DURATION));
         fadeTransition.setNode(root);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
@@ -146,7 +147,15 @@ public class Checkers {
         HBox newHBox3 = new HBox();
         newHBox1.setSpacing(30);
         newHBox2.setSpacing(15.0);
-        Label player1Label = new Label(player != null ? player.getName() : "Player 1");
+        String player1 = "Player 1";
+        String player2 = "Player 2";
+        if (this.player != null && this.player instanceof AIPlayer || this.player instanceof RandomPlayer) {
+            player2 = this.player.getClass().getSimpleName();
+        } else if (this.player != null && this.player instanceof RemotePlayer) {
+            player1 = this.player.getName();
+            player2 = this.player.getOpponentName();
+        }
+        Label player1Label = new Label(player1);
         player1Label.setFont(textFont);
         player1Label.setTextFill(fillColor);
         Label player1Score = new Label("0");
@@ -163,7 +172,7 @@ public class Checkers {
 
         newHBox3.setSpacing(15.0);
         newHBox3.setAlignment(Pos.CENTER_LEFT);
-        Label player2Label = new Label(player != null ? player.getOpponentName() : "Player 2");
+        Label player2Label = new Label(player2);
         player2Label.setFont(textFont);
         player2Label.setTextFill(fillColor);
         Label player2Score = new Label("0");
@@ -173,7 +182,6 @@ public class Checkers {
             Platform.runLater(() -> {
                 player2Score.setText(observableValue.getValue().toString());
             });
-
         });
         newHBox3.getChildren().addAll(player2Score, player2Label);
         newHBox1.getChildren().addAll(newHBox2, newHBox3);
@@ -205,6 +213,7 @@ public class Checkers {
      * @return a JavaFx HBox Node
      */
     private HBox setLowerActionButtons() {
+        final int IMAGE_SIZE = 30;
         HBox hBox4 = new HBox();
         hBox4.setBackground(boxBackground);
         hBox4.setPadding(new Insets(5.0));
@@ -212,8 +221,8 @@ public class Checkers {
         hBox4.setSpacing(25.0);
         ImageView imageView4 = new ImageView();
         imageView4.setImage(new Image("/idea.png"));
-        imageView4.setFitWidth(25);
-        imageView4.setFitHeight(25);
+        imageView4.setFitWidth(IMAGE_SIZE);
+        imageView4.setFitHeight(IMAGE_SIZE);
         Button hintButton = new Button();
         hintButton.setGraphic(imageView4);
         hintButton.setBackground(Background.EMPTY);
@@ -226,8 +235,8 @@ public class Checkers {
 
         ImageView imageView1 = new ImageView();
         imageView1.setImage(new Image("/home.png"));
-        imageView1.setFitWidth(25);
-        imageView1.setFitHeight(25);
+        imageView1.setFitWidth(IMAGE_SIZE);
+        imageView1.setFitHeight(IMAGE_SIZE);
         Button homeButton = new Button();
         homeButton.setGraphic(imageView1);
         homeButton.setBackground(Background.EMPTY);
@@ -240,8 +249,8 @@ public class Checkers {
 
         ImageView imageView = new ImageView();
         imageView.setImage(new Image("/undo.png"));
-        imageView.setFitWidth(25);
-        imageView.setFitHeight(25);
+        imageView.setFitWidth(IMAGE_SIZE);
+        imageView.setFitHeight(IMAGE_SIZE);
         Button undoButton = new Button();
         undoButton.setGraphic(imageView);
         undoButton.setBackground(Background.EMPTY);
@@ -259,44 +268,62 @@ public class Checkers {
 
 
         ImageView imageView2 = new ImageView();
-        imageView2.setFitHeight(25.0);
-        imageView2.setFitWidth(25.0);
+        imageView2.setFitHeight(IMAGE_SIZE);
+        imageView2.setFitWidth(IMAGE_SIZE);
         imageView2.setImage(new Image("/refresh.png"));
         Button refreshButton = new Button();
         refreshButton.setGraphic(imageView2);
         refreshButton.setPadding(Insets.EMPTY);
-        imageView.setFitHeight(25.0);
-        imageView.setFitWidth(25.0);
+        imageView.setFitHeight(IMAGE_SIZE);
+        imageView.setFitWidth(IMAGE_SIZE);
         refreshButton.setBackground(Background.EMPTY);
         refreshButton.setOnMouseClicked((e) -> {
+//            showDialog(true);
             board.resetBoard();
             updateBoard();
             board.player1Score.set(0);
             board.player2Score.set(0);
             myTurn = true;
-            if (player instanceof RemotePlayer) myTurn = player.myTurn == Piece.PieceOwner.PLAYER1;
+            if (player instanceof RemotePlayer) {
+                myTurn = player.myTurn == Piece.PieceOwner.PLAYER1;
+            }
         });
 
 
-        ImageView imageView3 = new ImageView();
-        imageView3.setFitHeight(25.0);
-        imageView3.setFitWidth(25.0);
+        ImageView imageView3 = new ImageView("/redo.png");
+        imageView3.setFitHeight(IMAGE_SIZE);
+        imageView3.setFitWidth(IMAGE_SIZE);
         Button redoButton = new Button();
         redoButton.setGraphic(imageView3);
         redoButton.setPadding(Insets.EMPTY);
         redoButton.setBackground(Background.EMPTY);
-        imageView3.setImage(new Image("/redo.png"));
+
         redoButton.setOnMouseClicked((e) -> {
             board.redo();
             updateBoard();
         });
+        ImageView imageView5 = new ImageView("/info.png");
+        imageView5.setFitHeight(IMAGE_SIZE);
+        imageView5.setFitWidth(IMAGE_SIZE);
+        Button infoButton = new Button();
+        infoButton.setGraphic(imageView5);
+        infoButton.setPadding(Insets.EMPTY);
+        infoButton.setBackground(Background.EMPTY);
+
+        infoButton.setOnMouseClicked((e) -> {
+            showInfoDialog();
+        });
 
 
-        hBox4.getChildren().addAll(undoButton, refreshButton, redoButton, hintButton, homeButton);
+        hBox4.getChildren().addAll(undoButton, refreshButton, redoButton, hintButton, homeButton, infoButton);
         hBox4.setAlignment(Pos.CENTER);
-        hBox4.setEffect(dropShadow);
+//        hBox4.setEffect(dropShadow);
         HBox.setMargin(hBox4, margin);
         return hBox4;
+    }
+
+    private void showInfoDialog() {
+        Dialog<String> dialog = new Dialog<>();
     }
 
     /**
@@ -444,8 +471,18 @@ public class Checkers {
     public void showDialog(boolean won) {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Game Over");
-        dialog.setContentText(won ? "You WON!" : "You Lost!");
-        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+//        dialog.setContentText(won ? "You WON!" : "You Lost!");
+//        dialog.getDialogPane().setGraphic(new ImageView("/you win.png"));
+//        dialog.setHeight(100);
+//        dialog.setWidth(80);
+        ImageView youWin = new ImageView("/you win.png");
+        ImageView youLost = new ImageView("/you lost.png");
+        youWin.setFitWidth(200);
+        youWin.setFitHeight(220);
+        dialog.getDialogPane().setContent(won ? youWin : youLost);
+
+        ButtonType cancelButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(cancelButton);
         dialog.showAndWait();
     }

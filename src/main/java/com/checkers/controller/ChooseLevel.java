@@ -1,10 +1,10 @@
 package com.checkers.controller;
 
-
 import com.checkers.gui.Checkers;
 import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.prefs.Config;
 import com.checkers.models.prefs.Level;
+import com.checkers.util.SceneUtils;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +17,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import org.junit.Test;
+import org.testfx.api.FxAssert;
+import org.testfx.matcher.control.LabeledMatchers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -95,7 +98,7 @@ public class ChooseLevel implements Initializable {
 
     private void fadeOutTransition(Parent root, Callback<Void, Void> function) {
         FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setDuration(Duration.millis(SceneUtils.ANIMATION_DURATION));
         fadeTransition.setNode(root);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
@@ -117,7 +120,7 @@ public class ChooseLevel implements Initializable {
 
     private void fakeInTransition(AnchorPane parent) {
         FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(1000));
+        fadeTransition.setDuration(Duration.millis(SceneUtils.ANIMATION_DURATION));
         fadeTransition.setNode(parent);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);

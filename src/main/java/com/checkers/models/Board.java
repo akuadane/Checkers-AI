@@ -186,7 +186,7 @@ public class Board {
                 }
             }
         }
-
+        turn = Piece.PieceOwner.PLAYER1;
     }
 
     /**

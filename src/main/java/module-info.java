@@ -5,6 +5,8 @@ module com.checkers {
     requires org.controlsfx.controls;
     requires junit;
     requires javafx.graphics;
-    opens com.checkers.gui to javafx.graphics, javafx.fxml;
-    opens com.checkers.controller to javafx.fxml;
+    requires testfx.core;
+    requires com.google.common;
+    opens com.checkers.gui to javafx.graphics, javafx.fxml, junit, testfx.core;
+    opens com.checkers.controller to javafx.fxml, junit, testfx.core;
 }

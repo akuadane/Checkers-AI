@@ -6,6 +6,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.junit.Test;
+import org.testfx.api.FxAssert;
+import org.testfx.matcher.control.LabeledMatchers;
 
 import java.io.IOException;
 
