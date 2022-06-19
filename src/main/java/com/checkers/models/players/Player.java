@@ -26,7 +26,7 @@ public abstract class Player {
         return this.name;
     }
 
-    Player(String name) {
+    protected Player(String name) {
         this.name = name;
         this.myTurn = Piece.PieceOwner.PLAYER2;
     }

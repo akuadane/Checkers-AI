@@ -80,6 +80,7 @@ public class CreateJoin implements Initializable {
                 }
             };
             Runnable waitOpponentRunnable = () -> {
+                if (connectionStatus.getConnectionStatus() == ActionStatus.FAILED) return;
                 Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.WAITING_FOR_OPPONENT));
                 try {
                     Thread.sleep((long) Double.POSITIVE_INFINITY);

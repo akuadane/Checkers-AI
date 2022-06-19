@@ -47,7 +47,6 @@ public class MCTS {
         }
 
         int bestMoveIndex = this.selectBestMove(node,noPlays);
-        System.out.println(bestMoveIndex);
         return node.getState().getBoard().reachablePositionsByPlayer().get(bestMoveIndex);
 
     }

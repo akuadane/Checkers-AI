@@ -19,7 +19,6 @@ public class QTable {
     public QTable(String name) {
         db = DBMaker.fileDB(DEFAULT_PATH).make();
         map = db.hashMap(name, Serializer.STRING, Serializer.DOUBLE_ARRAY).createOrOpen();
-        System.out.println(map.size());
     }
 
     public QTable() {
@@ -31,7 +30,6 @@ public class QTable {
         double[] actions = this.map.get(state.toString());
 
         if (actions == null) {
-            //TODO initialize the int array with random values
             List<Move> possibleMoves = state.reachablePositionsByPlayer(state.getTurn());
             actions = new double[possibleMoves.size()];
 

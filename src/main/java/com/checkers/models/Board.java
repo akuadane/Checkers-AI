@@ -19,6 +19,11 @@ public class Board {
     public Piece[][] prevBoard;
     private Piece[][] futureBoard;
     private Piece.PieceOwner turn;
+    public int prevPlayer1Score;
+    public int prevPlayer2Score;
+
+    public int futurePlayer1Score;
+    public int futurePlayer2Score;
 
     public final IntegerProperty player1Score = new SimpleIntegerProperty(0);
     public final IntegerProperty player2Score = new SimpleIntegerProperty(0);
@@ -65,6 +70,8 @@ public class Board {
         for (Move move : this.reachablePositionsByPlayer(this.getPiece(mv.getOrigin()).owner)) {
             if (mv.equals(move)) {
                 prevBoard = cloneBoardArray(board);
+                prevPlayer2Score = this.getPlayer2Score();
+                prevPlayer1Score = this.getPlayer1Score();
                 int initR = move.getOrigin().getRow();
                 int initC = move.getOrigin().getColumn();
                 int newR = move.getDestination().getRow();
@@ -141,8 +148,8 @@ public class Board {
      * Returns the possible moves of the current player.
      *
      * @return ArrayList of moves
-     * */
-    public ArrayList<Move> reachablePositionsByPlayer(){
+     */
+    public ArrayList<Move> reachablePositionsByPlayer() {
         return this.reachablePositionsByPlayer(this.turn);
     }
 
@@ -154,6 +161,10 @@ public class Board {
 
     public Piece.PieceOwner getTurn() {
         return this.turn;
+    }
+
+    public void setTurn(Piece.PieceOwner owner) {
+        this.turn = owner;
     }
 
     /**
@@ -193,6 +204,8 @@ public class Board {
             }
         }
         turn = Piece.PieceOwner.PLAYER1;
+        this.player2Score.setValue(0);
+        this.player1Score.setValue(0);
     }
 
     /**
@@ -223,11 +236,11 @@ public class Board {
 
     }
 
-    public boolean isEmpty(int r, int c){
-        return this.getPiece(r,c) == null;
+    public boolean isEmpty(int r, int c) {
+        return this.getPiece(r, c) == null;
     }
 
-    public boolean isEmpty(Position pos){
+    public boolean isEmpty(Position pos) {
         return this.getPiece(pos) == null;
     }
 
@@ -235,13 +248,19 @@ public class Board {
      * Restores the previous state of the board
      * prevBoard holds the board state just before the last move
      */
-    public void undo() {
+    public boolean undo() {
         if (prevBoard != null) {
             futureBoard = cloneBoardArray(board);
+            futurePlayer1Score = this.getPlayer1Score();
+            futurePlayer2Score = this.getPlayer2Score();
             board = cloneBoardArray(prevBoard);
+            player2Score.setValue(prevPlayer2Score);
+            player1Score.setValue(prevPlayer1Score);
             prevBoard = null;
             this.turn = (this.turn == Piece.PieceOwner.PLAYER1) ? Piece.PieceOwner.PLAYER2 : Piece.PieceOwner.PLAYER1;
+            return true;
         }
+        return false;
 
     }
 
@@ -249,13 +268,19 @@ public class Board {
      * Restores the state of the board before the undo.
      * futureBoard holds the board state just before the last undo
      */
-    public void redo() {
+    public boolean redo() {
         if (futureBoard != null) {
             prevBoard = cloneBoardArray(board);
+            prevPlayer1Score = getPlayer1Score();
+            prevPlayer2Score = getPlayer2Score();
             board = cloneBoardArray(futureBoard);
+            player2Score.setValue(futurePlayer2Score);
+            player1Score.setValue(futurePlayer1Score);
             futureBoard = null;
             this.turn = (this.turn == Piece.PieceOwner.PLAYER1) ? Piece.PieceOwner.PLAYER2 : Piece.PieceOwner.PLAYER1;
+            return true;
         }
+        return false;
     }
 
 
@@ -266,7 +291,7 @@ public class Board {
      *
      * @return PieceOwner type of the winning player or null if the game hasn't ended yet.
      */
-    public Piece.PieceOwner isGameOver() { // TODO change the name to isThereWinner
+    public Piece.PieceOwner isGameOver() {
         boolean p1HasMoves = false, p2HasMoves = false;
 
         for (int r = 0; r < BOARD_SIZE; r++) {
@@ -345,7 +370,7 @@ public class Board {
 
     @Override
     public String toString() {
-        String boardStr="";
+        String boardStr = "";
         for (int r = 0; r < BOARD_SIZE; r++) {
             for (int c = (1 - r % 2); c < BOARD_SIZE; c += 2) {
                 Piece piece = this.board[r][c];
@@ -359,7 +384,7 @@ public class Board {
                     if (piece instanceof King)
                         p = Character.toUpperCase(p);
                 }
-                boardStr+=p;
+                boardStr += p;
             }
         }
         return boardStr;

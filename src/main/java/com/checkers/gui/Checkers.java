@@ -33,7 +33,6 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TimerTask;
 
 /**
  * Class main checkers game UI and behavior controller
@@ -52,7 +51,6 @@ public class Checkers {
     public IntegerProperty elapsedTime = new SimpleIntegerProperty(0);
     public Background boxBackground = new Background(new BackgroundFill(Color.valueOf("#9E4B1A"), CornerRadii.EMPTY, Insets.EMPTY));
     public DropShadow dropShadow;
-    private final Insets padding = new Insets(10.0);
     private final Insets margin = new Insets(10.0);
     private final Font textFont = Font.font(null, FontWeight.BOLD, 20);
     private final Color fillColor = Color.WHITE;
@@ -122,7 +120,7 @@ public class Checkers {
         outerLayout.setOpacity(0.0);
         Platform.runLater(() -> {
             Scene scene = new Scene(outerLayout);
-            stage.setTitle("Checkers");
+            stage.setTitle("Checkers AI");
             stage.setScene(scene);
             stage.setResizable(false);
             stage.centerOnScreen();
@@ -150,11 +148,12 @@ public class Checkers {
         newHBox2.setSpacing(15.0);
         String player1 = "Player 1";
         String player2 = "Player 2";
-        if (this.player != null && this.player instanceof AIPlayer || this.player instanceof RandomPlayer) {
+        if (this.player != null && this.player instanceof RemotePlayer) {
+            player1 = this.player.myTurn == Piece.PieceOwner.PLAYER1 ? "You" : this.player.getOpponentName();
+            player2 = this.player.myTurn == Piece.PieceOwner.PLAYER2 ? "You" : this.player.getOpponentName();
+        } else if (this.player != null) {
             player2 = this.player.getClass().getSimpleName();
-        } else if (this.player != null && this.player instanceof RemotePlayer) {
-            player1 = this.player.getName();
-            player2 = this.player.getOpponentName();
+            player1 = "You";
         }
         Label player1Label = new Label(player1);
         player1Label.setFont(textFont);
@@ -195,17 +194,6 @@ public class Checkers {
         vbox.getChildren().addAll(newHBox1);
         vbox.setSpacing(10.0);
         return vbox;
-    }
-
-    /**
-     * Class ScheduledTimer represents a timer task that periodically updates the elapsed time every second
-     */
-    private class ScheduledTimer extends TimerTask {
-
-        @Override
-        public void run() {
-            elapsedTime.setValue(elapsedTime.getValue() + 1);
-        }
     }
 
     /**
@@ -258,15 +246,16 @@ public class Checkers {
         undoButton.setPadding(Insets.EMPTY);
         undoButton.setTooltip(new Tooltip("Undo last move"));
         undoButton.setOnAction((e) -> {
-            board.undo();
+            if (!board.undo()) return;
             updateBoard();
+            if (this.player == null) return;
             myTurn = !myTurn;
+            if (myTurn) board.setTurn(Piece.PieceOwner.PLAYER1);
+            else board.setTurn(Piece.PieceOwner.PLAYER2);
             if (!myTurn) {
                 aiMove();
             }
-
         });
-
 
         ImageView imageView2 = new ImageView();
         imageView2.setFitHeight(IMAGE_SIZE);
@@ -279,17 +268,10 @@ public class Checkers {
         imageView.setFitWidth(IMAGE_SIZE);
         refreshButton.setBackground(Background.EMPTY);
         refreshButton.setOnMouseClicked((e) -> {
-//            showDialog(true);
             board.resetBoard();
             updateBoard();
-            board.player1Score.set(0);
-            board.player2Score.set(0);
             myTurn = true;
-            if (player instanceof RemotePlayer) {
-                myTurn = player.myTurn == Piece.PieceOwner.PLAYER1;
-            }
         });
-
 
         ImageView imageView3 = new ImageView("/redo.png");
         imageView3.setFitHeight(IMAGE_SIZE);
@@ -300,9 +282,15 @@ public class Checkers {
         redoButton.setBackground(Background.EMPTY);
 
         redoButton.setOnMouseClicked((e) -> {
-            board.redo();
+            if (!board.redo()) return;
             updateBoard();
+            if (this.player == null) return;
+            myTurn = !myTurn;
+            if (myTurn) board.setTurn(Piece.PieceOwner.PLAYER1);
+            else board.setTurn(Piece.PieceOwner.PLAYER2);
+            if (!myTurn) aiMove();
         });
+
         ImageView imageView5 = new ImageView("/info.png");
         imageView5.setFitHeight(IMAGE_SIZE);
         imageView5.setFitWidth(IMAGE_SIZE);
@@ -315,8 +303,9 @@ public class Checkers {
             showInfoDialog();
         });
 
+        if (!(this.player instanceof RemotePlayer)) hBox4.getChildren().addAll(undoButton, refreshButton, redoButton);
 
-        hBox4.getChildren().addAll(undoButton, refreshButton, redoButton, hintButton, homeButton, infoButton);
+        hBox4.getChildren().addAll(hintButton, homeButton, infoButton);
         hBox4.setAlignment(Pos.CENTER);
 //        hBox4.setEffect(dropShadow);
         HBox.setMargin(hBox4, margin);
@@ -325,6 +314,17 @@ public class Checkers {
 
     private void showInfoDialog() {
         Dialog<String> dialog = new Dialog<>();
+        FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.controller.ChoosePlayer.class.getResource("/game-info.fxml"));
+        try {
+            AnchorPane anchorPane = fxmlLoader.load();
+            dialog.getDialogPane().setContent(anchorPane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ButtonType cancelButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(cancelButton);
+        dialog.showAndWait();
+
     }
 
     /**
@@ -333,14 +333,12 @@ public class Checkers {
      */
     private void gotoHome() {
         mainStage.close();
-        System.out.println(config.getChoosePlayerScene());
         FXMLLoader fxmlLoader = new FXMLLoader(com.checkers.gui.ChoosePlayer.class.getResource("/choose-player.fxml"));
         try {
             Scene nextScene = new Scene(fxmlLoader.load());
             mainStage.setScene(nextScene);
             mainStage.setTitle("Choose Player");
             mainStage.show();
-            System.out.println("Done");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -361,7 +359,7 @@ public class Checkers {
             case HARD -> player = new AlphaBetaMinMaxAIPlayer("Alpha Beta", Piece.PieceOwner.PLAYER2);
             case MEDIUM -> player = new MinMaxAIPlayer("MiniMaxAI", Piece.PieceOwner.PLAYER2);
             case EXPERT -> player = new BackRowAIPlayer("BackRowAI", Piece.PieceOwner.PLAYER2);
-            default -> player = new IterativeDeepeningAIPlayer("John Doe", Piece.PieceOwner.PLAYER2);
+            default -> player = new IterativeDeepeningAIPlayer("Iterative Deepening", Piece.PieceOwner.PLAYER2);
         }
 
         return player;
@@ -481,6 +479,8 @@ public class Checkers {
         ImageView youLost = new ImageView("/you lost.png");
         youWin.setFitWidth(200);
         youWin.setFitHeight(220);
+        youLost.setFitWidth(200);
+        youLost.setFitHeight(220);
         dialog.getDialogPane().setContent(won ? youWin : youLost);
 
         ButtonType cancelButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);

@@ -11,7 +11,7 @@ public class Jump extends Move {
         toBeRemoved = new ArrayList<>();
     }
 
-    //TODO create an exception for when the size of the array is > 4
+
     public void addToBeRemovedSquare(Position remove){toBeRemoved.add(remove);}
 
     @Override
