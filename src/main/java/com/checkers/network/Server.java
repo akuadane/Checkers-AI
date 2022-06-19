@@ -1,3 +1,5 @@
+
+/*
 package com.checkers.network;
 
 import java.io.ObjectOutputStream;
@@ -6,8 +8,8 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class Server {
-    public static HashMap<Integer, int[]> games;
-    public static HashMap<Integer, PlayerData> playerInfo;
+    public static HashMap<String, int[]> games = new HashMap<>();
+    public static HashMap<Integer, PlayerData> playerInfo = new HashMap<>();
     public static int minimumID = 1;
     static int PORT = 6060;
 
@@ -21,16 +23,19 @@ public class Server {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server listening on port: " + PORT);
             while (true) {
+
                 Socket socket = serverSocket.accept();
-                PlayerHandler playerHandler = new PlayerHandler(socket);
-                Action action = new ConnectionInfo(minimumID);
+                System.out.println("User Accepted");
+                new ObjectOutputStream(socket.getOutputStream()).writeObject(new ConnectionInfo(minimumID));
+                PlayerHandler playerHandler = new PlayerHandler(socket, minimumID);
                 minimumID += 1;
-                new ObjectOutputStream(socket.getOutputStream()).writeObject(action);
                 playerHandler.start();
 
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }
+
+*/
