@@ -136,6 +136,7 @@ public class Board {
         return moves;
     }
 
+
     /**
      * Returns the possible moves of the current player.
      *

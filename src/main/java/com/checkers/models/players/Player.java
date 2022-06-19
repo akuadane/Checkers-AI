@@ -13,7 +13,7 @@ public abstract class Player {
     public Piece.PieceOwner myTurn;
 
 
-    Player(String name, Piece.PieceOwner myTurn) {
+    protected Player(String name, Piece.PieceOwner myTurn) {
         this.name = name;
         this.myTurn = myTurn;
     }
