@@ -19,7 +19,6 @@ public class QTable {
     public QTable(String name) {
         db = DBMaker.fileDB(DEFAULT_PATH).make();
         map = db.hashMap(name, Serializer.STRING, Serializer.DOUBLE_ARRAY).createOrOpen();
-        System.out.println(map.size());
     }
 
     public QTable() {

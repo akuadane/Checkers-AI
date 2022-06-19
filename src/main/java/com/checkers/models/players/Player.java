@@ -17,7 +17,10 @@ public abstract class Player {
         this.name = name;
         this.myTurn = myTurn;
     }
-
+    protected Player(String name) {
+        this.name = name;
+        this.myTurn = Piece.PieceOwner.PLAYER2;
+    }
     public String getOpponentName() {
         return this.opponentName;
     }
@@ -26,10 +29,7 @@ public abstract class Player {
         return this.name;
     }
 
-    Player(String name) {
-        this.name = name;
-        this.myTurn = Piece.PieceOwner.PLAYER2;
-    }
+
     public abstract Move makeMove(Board board) throws InValidMove, CloneNotSupportedException;
 
     public boolean makeMove(Move move) throws InValidMove {

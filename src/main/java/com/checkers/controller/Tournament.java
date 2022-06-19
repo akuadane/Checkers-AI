@@ -5,6 +5,10 @@ import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.Player;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,6 +16,10 @@ import java.util.Queue;
 
 public class Tournament {
     Player[] players;
+    final int GAME_WINS = 0;
+    final int ROUND_WINS = 1;
+    final int GAME_LOSSES = 2;
+    final int GAME_DRAWS = 3;
 
     public Tournament(){
         players = PlayerFactory.getAllPlayers();
@@ -19,8 +27,8 @@ public class Tournament {
 
     //TODO add more detail in the stat
     public String playOff(int rounds) throws InValidMove, CloneNotSupportedException {
-        HashMap<String,int[]> stat = new HashMap<>(); // [a,b,c] a is number of wins by game, b is number of win by rounds, loss
-
+        HashMap<String,int[]> stat = new HashMap<>(); // [a,b,c,d] a is number of wins by game, b is number of win by rounds, c for loss, and d draws
+        int gamesPlayed = 0;
         while(rounds>0){
             Queue<Player> playersInGame = new LinkedList<>(Arrays.asList(players));
             Player roundWinner = null;
@@ -28,47 +36,65 @@ public class Tournament {
                 Player player1 = playersInGame.poll();
                 player1.myTurn= Piece.PieceOwner.PLAYER1;
 
+                int winnerResultIndex = 0;
+                int loserResultIndex  = 0;
+
                 if(playersInGame.isEmpty()){
                     roundWinner = player1;
                     break;
                 }
-
                 Player player2= playersInGame.poll();
                 player2.myTurn = Piece.PieceOwner.PLAYER2;
 
-                Player gameWinner = new Game(player1,player2).play();
-                if(gameWinner == null){
+                int[] result = stat.get(player1.toString());
 
+                if(result==null) { // If wasn't in the hashmap before
+                    stat.put(player1.toString(), new int[]{0, 0, 0, 0});
                 }
-                Player loser = (gameWinner.equals(player1)?player2:player1);
-
-                playersInGame.add(gameWinner);
-
-                int[] result = stat.get(gameWinner.toString());
-
+                result = stat.get(player2.toString());
                 if(result==null){ // If wasn't in the hashmap before
-                    stat.put(gameWinner.toString(),new int[]{0,1,0,0});
-                }else{
-                    result[1]+=1;
-                    stat.put(gameWinner.toString(),result);
+                    stat.put(player2.toString(),new int[]{0,0,0,0});
                 }
+
+                System.out.println(String.format("%s Vs %s",player1,player2));
+                Player gameWinner = new Game(player1,player2).playWithoutDebugging();
+                Player loser;
+                if(gameWinner == null){
+                    gameWinner = player1;
+                    loser = player2;
+
+                    winnerResultIndex = GAME_DRAWS;
+                    loserResultIndex = GAME_DRAWS;
+
+                    playersInGame.add(gameWinner);
+                    playersInGame.add(loser);
+                    System.out.println("Result: DRAW");
+                }
+                else {
+                     loser = (gameWinner.equals(player1) ? player2 : player1);
+                         winnerResultIndex = GAME_WINS;
+                         loserResultIndex = GAME_LOSSES;
+                         playersInGame.add(gameWinner);
+                         System.out.println(String.format("Result: %s won.",gameWinner));
+                     }
+
+                result = stat.get(gameWinner.toString());
+                result[winnerResultIndex]++;
 
                 result = stat.get(loser.toString());
-                if(result==null){ // If wasn't in the hashmap before
-                    stat.put(loser.toString(),new int[]{0,0,1,0});
-                }else{
-                    result[2]+=1;
-                    stat.put(loser.toString(),result);
-                }
+                result[loserResultIndex]++;
 
+
+                System.out.print("Games played "+ gamesPlayed + "\r");
+                gamesPlayed++;
 
             }
             int[] result = stat.get(roundWinner.toString());
-            result[0]+=1;
+            result[ROUND_WINS]+=1;
             stat.put(roundWinner.toString(),result);
             rounds-=1;
         }
-
+        dumpResultToCSV(stat);
         return generateReport(stat);
     }
 
@@ -78,9 +104,32 @@ public class Tournament {
         for (String key :
                 stat.keySet()) {
             int[] result = stat.get(key);
-            strStat+= String.format(key+" championship wins: %d, wins: %d, loss: %",result[0],result[1],result[2]);
+            strStat+= String.format(key+" championship wins: %d, Game wins: %d, loss: %d, draws: %d\n",result[ROUND_WINS],result[GAME_WINS],result[GAME_LOSSES], result[GAME_DRAWS]);
         }
         return strStat;
     }
 
+    private void dumpResultToCSV(HashMap<String,int[]> stat) {
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(new FileOutputStream("tournament_result.csv"));
+            writer.println("player,championship wins,total wins,total losses, total draws");
+            for (String key :
+                    stat.keySet()) {
+                int[] result = stat.get(key);
+                String playerStat = String.format(key + ", %d, %d, %d,%d", result[ROUND_WINS], result[GAME_WINS], result[GAME_LOSSES], result[GAME_DRAWS]);
+                writer.println(playerStat);
+            }
+
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            writer.close();
+        }
+
+    }
+
+
 }
+

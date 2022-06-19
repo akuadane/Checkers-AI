@@ -2,6 +2,7 @@ package com.checkers;
 
 
 import com.checkers.controller.Game;
+import com.checkers.controller.Tournament;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
@@ -20,10 +21,10 @@ public class Main {
        // Game game = new Game(new MCTSPlayer("MCTS", Piece.PieceOwner.PLAYER1),new AlphaBetaMinMaxAIPlayer("AlphaBetaMinMax", Piece.PieceOwner.PLAYER2));
 
 
-        game.play();
+        //game.play();
 
-//        Tournament tr = new Tournament();
-//        tr.playOff(1);
+       Tournament tr = new Tournament();
+        System.out.println(tr.playOff(1));
 
     }
 }

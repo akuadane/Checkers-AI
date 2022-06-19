@@ -10,6 +10,10 @@ public class MCTSPlayer extends Player {
 
     MCTS mcts;
 
+    public MCTSPlayer(){
+        super("MCTS_Player");
+        mcts = new MCTS();
+    }
     public MCTSPlayer(String name, Piece.PieceOwner turn){
         super(name,turn);
         mcts = new MCTS();

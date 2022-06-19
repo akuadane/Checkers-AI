@@ -1,15 +1,16 @@
 package com.checkers.models;
 
-import com.checkers.models.players.MinMaxAIPlayer;
-import com.checkers.models.players.Player;
-import com.checkers.models.players.RandomPlayer;
-import com.checkers.models.players.RatioAIPlayer;
+import com.checkers.models.players.*;
+import com.checkers.models.players.mcts.MCTSPlayer;
 
 public class PlayerFactory {
 
     public static Player[] getAllPlayers(){
-        return new Player[]{new RandomPlayer(),
+        return new Player[]{
+                new RandomPlayer(),
                 new MinMaxAIPlayer(),
-                new RatioAIPlayer()};
+                new AlphaBetaMinMaxAIPlayer(),
+                new ReinforcedMinMax(),
+                new MCTSPlayer()};
     }
 }
