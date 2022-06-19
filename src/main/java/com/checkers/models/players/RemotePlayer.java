@@ -1,6 +1,7 @@
 package com.checkers.models.players;
 
 import com.checkers.models.Board;
+import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
 import com.checkers.models.piece.Piece;
@@ -70,9 +71,8 @@ public class RemotePlayer extends Player {
                 writer.writeObject(new ConnectionInfo(name));
                 return true;
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new CouldntConnectToServerException("Could not connect to host");
             }
-            return false;
         };
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         return executorService.submit(joinCallable);
@@ -92,16 +92,11 @@ public class RemotePlayer extends Player {
 
     public Future<Boolean> host(int port) {
         Callable<Boolean> hostTask = () -> {
-            try {
-                myServerSocket = new ServerSocket(port);
-                mySocket = myServerSocket.accept();
-                writer = new ObjectOutputStream(mySocket.getOutputStream());
-                reader = new ObjectInputStream(mySocket.getInputStream());
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return false;
+            myServerSocket = new ServerSocket(port);
+            mySocket = myServerSocket.accept();
+            writer = new ObjectOutputStream(mySocket.getOutputStream());
+            reader = new ObjectInputStream(mySocket.getInputStream());
+            return true;
         };
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         return executorService.submit(hostTask);
