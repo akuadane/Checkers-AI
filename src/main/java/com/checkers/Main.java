@@ -1,10 +1,12 @@
 package com.checkers;
 
+
 import com.checkers.controller.Game;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.AlphaBetaMinMaxAIPlayer;
 import com.checkers.models.players.BackRowAIPlayer;
+import com.checkers.models.players.mcts.MCTSPlayer;
 
 import com.checkers.models.players.MinMaxAIPlayer;
 import com.checkers.models.players.ReinforcedMinMax;
@@ -13,6 +15,9 @@ import com.checkers.models.players.ReinforcedMinMax;
 public class Main {
 
     public static void main(String[] args) throws InterruptedException, InValidMove, CloneNotSupportedException {
+
+
+        Game game = new Game(new MCTSPlayer("MCTS", Piece.PieceOwner.PLAYER1),new AlphaBetaMinMaxAIPlayer("AlphaBetaMinMax", Piece.PieceOwner.PLAYER2));
 
         Game game = new Game(new AlphaBetaMinMaxAIPlayer("AlphaBetaMinMax", Piece.PieceOwner.PLAYER1), new BackRowAIPlayer("MinMax", Piece.PieceOwner.PLAYER2));
 

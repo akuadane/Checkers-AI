@@ -72,7 +72,7 @@ public class MinMaxAIPlayer extends Player implements AIPlayer {
             temp.makeMove(mv);
             double moveVal  = min(temp,MAX_DEPTH);
 
-            if(max<moveVal || myMove==null){
+            if( myMove==null || max<moveVal ){
                 myMove = mv;
                 max=moveVal;
             }

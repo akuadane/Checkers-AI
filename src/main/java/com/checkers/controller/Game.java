@@ -18,6 +18,12 @@ public Game(Player player1, Player player2){
     this.playerInTurn = player1;
     this.board = new Board();
 }
+public Game(Player player1, Player player2,Board board){
+    this.player1 = player1;
+    this.player2 = player2;
+    this.playerInTurn = (board.getTurn()==player1.myTurn)? player1: player2;
+    this.board = board;
+}
 
 public Player play() throws InValidMove, CloneNotSupportedException {
     while (true){
@@ -42,6 +48,21 @@ public Player play() throws InValidMove, CloneNotSupportedException {
         playerInTurn = (playerInTurn.equals(player1))?player2:player1;
         final long duration = System.currentTimeMillis() - startTime;
         System.out.println(duration + " milli seconds");
+    }
+
+}
+
+public Player playWithoutDebugging() throws InValidMove, CloneNotSupportedException {
+    while(true){
+        Piece.PieceOwner winner = board.isGameOver();
+        if(winner!=null){
+            Player winnerPlayer = ((player1.myTurn==winner)?(player1):(player2));
+            return winnerPlayer;
+        }
+
+        Move playerMove = playerInTurn.makeMove(new Board(board));
+        board.makeMove(playerMove);
+        playerInTurn = (playerInTurn.equals(player1))?player2:player1;
     }
 
 }
