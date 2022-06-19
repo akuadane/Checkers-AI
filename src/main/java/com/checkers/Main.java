@@ -19,7 +19,6 @@ public class Main {
 
         Game game = new Game(new MCTSPlayer("MCTS", Piece.PieceOwner.PLAYER1),new AlphaBetaMinMaxAIPlayer("AlphaBetaMinMax", Piece.PieceOwner.PLAYER2));
 
-        Game game = new Game(new AlphaBetaMinMaxAIPlayer("AlphaBetaMinMax", Piece.PieceOwner.PLAYER1), new BackRowAIPlayer("MinMax", Piece.PieceOwner.PLAYER2));
 
         game.play();
 

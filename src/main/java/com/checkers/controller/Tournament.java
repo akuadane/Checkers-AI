@@ -37,6 +37,9 @@ public class Tournament {
                 player2.myTurn = Piece.PieceOwner.PLAYER2;
 
                 Player gameWinner = new Game(player1,player2).play();
+                if(gameWinner == null){
+
+                }
                 Player loser = (gameWinner.equals(player1)?player2:player1);
 
                 playersInGame.add(gameWinner);
@@ -44,7 +47,7 @@ public class Tournament {
                 int[] result = stat.get(gameWinner.toString());
 
                 if(result==null){ // If wasn't in the hashmap before
-                    stat.put(gameWinner.toString(),new int[]{0,1,0});
+                    stat.put(gameWinner.toString(),new int[]{0,1,0,0});
                 }else{
                     result[1]+=1;
                     stat.put(gameWinner.toString(),result);
@@ -52,7 +55,7 @@ public class Tournament {
 
                 result = stat.get(loser.toString());
                 if(result==null){ // If wasn't in the hashmap before
-                    stat.put(loser.toString(),new int[]{0,0,1});
+                    stat.put(loser.toString(),new int[]{0,0,1,0});
                 }else{
                     result[2]+=1;
                     stat.put(loser.toString(),result);
