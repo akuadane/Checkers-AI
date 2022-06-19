@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException, InValidMove, CloneNotSupportedException {
 
-        Game game = new Game(new AlphaBetaMinMaxAIPlayer("AlphaBetaMinMax", Piece.PieceOwner.PLAYER1),new MCTSPlayer("MCTS", Piece.PieceOwner.PLAYER2));
+        Game game = new Game(new MCTSPlayer("MCTS", Piece.PieceOwner.PLAYER1),new AlphaBetaMinMaxAIPlayer("AlphaBetaMinMax", Piece.PieceOwner.PLAYER2));
         game.play();
 
 //        Tournament tr = new Tournament();

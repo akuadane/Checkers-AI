@@ -4,6 +4,7 @@ import com.checkers.controller.Game;
 import com.checkers.models.Board;
 import com.checkers.models.exceptions.InValidMove;
 import com.checkers.models.move.Move;
+import com.checkers.models.piece.Pawn;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.Player;
 import com.checkers.models.players.RandomPlayer;
@@ -39,12 +40,14 @@ public class MCTS {
                 cpPromisingNode = cpPromisingNode.getRandomChild();
 
             Piece.PieceOwner winner = this.simulateGame(cpPromisingNode);
-            this.backPropagate(cpPromisingNode,winner);
+            this.backPropagate(cpPromisingNode,winner,node.getState().getBoard().getTurn());
 
             noPlays++;
 
         }
+
         int bestMoveIndex = this.selectBestMove(node,noPlays);
+        System.out.println(bestMoveIndex);
         return node.getState().getBoard().reachablePositionsByPlayer().get(bestMoveIndex);
 
     }
@@ -69,14 +72,14 @@ public class MCTS {
         int bestMvIndex=0;
         double winRate=0;
         int bestMvPlays =0;
-        double bestScore =0;
+        double bestScore = Double.MIN_VALUE;
 
 
         for (int i = 0; i < root.getChildren().size(); i++) {
             MCTSNode child = root.getChildren().get(i);
 
-            int childWins = child.getState().getWins();
-            int childPlays = child.getState().getPlays();
+            double childWins = child.getState().getWins();
+            double childPlays = child.getState().getPlays();
 
             if(childPlays==0)
                 continue;
@@ -90,8 +93,8 @@ public class MCTS {
 //
 //            }
 
-            if(childWins/childPlays + childPlays/noPlays > bestScore){
-                bestScore = childWins/childPlays + childPlays/noPlays;
+            if(childWins/childPlays  > bestScore){
+                bestScore = childWins/childPlays ;
                 bestMvIndex =i;
             }
 
@@ -145,6 +148,34 @@ public class MCTS {
 
         return (player1>=player2)? Piece.PieceOwner.PLAYER1: Piece.PieceOwner.PLAYER2;
     }
+//    private Piece.PieceOwner simulateGame(MCTSNode node) {
+//        int player1=0;
+//        int player2=0;
+//        Board board = node.getState().getBoard();
+//        for(int r=0;r<board.board.length;r++){
+//            for(int c=(1-r%2);c<board.board.length;c+=2){
+//                Piece piece = board.board[r][c];
+//
+//                if(piece!=null){
+//                    if(piece.owner== Piece.PieceOwner.PLAYER1){
+//                        if(piece instanceof Pawn)
+//                            player1+=1;
+//                        else
+//                            player1+=2;
+//                    }else{
+//                        if(piece instanceof Pawn)
+//                            player2+=1;
+//                        else
+//                            player2+=2;
+//                    }
+//                }
+//            }
+//
+//        }
+//         if(player1>= player2)
+//             return Piece.PieceOwner.PLAYER1;
+//         return Piece.PieceOwner.PLAYER2;
+//    }
 
 
     /**
@@ -153,12 +184,12 @@ public class MCTS {
      * @param cpPromisingNode The node and its parents are going to be updated.
      * @param winner The result from the simulation.
      * */
-    private void backPropagate(MCTSNode cpPromisingNode, Piece.PieceOwner winner) {
+    private void backPropagate(MCTSNode cpPromisingNode, Piece.PieceOwner winner,Piece.PieceOwner myTurn) {
         MCTSNode temp = cpPromisingNode;
 
         while(temp!=null){
             temp.incrementPlays();
-            if(temp.getState().getBoard().getTurn().equals(winner)){
+            if(myTurn.equals(winner)){
                 temp.incrementWins();
             }
             temp = temp.getParent();
