@@ -136,9 +136,6 @@ public class Board {
         return moves;
     }
 
-    public ArrayList<Move> reachablePositionsByPlayer() {
-        return this.reachablePositionsByPlayer(this.turn);
-    }
 
     /**
      * Returns the possible moves of the current player.
