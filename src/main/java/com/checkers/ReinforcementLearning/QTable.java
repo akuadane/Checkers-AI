@@ -30,7 +30,6 @@ public class QTable {
         double[] actions = this.map.get(state.toString());
 
         if (actions == null) {
-            //TODO initialize the int array with random values
             List<Move> possibleMoves = state.reachablePositionsByPlayer(state.getTurn());
             actions = new double[possibleMoves.size()];
 

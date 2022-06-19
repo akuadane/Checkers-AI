@@ -266,7 +266,7 @@ public class Board {
      *
      * @return PieceOwner type of the winning player or null if the game hasn't ended yet.
      */
-    public Piece.PieceOwner isGameOver() { // TODO change the name to isThereWinner
+    public Piece.PieceOwner isGameOver() {
         boolean p1HasMoves = false, p2HasMoves = false;
 
         for (int r = 0; r < BOARD_SIZE; r++) {

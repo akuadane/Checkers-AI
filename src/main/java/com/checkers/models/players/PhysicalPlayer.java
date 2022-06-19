@@ -16,8 +16,7 @@ public class PhysicalPlayer extends Player {
 
     @Override
     public Move makeMove(Board board) {
-        //TODO receive the move from the click of mouse
-        // TODO remove the following implementation
+
 
         List<Move> moveList = board.reachablePositionsByPlayer(myTurn);
         int index =0;

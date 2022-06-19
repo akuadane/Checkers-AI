@@ -22,7 +22,7 @@ public class Tournament {
         players = PlayerFactory.getAllPlayers();
     }
 
-    //TODO add more detail in the stat
+
     public String playOff(int rounds) throws InValidMove, CloneNotSupportedException {
         Thread[] threads = new Thread[rounds];
         int gamesPlayed = 0;
