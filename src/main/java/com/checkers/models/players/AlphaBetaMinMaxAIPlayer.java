@@ -14,7 +14,7 @@ import java.util.List;
 public class AlphaBetaMinMaxAIPlayer extends Player implements AIPlayer {
     LocalTime stTime;
     final int MAX_SECONDS = 5;
-     int MAX_DEPTH=10;
+     int MAX_DEPTH=15;
 
     public AlphaBetaMinMaxAIPlayer(String name, Piece.PieceOwner myTurn) {
         super(name,myTurn);

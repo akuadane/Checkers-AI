@@ -25,7 +25,7 @@ public class CheckersEnvironment{
     public ActionResult takeAction(Move mv) throws InValidMove, CloneNotSupportedException {
         double reward ;
         this.state.makeMove(mv);
-        // TODO compare the prev and current board to make a reward
+
 
         reward = this.rewardFunc();
 
@@ -37,8 +37,8 @@ public class CheckersEnvironment{
         Move p2Move = this.player1.makeMove(new Board(this.state));
         this.state.makeMove(p2Move);
 
-        // TODO assess the board state and update reward
-        reward = (reward + this.rewardFunc())/2; //TODO change the ratios and see the result
+
+        reward = (reward + this.rewardFunc())/2;
         winner = this.state.isGameOver();
         if(winner!=null && winner==player1.myTurn){
             return new ActionResult(new Board(this.state),LOWEST_REWARD,winner,true);
