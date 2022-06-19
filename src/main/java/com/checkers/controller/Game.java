@@ -6,6 +6,7 @@ import com.checkers.models.move.Move;
 import com.checkers.models.piece.Pawn;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.Player;
+import com.checkers.models.players.ReinforcedMinMax;
 
 import java.time.LocalTime;
 
@@ -24,6 +25,14 @@ public Game(Player player1, Player player2){
 public Game(Player player1, Player player2,Board board){
     this.player1 = player1;
     this.player2 = player2;
+
+    if(player1 instanceof ReinforcedMinMax)
+    {
+        Player temp = player1;
+        player1 = player2;
+        player2 = temp;
+    }
+
     this.playerInTurn = (board.getTurn()==player1.myTurn)? player1: player2;
     this.board = board;
 }

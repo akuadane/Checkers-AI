@@ -8,9 +8,10 @@ public class PlayerFactory {
     public static Player[] getAllPlayers(){
         return new Player[]{
                 new RandomPlayer(),
-                new MinMaxAIPlayer(),
-                new AlphaBetaMinMaxAIPlayer(),
-                new ReinforcedMinMax(),
-                new MCTSPlayer()};
+               // new MinMaxAIPlayer(),
+            new AlphaBetaMinMaxAIPlayer(),
+//                new ReinforcedMinMax(),
+//                new MCTSPlayer(),
+        };
     }
 }

@@ -9,10 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Tournament {
     Player[] players;
@@ -30,7 +27,9 @@ public class Tournament {
         HashMap<String,int[]> stat = new HashMap<>(); // [a,b,c,d] a is number of wins by game, b is number of win by rounds, c for loss, and d draws
         int gamesPlayed = 0;
         while(rounds>0){
-            Queue<Player> playersInGame = new LinkedList<>(Arrays.asList(players));
+            List playerList = Arrays.asList(players);
+            Collections.shuffle(playerList);
+            Queue<Player> playersInGame = new LinkedList<>(playerList);
             Player roundWinner = null;
             while(!playersInGame.isEmpty()){
                 Player player1 = playersInGame.poll();

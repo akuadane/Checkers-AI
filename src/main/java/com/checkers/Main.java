@@ -24,7 +24,7 @@ public class Main {
         //game.play();
 
        Tournament tr = new Tournament();
-        System.out.println(tr.playOff(1));
+        System.out.println(tr.playOff(20));
 
     }
 }
