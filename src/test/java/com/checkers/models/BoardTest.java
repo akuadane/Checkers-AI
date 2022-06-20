@@ -50,7 +50,7 @@ public class BoardTest {
     public void findJumpTest(){}
 
     @Test(expected = InValidMove.class)
-    public void makeIllegalMoveTest() throws InValidMove, CloneNotSupportedException {
+    public void makeIllegalMoveTest() throws InValidMove {
         board.makeMove(null);
     }
 
@@ -69,7 +69,7 @@ public class BoardTest {
     }
 
     @Test
-    public void undoTest() throws InValidMove, CloneNotSupportedException {
+    public void undoTest() throws InValidMove {
         Board prevBoard = new Board(board);
         Move mv = board.reachablePositionsByPlayer(Piece.PieceOwner.PLAYER1).get(0);
 
@@ -80,10 +80,27 @@ public class BoardTest {
         assertEquals(prevBoard,board);
 
     }
+    @Test
+    public void redoTest() throws InValidMove {
+        Board prevBoard = new Board(board);
+        Move mv = board.reachablePositionsByPlayer(Piece.PieceOwner.PLAYER1).get(0);
+
+        board.makeMove(mv);
+        assertNotEquals(prevBoard,board);
+
+        Board afterMoveBoard = new Board(board);
+
+        board.undo();
+        assertEquals(prevBoard,board);
+
+        board.redo();
+        assertEquals(board,afterMoveBoard);
+
+    }
 
     @Test
     public void isGameOverTest(){
-        assertEquals(board.isGameOver(),null);
+        assertNull(board.isGameOver());
     }
 
 }

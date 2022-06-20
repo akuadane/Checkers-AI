@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Checkers_Workshop_GUI.iml" filepath="$PROJECT_DIR$/Checkers_Workshop_GUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/checkers.iml" filepath="$PROJECT_DIR$/checkers.iml" />
     </modules>
   </component>
