@@ -6,14 +6,11 @@ import com.checkers.models.exceptions.CouldntConnectToServerException;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.RemotePlayer;
 import com.checkers.models.prefs.Config;
-import com.checkers.util.SceneUtils;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,12 +18,13 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+
+import static com.checkers.util.SceneUtils.fadeInTransition;
+import static com.checkers.util.SceneUtils.fakeOutTransition;
 
 /**
  * Class CreateJoin represents a controller class for choosing and establishing a remote game
@@ -63,46 +61,39 @@ public class CreateJoin implements Initializable {
      * @param actionEvent: represents a mouse event selection of Join Game
      */
     public void onJoinAction(ActionEvent actionEvent) {
+        System.out.println("Initial state before join: " + connectionStatus.getConnectionStatus().toString());
+
         setStage(actionEvent);
-        if (connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT || connectionStatus.getConnectionStatus() == ActionStatus.COMPLETED)
+        if (connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT || connectionStatus.getConnectionStatus() == ActionStatus.COMPLETED) {
+            connectionStatus.setConnectionStatus(ActionStatus.FAILED);
             return;
+        }
         String port, name, hostname;
         name = this.name.getText().trim();
         hostname = this.hostname.getText().trim();
         port = this.port.getText().trim();
-        try {
-            Runnable joinGameRunnable = () -> {
-                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.JOINING_GAME));
-                try {
-                    player = new RemotePlayer(name, Piece.PieceOwner.PLAYER2, hostname, Integer.parseInt(port));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            };
-            Runnable waitOpponentRunnable = () -> {
-                if (connectionStatus.getConnectionStatus() == ActionStatus.FAILED) return;
-                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.WAITING_FOR_OPPONENT));
-                try {
-                    Thread.sleep((long) Double.POSITIVE_INFINITY);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            };
-
-            CompletableFuture<Void> joinGameFuture = CompletableFuture.runAsync(joinGameRunnable);
-            CompletableFuture<Void> waitOpponentFuture = CompletableFuture.runAsync(waitOpponentRunnable);
-
-            joinGameFuture.thenRun(() -> player.setWaitOpponentFuture(waitOpponentFuture));
-
-            waitOpponentFuture.thenRun(() -> {
-                connectionStatus.setConnectionStatus(ActionStatus.COMPLETED);
-            });
-
-
-        } catch (Exception e) {
+        if (name.length() < 2 || hostname.length() < 4 || port.length() < 2) {
             connectionStatus.setConnectionStatus(ActionStatus.FAILED);
-            e.printStackTrace();
+            return;
         }
+        Runnable joinGameRunnable = () -> {
+            Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.JOINING_GAME));
+            try {
+                player = new RemotePlayer(name, Piece.PieceOwner.PLAYER2, hostname, Integer.parseInt(port));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        CompletableFuture<Void> joinGameFuture = CompletableFuture.runAsync(joinGameRunnable);
+
+        joinGameFuture.thenRun(() -> {
+            connectionStatus.setConnectionStatus(ActionStatus.COMPLETED);
+        }).exceptionally((e) -> {
+            connectionStatus.setConnectionStatus(ActionStatus.FAILED);
+            joinGameFuture.cancel(true);
+            return null;
+        });
     }
 
     /**
@@ -121,42 +112,40 @@ public class CreateJoin implements Initializable {
      * @param actionEvent: represents a mouse event on Create Action selection
      */
     public void onCreateAction(ActionEvent actionEvent) {
+        System.out.println("Initial state: " + connectionStatus.getConnectionStatus().toString());
         setStage(actionEvent);
         if (connectionStatus.getConnectionStatus() == ActionStatus.COMPLETED || connectionStatus.getConnectionStatus() == ActionStatus.WAITING_FOR_OPPONENT)
             return;
-        String name, gameID;
-        name = this.name.getText().trim();
-        gameID = this.hostname.getText().trim();
-        try {
+        String nameValue, hostValue, portValue;
+        nameValue = name.getText().trim();
+        hostValue = hostname.getText().trim();
+        portValue = port.getText().trim();
+        final String name, host;
+        final int porta;
+        name = nameValue.length() < 2 ? "John Doe" : nameValue;
+        host = hostValue.length() < 4 ? "127.0.0.1" : hostValue;
+        porta = portValue.length() < 3 ? 6060 : Integer.parseInt(portValue);
 
-            Runnable hostGameRunnable = () -> {
-                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.HOSTING_GAME));
-                try {
-                    player = new RemotePlayer(name, Piece.PieceOwner.PLAYER1);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            };
+        Runnable hostGameRunnable = () -> {
+            connectionStatus.setConnectionStatus(ActionStatus.WAITING_FOR_OPPONENT);
 
-            Runnable waitOpponentRunnable = () -> {
-                Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.WAITING_FOR_OPPONENT));
-                try {
-                    Thread.sleep((long) Double.POSITIVE_INFINITY);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            };
-            CompletableFuture<Void> waitOpponentFuture = CompletableFuture.runAsync(waitOpponentRunnable);
-            CompletableFuture<Void> hostGameFuture = CompletableFuture.runAsync(hostGameRunnable);
-            hostGameFuture.thenRun(() -> player.setWaitOpponentFuture(waitOpponentFuture));
+            try {
+                player = new RemotePlayer(name, Piece.PieceOwner.PLAYER1, host, porta);
+            } catch (Exception e) {
+                System.out.println("Exception in hosting raised");
+                throw new RuntimeException(e);
+            }
+            System.out.println("Host game finished success");
+        };
 
-            waitOpponentFuture.thenRun(() -> {
-                connectionStatus.setConnectionStatus(ActionStatus.COMPLETED);
-            });
-        } catch (Exception e) {
-            Platform.runLater(() -> connectionStatus.setConnectionStatus(ActionStatus.FAILED));
+        CompletableFuture<Void> hostGameFuture = CompletableFuture.runAsync(hostGameRunnable);
+        hostGameFuture.thenRun(() -> {
+            connectionStatus.setConnectionStatus(ActionStatus.COMPLETED);
+        }).exceptionally((e) -> {
             e.printStackTrace();
-        }
+            connectionStatus.setConnectionStatus(ActionStatus.FAILED);
+            return null;
+        });
     }
 
     /**
@@ -166,7 +155,7 @@ public class CreateJoin implements Initializable {
      */
     private void showScene() throws CouldntConnectToServerException {
         ((Config) stage.getUserData()).setPlayer(player);
-        fadeOutTransition(currentScene.getRoot(), (arg) -> {
+        fakeOutTransition(currentScene.getRoot(), (arg) -> {
             Checkers game = Checkers.getInstance();
             try {
                 game.start(stage);
@@ -181,31 +170,6 @@ public class CreateJoin implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         anchorPane.setOpacity(0.0);
         fadeInTransition(anchorPane);
-    }
-
-    private void fadeInTransition(AnchorPane anchorPane) {
-        FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(SceneUtils.ANIMATION_DURATION));
-        fadeTransition.setNode(anchorPane);
-        fadeTransition.setFromValue(0);
-        fadeTransition.setToValue(1);
-        fadeTransition.play();
-    }
-
-    private void fadeOutTransition(Parent parent, Callback<Void, Void> function) {
-        FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(SceneUtils.ANIMATION_DURATION));
-        fadeTransition.setNode(parent);
-        fadeTransition.setFromValue(1);
-        fadeTransition.setToValue(0);
-        fadeTransition.setOnFinished(actionEvent -> {
-            try {
-                function.call(null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        fadeTransition.play();
     }
 
     /**
@@ -224,7 +188,7 @@ public class CreateJoin implements Initializable {
          *
          * @param connectionStatus: new connection status
          */
-        public void setConnectionStatus(ActionStatus connectionStatus) {
+        public synchronized void setConnectionStatus(ActionStatus connectionStatus) {
             ActionStatus previousState = this.connectionStatus;
             this.connectionStatus = connectionStatus;
             switch (this.connectionStatus) {
@@ -252,8 +216,10 @@ public class CreateJoin implements Initializable {
      * @param previousStatus: previous state of the connection
      */
     private void handleJoiningGame(ActionStatus previousStatus) {
-        overlayPane.setVisible(true);
-        statusLabel.setText(ActionStatus.JOINING_GAME.name());
+        Platform.runLater(() -> {
+            overlayPane.setVisible(true);
+            statusLabel.setText("Joining Game");
+        });
     }
 
     /**
@@ -262,8 +228,10 @@ public class CreateJoin implements Initializable {
      * @param previousStatus: previous state of the connection
      */
     private void handleWaitingForOpponent(ActionStatus previousStatus) {
-        overlayPane.setVisible(true);
-        statusLabel.setText(ActionStatus.WAITING_FOR_OPPONENT.name());
+        Platform.runLater(() -> {
+            overlayPane.setVisible(true);
+            statusLabel.setText("Waiting Opponent");
+        });
 
     }
 
@@ -291,8 +259,10 @@ public class CreateJoin implements Initializable {
      * @param previousStatus: previous state of the connection
      */
     private void handleOnFailed(ActionStatus previousStatus) {
-        statusLabel.setText(ActionStatus.FAILED.name());
-        overlayPane.setVisible(false);
-        errorLabel.setVisible(true);
+        Platform.runLater(() -> {
+            statusLabel.setText(ActionStatus.FAILED.name());
+            overlayPane.setVisible(false);
+            errorLabel.setVisible(true);
+        });
     }
 }

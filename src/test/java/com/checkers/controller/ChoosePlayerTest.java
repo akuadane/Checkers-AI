@@ -6,9 +6,6 @@ import org.testfx.api.FxRobotException;
 import org.testfx.matcher.control.LabeledMatchers;
 
 public class ChoosePlayerTest extends FxBaseTest {
-    final String WITH_COMPUTER_ID = "#playWithComputerButton";
-    final String WITH_PLAYER_ID = "#playWithPlayerButton";
-    final String WITH_REMOTE_ID = "#playRemoteButton";
 
     @Test(expected = FxRobotException.class)
     public void clickOnBogusElement() {

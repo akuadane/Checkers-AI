@@ -22,7 +22,6 @@ public class PhysicalPlayer extends Player {
         int index =0;
         for (Move a :
                 moveList) {
-            System.out.println(index + " " +a);
             index++;
         }
 
@@ -30,11 +29,9 @@ public class PhysicalPlayer extends Player {
             System.out.print("Choice > ");
             Scanner scanner = new Scanner(System.in);
             int i = scanner.nextInt();
-            System.out.println();
 
             if(i>=0 && i<moveList.size())
                 return moveList.get(i);
-            System.out.println("Choose a correct move");
         }
 
     }

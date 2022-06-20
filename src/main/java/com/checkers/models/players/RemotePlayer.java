@@ -131,12 +131,9 @@ public class RemotePlayer extends Player {
             try {
                 Action action;
                 while (!((action = (Action) reader.readObject()) instanceof Close)) {
-                    if (action instanceof MakeMove makeMove)
-                        onMakeMoveCallback(makeMove);
-                    else if (action instanceof ConnectionInfo connectionInfo)
-                        onConnectionInfoCallback(connectionInfo);
-                    else if (action instanceof Error error)
-                        onErrorCallback(error);
+                    if (action instanceof MakeMove makeMove) onMakeMoveCallback(makeMove);
+                    else if (action instanceof ConnectionInfo connectionInfo) onConnectionInfoCallback(connectionInfo);
+                    else if (action instanceof Error error) onErrorCallback(error);
                 }
                 Close close = (Close) action;
                 onCloseCallback(close);
@@ -156,7 +153,6 @@ public class RemotePlayer extends Player {
             writer.writeObject(new ConnectionInfo(name));
         }
         opponentName = action.playerName;
-        this.getWaitOpponentFuture().complete(null);
     }
 
     public void onMakeMoveCallback(MakeMove action) {
@@ -166,83 +162,9 @@ public class RemotePlayer extends Player {
     public void onCloseCallback(Close action) {
     }
 
-    public boolean writeAction(Action action) {
-        try {
-            writer.writeObject(action);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
 
     public String getOpponentName() {
         return opponentName;
-    }
-
-    public void setOpponentName(String opponentName) {
-        this.opponentName = opponentName;
-    }
-
-    public Socket getMySocket() {
-        return mySocket;
-    }
-
-    public void setMySocket(Socket mySocket) {
-        this.mySocket = mySocket;
-    }
-
-    public ServerSocket getMyServerSocket() {
-        return myServerSocket;
-    }
-
-    public void setMyServerSocket(ServerSocket myServerSocket) {
-        this.myServerSocket = myServerSocket;
-    }
-
-    public ObjectOutputStream getWriter() {
-        return writer;
-    }
-
-    public void setWriter(ObjectOutputStream writer) {
-        this.writer = writer;
-    }
-
-    public ObjectInputStream getReader() {
-        return reader;
-    }
-
-    public void setReader(ObjectInputStream reader) {
-        this.reader = reader;
-    }
-
-    public CompletableFuture<Move> getMakeMoveFuture() {
-        return makeMoveFuture;
-    }
-
-    public void setMakeMoveFuture(CompletableFuture<Move> makeMoveFuture) {
-        this.makeMoveFuture = makeMoveFuture;
-    }
-
-    public Function<Void, Void> getOnErrorCallback() {
-        return onErrorCallback;
-    }
-
-    public void setOnErrorCallback(Function<Void, Void> onErrorCallback) {
-        this.onErrorCallback = onErrorCallback;
-    }
-
-    public Function<Void, Void> getOnCloseCallback() {
-        return onCloseCallback;
-    }
-
-    public void setOnCloseCallback(Function<Void, Void> onCloseCallback) {
-        this.onCloseCallback = onCloseCallback;
-    }
-
-    public Function<Move, Void> getOnMakeMoveCallbackFunc() {
-        return onMakeMoveCallbackFunc;
     }
 
     public void setOnMakeMoveCallbackFunc(Function<Move, Void> onMakeMoveCallbackFunc) {
