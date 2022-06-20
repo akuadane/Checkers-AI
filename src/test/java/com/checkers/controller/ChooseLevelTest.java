@@ -1,19 +1,27 @@
 package com.checkers.controller;
 
 import javafx.stage.Stage;
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.matcher.control.LabeledMatchers;
+import org.testfx.util.WaitForAsyncUtils;
 
 public class ChooseLevelTest extends FxBaseTest {
-    final String EASY_ID = "#easyButton";
-    final String MEDIUM_ID = "#mediumButton";
-    final String HARD_ID = "#hardButton";
-    final String EXPERT_ID = "#expertButton";
 
     @Override
     public void start(Stage stage) throws Exception {
         stage.show();
+    }
+    @Before
+    public void go_to_levels_screen() {
+        clickOn("#playWithComputerButton");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     @Test

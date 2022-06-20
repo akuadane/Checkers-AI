@@ -6,6 +6,7 @@ import com.checkers.models.move.Move;
 import com.checkers.models.move.Position;
 import com.checkers.models.piece.Piece;
 import com.checkers.models.players.*;
+import com.checkers.models.players.mcts.MCTSPlayer;
 import com.checkers.models.prefs.Config;
 import com.checkers.models.prefs.GameType;
 import com.checkers.models.prefs.Level;
@@ -102,6 +103,7 @@ public class Checkers {
         VBox outerLayout = initScoreBoard();
 
         GridPane gridPane = new GridPane();
+        gridPane.setId("mainGridPane");
         gridPane.setBackground(new Background(new BackgroundFill(Color.valueOf("#FFF0DC"), CornerRadii.EMPTY, Insets.EMPTY)));
         gridPane.setPrefSize(WIDTH, HEIGHT);
         gridPane.setEffect(dropShadow);
@@ -186,6 +188,7 @@ public class Checkers {
         newHBox3.getChildren().addAll(player2Score, player2Label);
         newHBox1.getChildren().addAll(newHBox2, newHBox3);
         newHBox1.setAlignment(Pos.CENTER);
+        newHBox1.setId("scoreHBox");
 
         newHBox1.setBackground(boxBackground);
         newHBox1.setPadding(new Insets(5.0));
@@ -227,6 +230,7 @@ public class Checkers {
         imageView1.setFitWidth(IMAGE_SIZE);
         imageView1.setFitHeight(IMAGE_SIZE);
         Button homeButton = new Button();
+        homeButton.setId("homeButton");
         homeButton.setGraphic(imageView1);
         homeButton.setBackground(Background.EMPTY);
         homeButton.setPadding(Insets.EMPTY);
@@ -241,6 +245,7 @@ public class Checkers {
         imageView.setFitWidth(IMAGE_SIZE);
         imageView.setFitHeight(IMAGE_SIZE);
         Button undoButton = new Button();
+        undoButton.setId("undoButton");
         undoButton.setGraphic(imageView);
         undoButton.setBackground(Background.EMPTY);
         undoButton.setPadding(Insets.EMPTY);
@@ -295,6 +300,7 @@ public class Checkers {
         imageView5.setFitHeight(IMAGE_SIZE);
         imageView5.setFitWidth(IMAGE_SIZE);
         Button infoButton = new Button();
+        homeButton.setId("infoButton");
         infoButton.setGraphic(imageView5);
         infoButton.setPadding(Insets.EMPTY);
         infoButton.setBackground(Background.EMPTY);
@@ -356,10 +362,9 @@ public class Checkers {
         Player player;
         switch (level) {
             case EASY -> player = new RandomPlayer("Random Player", Piece.PieceOwner.PLAYER2);
+            case MEDIUM -> player = new MinMaxAIPlayer("Mini Max", Piece.PieceOwner.PLAYER2);
             case HARD -> player = new AlphaBetaMinMaxAIPlayer("Alpha Beta", Piece.PieceOwner.PLAYER2);
-            case MEDIUM -> player = new MinMaxAIPlayer("MiniMaxAI", Piece.PieceOwner.PLAYER2);
-            case EXPERT -> player = new BackRowAIPlayer("BackRowAI", Piece.PieceOwner.PLAYER2);
-            default -> player = new IterativeDeepeningAIPlayer("Iterative Deepening", Piece.PieceOwner.PLAYER2);
+            default -> player = new MCTSPlayer("Monte Carlo", Piece.PieceOwner.PLAYER2);
         }
 
         return player;
@@ -426,7 +431,7 @@ public class Checkers {
                 updateBoard();
                 isThereWinner();
                 if (config.getGameType() != GameType.PLAYER) this.myTurn = !this.myTurn;
-                if (player instanceof AIPlayer || player instanceof RandomPlayer) { //AI will make a move
+                if (this.player != null && !(this.player instanceof RemotePlayer)) { //AI will make a move
                     this.aiMove();
                 }
                 if (player instanceof RemotePlayer) {
