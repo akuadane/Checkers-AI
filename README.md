@@ -35,3 +35,5 @@ If successful, you should see the following window pop-up.
 [12] Dānishgāh-i Ṣanʻatī-i Sharīf, & Institute of Electrical and Electronics Engineers. (n.d.). The 18th CSI International Symposium on Computer Architecture & Digital Systems (CADS 2015) : location: Tehran, Iran, Sharif University of Technology, dates: 7-8 October 2015. <br />
 [13] Dongbei da xue (1993), Qingdao da xue, IEEE Control Systems Society, & IEEE Singapore Section. Industrial Electronics Chapter. (n.d.). Proceedings of the 2015 27th Chinese Control and Decision Conference (CCDC) : May 23-25, 2015, Qingdao Haiqing Hotel, Qingdao, China. <br />
 [14] Zhang, C., & Cui, J. (2009). Improved alpha-beta pruning of heuristic search in game-playing tree. 2009 WRI World Congress on Computer Science and Information Engineering, CSIE 2009, 2, 672–674. https://doi.org/10.1109/CSIE.2009.527 <br />
+[15] Baeldung."Monte Carlo Tree Search for Tic-Tac-Toe Game in java". Available: https://www.baeldung.com/java-monte-carlo-tree-search
+[16] SentDex. "Q - learning Intro", YouTube. Available: https://www.youtube.com/watch?v=yMk_XtIEzH8&list=PLQVvvaa0QuDezJFIOU5wDdfy4e9vdnx-7.
