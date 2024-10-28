@@ -8,7 +8,7 @@
 - Tsedeke Nigusu		
 
 ### Advisor
-#### Mr. Endrias Haile
+#### Mr. Amanuel Mersha & Mr. Endrias Haile 
 
 ### Project Summary
 Checkers is a board game, one of the world’s oldest classic games which are played by two persons who oppose each other across a board of 64 light and dark squares. The goal is to jump the opponent's pieces, and remove them from the board, in an effort to win back one's players and remove every opposing piece from the board. It has been known that the simple game of checkers can provide significant training in thought and logic, develop concentration skills, and boost problem-solving skills. Of course, it also keeps players occupied with fun competition.
